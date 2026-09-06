@@ -207,7 +207,12 @@ export async function createViewer(host, atlas, handlers) {
   }
 
   // One plane, reused by every published cutaway.
-  const sectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  // A longitudinal cut across the tooth. World X is mesiodistal once the
+  // model has been stood up, which is the section a tooth is usually drawn in.
+  const sectionPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
+
+  // How solid each tissue of an opened tooth is before the reader changes it.
+  const CUTAWAY_FADE = { tooth: 0.58, pdl: 0.26, bone: 0.2, pulp: 1 };
 
   const pin = new THREE.Group();
   pin.visible = false;
@@ -555,7 +560,12 @@ export async function createViewer(host, atlas, handlers) {
     // from over-compensating.
     let distance = Math.max(
       0.04,
-      (size * (currentState?.toothDetail ? 1.5 : 2.2)) /
+      (size *
+        (currentState?.toothDetail
+          ? dentalModel?.userData.published
+            ? 2.1
+            : 1.5
+          : 2.2)) /
         Math.max(0.62, Math.min(camera.aspect, 1)),
     );
     if (explosion > 0 && canExplode()) {
@@ -853,22 +863,34 @@ export async function createViewer(host, atlas, handlers) {
       if (dentalModel && state.toothDetail && dentalModel.userData.published) {
         const plan = dentalModel.userData.published;
         resolutionStatus(plan.caption);
-        const radius = dentalModel.userData.radius || 0.01;
+        // Half the widest span of the tooth itself, so the sweep crosses it.
+        const box = new THREE.Box3().setFromObject(dentalModel);
+        const span = box.getSize(new THREE.Vector3());
+        const radius = Math.max(span.x, span.z) / 2 || 0.01;
         // The plane sweeps from behind the tooth to its middle, which is what
         // the depth slider meant on the drawn cutaway.
-        const offset = ((state.sectionDepth ?? 50) / 100) * 2 * radius - radius;
+        const middle = box.getCenter(new THREE.Vector3()).x;
+        const offset =
+          middle - radius + ((state.sectionDepth ?? 50) / 100) * 2 * radius;
         sectionPlane.constant = -offset;
+        // A renderer wide plane rather than a per material one: it needs no
+        // shader recompile, and nothing else is on screen in this view.
+        renderer.clippingPlanes = state.cutaway ? [sectionPlane] : [];
         for (const mesh of dentalModel.children) {
-          mesh.visible = !state.hiddenTissues.has(mesh.userData.tissue);
-          mesh.material.clippingPlanes = state.cutaway ? [sectionPlane] : null;
-          mesh.material.clipShadows = true;
-          const fade = state.opacity?.get(`model-${mesh.userData.tissue}`) ?? 1;
+          const tissue = mesh.userData.tissue;
+          mesh.visible = !state.hiddenTissues.has(tissue);
+          // The point of opening a tooth is to see inside it, so the shell it
+          // is seen through starts part way transparent. Solid enough to read
+          // the crown and the roots, clear enough for the canal behind them.
+          const fade = state.opacity?.get(`model-${tissue}`) ?? CUTAWAY_FADE[tissue] ?? 1;
           mesh.material.transparent = fade < 1;
           mesh.material.opacity = fade;
           mesh.material.depthWrite = fade >= 1;
           mesh.material.needsUpdate = true;
         }
+        render();
       } else if (dentalModel && state.toothDetail) {
+        renderer.clippingPlanes = [];
         const nextSection = `${state.cutaway}-${state.sectionDepth}`;
         if (nextSection !== sectionKey) {
           setToothSection(dentalModel, state.cutaway, state.sectionDepth);
@@ -878,6 +900,7 @@ export async function createViewer(host, atlas, handlers) {
           (m) => (m.visible = !state.hiddenTissues.has(m.userData.tissue)),
         );
       }
+      if (!dentalModel?.userData.published) renderer.clippingPlanes = [];
       for (const mesh of meshes) {
         const part = mesh.userData.part;
         mesh.visible =

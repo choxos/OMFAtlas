@@ -248,7 +248,7 @@ export function createPublishedToothModel(manifest, buffer, fdi) {
     mesh.position.set(-center[0], -center[1], -center[2]);
     mesh.userData.tissue = tissue;
     mesh.userData.modelPart = part;
-    mesh.renderOrder = tissue === "pulp" ? 2 : tissue === "pdl" ? 1 : 0;
+    mesh.renderOrder = tissue === "pulp" ? 0 : tissue === "pdl" ? 1 : 2;
     group.add(mesh);
     if (!tissues.includes(tissue)) tissues.push(tissue);
   }

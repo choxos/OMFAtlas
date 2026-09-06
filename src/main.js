@@ -1509,6 +1509,9 @@ try {
     onOrient: drawOrientation,
     onModelsReady: () => {
       if (state.mode === "models") renderModelControls();
+      // The captions are written from whichever model is open, and until now
+      // none was, so they still said schematic.
+      updateScene();
       if (state.toothDetail) renderToothTissues();
     },
     // The facial muscles arrive after the first frame, so the counts and the
