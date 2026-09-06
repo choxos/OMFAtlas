@@ -187,6 +187,7 @@ document.querySelector("#app").innerHTML = `
       "",
     )}</div><span id="tissue-3d-status" role="status">Rotate to inspect the section. Teaching geometry, not a scan.</span></section>
 
+  <svg id="orientation" viewBox="-50 -50 100 100" aria-hidden="true"><g id="orientation-axes"></g></svg>
   <div class="caption-stack"><p class="age-notice" id="age-notice"></p><div class="stage-caption"><span id="visible-count">Preparing anatomy</span><i class="caption-line"></i><span class="drag-hint">Drag to rotate · Scroll to zoom</span></div></div>
   <div class="stage-bottom panel">
     <div class="dock-row dock-selection"><div class="stage-bottom-name"><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} <span>Isolate structure</span></button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div>
@@ -750,6 +751,37 @@ function renderInspector() {
 
 /* The anchors the schematic structures are built from, offered by name on the
    bone they were measured on. Each option carries the rule that produced it. */
+/* The patient axes, drawn where they point on screen. Left and right in this
+   atlas are the patient's, which is the convention the landmark names and the
+   schematic sides both use, and it is the one thing about a head on a screen
+   that a reader cannot work out by looking. */
+const AXIS_LABELS = {
+  left: ["L", "R", "#5b7f9c"],
+  superior: ["S", "I", "#8a7fa8"],
+  anterior: ["A", "P", "#9c7f5b"],
+};
+let orientationFrame = 0;
+function drawOrientation(axes) {
+  // Once every few frames is enough for a 44px gizmo and keeps a drag cheap.
+  if (orientationFrame++ % 3) return;
+  const host = document.querySelector("#orientation-axes");
+  if (!host) return;
+  const arms = [];
+  for (const [key, [positive, negative, color]] of Object.entries(AXIS_LABELS)) {
+    const [x, y, z] = axes[key] || [0, 0, 0];
+    // Screen y grows downward; z is toward the reader and only sets the order.
+    for (const sign of [1, -1]) {
+      const at = [x * sign * 32, -y * sign * 32];
+      arms.push({
+        depth: z * sign,
+        markup: `<line x1="0" y1="0" x2="${at[0].toFixed(1)}" y2="${at[1].toFixed(1)}" stroke="${color}" stroke-width="2.4" stroke-linecap="round" opacity="${sign > 0 ? 1 : 0.34}"/><text x="${(at[0] * 1.32).toFixed(1)}" y="${(at[1] * 1.32 + 3.6).toFixed(1)}" fill="${color}" font-size="11" font-weight="600" text-anchor="middle" opacity="${sign > 0 ? 1 : 0.42}">${sign > 0 ? positive : negative}</text>`,
+      });
+    }
+  }
+  arms.sort((a, b) => a.depth - b.depth);
+  host.innerHTML = arms.map((a) => a.markup).join("");
+}
+
 function landmarkBlock(part) {
   const found = (viewer?.landmarks() || []).filter((l) => l.bone === part.id);
   if (!found.length) return "";
@@ -1310,6 +1342,7 @@ try {
     onExitDetail: exitTooth,
     onExplode: setExplosion,
     onHover: showHover,
+    onOrient: drawOrientation,
     // The facial muscles arrive after the first frame, so the counts and the
     // structure list are rebuilt once they are in the scene.
     onPartsChanged: ({ failed, message }) => {

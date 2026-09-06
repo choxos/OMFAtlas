@@ -7083,3 +7083,37 @@ body.tooth-inspection .studio #consent {
   text-transform: uppercase;
   color: var(--faint);
 }
+
+/* ---- Orientation ---------------------------------------------------------
+
+   Which side of a head on a screen is the patient's right is the one thing a
+   reader cannot work out by looking, and every side-bearing name in this atlas
+   (the landmarks, the schematic structures) is the patient's. So the axes are
+   drawn. The far half of each axis is dimmed, which is what tells a reader
+   whether they are looking at the face or the back of the skull. */
+
+.studio #orientation {
+  position: absolute;
+  right: 26px;
+  bottom: 62px;
+  z-index: 5;
+  width: 74px;
+  height: 74px;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.studio #orientation::after {
+  content: "";
+}
+
+@media (max-width: 860px) {
+  .studio #orientation {
+    display: none;
+  }
+}
+
+body.teaching .studio #orientation,
+body.tooth-inspection .studio #orientation {
+  display: none;
+}

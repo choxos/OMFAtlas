@@ -20,6 +20,7 @@ export async function createViewer(host, atlas, handlers) {
     onPartsChanged = () => {},
     onHover = () => {},
     onProgress = () => {},
+    onOrient = () => {},
   } = handlers;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, 0.001, 10);
@@ -390,9 +391,26 @@ export async function createViewer(host, atlas, handlers) {
     if (amount > 0 && changed) view(amount > 0.45 ? "anterior" : currentDirection, true);
     else render();
   }
+  const viewAxis = new THREE.Vector3();
+  const axisReport = { left: null, superior: null, anterior: null };
+  function reportOrientation() {
+    const inverse = camera.quaternion.clone().invert();
+    for (const [key, axis] of [
+      ["left", [1, 0, 0]],
+      ["superior", [0, 1, 0]],
+      ["anterior", [0, 0, 1]],
+    ])
+      axisReport[key] = viewAxis
+        .fromArray(axis)
+        .applyQuaternion(inverse)
+        .toArray();
+    onOrient(axisReport);
+  }
+
   function render() {
     sizePin();
     renderer.render(scene, camera);
+    reportOrientation();
     const distance = camera.position.distanceTo(controls.target);
     const zoomingIn =
       previousDistance !== null && distance < previousDistance - 0.000001;
