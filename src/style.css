@@ -1,3 +1,4 @@
+@import "./fonts.css";
 :root {
   font-family: "Helvetica Neue", Arial, sans-serif;
   color: #20242b;
@@ -3022,5 +3023,2160 @@ dialog {
   .tooth-inspection #viewer,
   .tooth-inspection.details-open #viewer {
     top: 66px;
+  }
+}
+
+/* ============================================================================
+   Studio layout.
+
+   The atlas used to sit in a three column grid, which boxed the 3D canvas into
+   one cell: the model rendered small, a third of the window was empty, and the
+   caption under the canvas collided with the render. The model is the subject,
+   so it now fills the window and every control floats over it on a glass
+   panel, the arrangement Human Atlas uses. This block is the last one in the
+   file and overrides the grid rules above it rather than deleting them, since
+   those rules still carry the styling for the dental, study and quiz content
+   that the panels hold.
+   ========================================================================= */
+
+:root {
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+
+  --ink: #1b2027;
+  --ink-soft: #3c4854;
+  --muted: #69747d;
+  --faint: #8a949d;
+  --navy: #1f3b45;
+  --teal: #2f7f8c;
+  --accent: #54aab9;
+  --line: #17242f1a;
+  --line-soft: #17242f12;
+  --stage: #f1f2f2;
+  --glass: #fffffff0;
+  --panel-radius: 15px;
+  --control-radius: 9px;
+  --shadow: 0 1px 2px #2433440a, 0 2px 6px #24334408, 0 18px 48px #2433440d;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  color: var(--ink);
+  background: var(--stage);
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.studio {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  min-height: 340px;
+}
+
+.studio .scene,
+.studio #viewer {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.studio #viewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+  border-radius: 0;
+}
+
+.studio #viewer canvas:active {
+  cursor: grabbing;
+}
+
+/* A faint corner falloff so the head reads as lit from the front rather than
+   floating on a flat field. Purely decorative, never intercepts a click. */
+.vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at 50% 44%, transparent 38%, #7d8b9814 100%);
+}
+
+.panel {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: var(--panel-radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  z-index: 5;
+}
+
+/* ---- Identity, tabs and top actions ------------------------------------ */
+
+.studio .identity {
+  position: absolute;
+  left: 26px;
+  top: 22px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 300px;
+  pointer-events: none;
+}
+
+.studio .identity .brand,
+.studio .identity a {
+  pointer-events: auto;
+}
+
+.studio .brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  color: inherit;
+  height: auto;
+  margin: 0;
+}
+
+.studio .brand-mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 2px #18253608;
+  flex-shrink: 0;
+}
+
+.studio .brand-mark svg {
+  width: 18px;
+  height: 18px;
+  color: var(--navy);
+}
+
+.studio .brand-word {
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  color: var(--navy);
+}
+
+.studio .brand-light {
+  font-weight: 450;
+  color: var(--ink-soft);
+}
+
+.studio .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.studio .live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3f8c85;
+  box-shadow: 0 0 10px #3f8c8544;
+  flex-shrink: 0;
+}
+
+.studio .breadcrumb {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--faint);
+  letter-spacing: 0.01em;
+}
+
+.studio h1#stage-title {
+  font-size: 30px;
+  font-weight: 620;
+  letter-spacing: -1px;
+  line-height: 1.12;
+  margin: 1px 0 3px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.studio #resolution-status {
+  font-size: 11px;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.studio .tab-bar {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--glass);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  height: auto;
+}
+
+.studio .nav-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 9px;
+  background: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.studio .nav-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.studio .nav-button:hover {
+  background: #17242f0a;
+  color: var(--ink);
+}
+
+.studio .nav-button.active {
+  background: var(--navy);
+  color: #fff;
+  box-shadow: 0 1px 3px #18253622;
+}
+
+.studio .top-actions {
+  position: absolute;
+  top: 24px;
+  right: 26px;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.studio .top-actions label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: auto;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  border: 0;
+  padding: 0;
+  background: none;
+}
+
+.studio .top-actions select {
+  height: 32px;
+  min-width: 128px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--control-radius);
+  background: #ffffffdd;
+  font-size: 12px;
+  font-weight: 450;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-soft);
+}
+
+.studio .top-actions > button {
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--glass);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.studio .top-actions > button:hover {
+  background: #fff;
+}
+
+.studio .top-actions .icon-button {
+  width: 40px;
+  min-width: 40px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+
+.studio .top-actions .icon-button svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* ---- Left panel: layers and structure library --------------------------- */
+
+.studio .sidebar {
+  position: absolute;
+  left: 26px;
+  top: 196px;
+  bottom: 132px;
+  width: 268px;
+  max-height: 680px;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 6px 0 14px;
+  overflow: hidden;
+  border-right: 0;
+}
+
+.studio .sidebar .search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  margin: 0 8px 10px 0;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--control-radius);
+  background: #17242f06;
+}
+
+.studio .sidebar .search svg {
+  width: 15px;
+  height: 15px;
+  color: var(--faint);
+}
+
+.studio .sidebar .search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  outline: none;
+}
+
+.studio .sidebar .search kbd {
+  font-size: 10px;
+  color: var(--faint);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.studio #browser {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px 10px 6px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #b9c1c8 transparent;
+  scrollbar-gutter: stable;
+  border: 0;
+  margin: 0;
+}
+
+.studio #browser::-webkit-scrollbar {
+  width: 8px;
+}
+
+.studio #browser::-webkit-scrollbar-thumb {
+  background: #b9c1c8;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* The list used to be clipped with no sign that three more layers existed
+   below the fold. This fades the last few pixels so the cut is visible. */
+.studio .sidebar::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 46px;
+  height: 26px;
+  pointer-events: none;
+  background: linear-gradient(to top, var(--glass), #ffffff00);
+}
+
+.studio .section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 3px 8px;
+  border: 0;
+  margin: 0;
+}
+
+.studio .section-label h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0;
+}
+
+.studio .section-label > span {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  background: #17242f0d;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+.studio .layer-presets {
+  display: flex;
+  gap: 2px;
+  margin: 2px 0 8px;
+  padding: 3px;
+  border: 0;
+  border-radius: 10px;
+  background: #17242f0a;
+}
+
+.studio .layer-presets button {
+  flex: 1;
+  height: 28px;
+  min-width: 0;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.studio .layer-presets button:hover {
+  color: var(--ink);
+}
+
+.studio .layer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 0 3px;
+  border: 0;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.studio .layer:has(input:not(:checked)) {
+  color: var(--faint);
+}
+
+.studio .layer > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio .layer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px #17242f08;
+}
+
+.studio .schematic-dot {
+  background: repeating-linear-gradient(45deg, var(--teal) 0 2px, #ffffff 2px 4px);
+}
+
+.studio .layer-count {
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--faint);
+  margin-left: auto;
+}
+
+.studio .layer-count i {
+  font-style: normal;
+  color: var(--teal);
+  margin-left: 2px;
+}
+
+.studio .schematic-switch {
+  margin-top: 2px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 6px;
+}
+
+.studio .schematic-note {
+  margin: 0 3px 8px;
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--faint);
+}
+
+.studio .structure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 34px;
+  padding: 6px 6px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 450;
+  color: var(--ink-soft);
+}
+
+.studio .structure:hover {
+  background: #17242f0a;
+}
+
+.studio .structure.selected {
+  background: var(--navy);
+  color: #fff;
+}
+
+.studio .structure.selected .schematic-badge {
+  background: #ffffff2e;
+  color: #fff;
+}
+
+.studio .structure > svg {
+  width: 13px;
+  height: 13px;
+  margin-left: auto;
+  opacity: 0.35;
+}
+
+.schematic-badge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: #2f7f8c1a;
+  border-radius: 5px;
+  padding: 2px 5px;
+  white-space: nowrap;
+}
+
+.studio .sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0 8px 0 0;
+  padding: 7px 3px 8px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--glass);
+  position: relative;
+  z-index: 1;
+}
+
+.studio .sidebar-bottom button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  font-size: 11px;
+  font-weight: 450;
+  color: var(--muted);
+}
+
+.studio .sidebar-bottom svg {
+  width: 13px;
+  height: 13px;
+}
+
+.studio .sidebar-bottom > span {
+  font-size: 10px;
+  color: var(--faint);
+}
+
+.studio #mobile-library {
+  display: none;
+}
+
+/* ---- Right edge: camera and zoom ---------------------------------------- */
+
+.studio .view-controls {
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px;
+  border-radius: 13px;
+  width: auto;
+  height: auto;
+}
+
+.studio .view-controls .view-pills,
+.studio .view-controls .zoom-controls {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+
+.studio .view-controls button {
+  width: 42px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 0;
+}
+
+.studio .view-controls button:hover {
+  background: #17242f0a;
+  color: var(--ink);
+}
+
+.studio .view-controls .view-pills .active {
+  background: var(--navy);
+  color: #fff;
+}
+
+.studio .view-controls i {
+  height: 1px;
+  background: var(--line);
+  margin: 5px 6px;
+}
+
+.studio .view-controls .zoom-controls button {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.studio .view-controls svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---- Bottom: selection, caption, footer --------------------------------- */
+
+.studio .stage-caption {
+  position: absolute;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+  pointer-events: none;
+  max-width: calc(100% - 640px);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.studio .caption-line {
+  width: 22px;
+  height: 1px;
+  background: var(--line);
+  flex-shrink: 0;
+}
+
+.studio .age-notice {
+  position: absolute;
+  bottom: 164px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  margin: 0;
+  padding: 0;
+  max-width: min(520px, calc(100% - 640px));
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.studio .stage-bottom {
+  position: absolute;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(470px, calc(100vw - 640px));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: var(--panel-radius);
+  margin: 0;
+}
+
+.studio .stage-bottom-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.studio .stage-bottom strong {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio .stage-bottom span {
+  font-size: 11px;
+  color: var(--faint);
+}
+
+.studio #isolate {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+
+.studio #isolate svg {
+  width: 15px;
+  height: 15px;
+}
+
+.studio .stage-bottom [data-clear-selection] {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 17px;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.studio .studio-footer {
+  position: absolute;
+  bottom: 18px;
+  left: 26px;
+  right: 26px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 10.5px;
+  color: var(--faint);
+  pointer-events: none;
+}
+
+.studio .studio-footer button {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 10.5px;
+  font-weight: 450;
+  color: var(--muted);
+  pointer-events: auto;
+}
+
+.studio .studio-footer button:hover {
+  color: var(--ink);
+  background: none;
+}
+
+/* ---- Status, mode bar, dental controls ---------------------------------- */
+
+.studio #load-status {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  padding: 16px 20px;
+  max-width: min(360px, calc(100vw - 48px));
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  text-align: center;
+  border-radius: 13px;
+  margin: 0;
+}
+
+.studio #mode-bar {
+  position: absolute;
+  left: 50%;
+  bottom: 196px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 11px;
+  margin: 0;
+  width: auto;
+}
+
+.studio #mode-bar button {
+  height: 30px;
+  padding: 0 11px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.studio #mode-bar button.active {
+  background: var(--navy);
+  color: #fff;
+}
+
+.studio #dental-3d-controls {
+  position: absolute;
+  left: 26px;
+  bottom: 56px;
+  z-index: 6;
+  width: 268px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 14px;
+  border-radius: var(--panel-radius);
+  margin: 0;
+}
+
+.studio #dental-3d-controls .detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+}
+
+.studio #dental-3d-controls .detail-actions label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+.studio #dental-3d-controls #exit-tooth {
+  flex: 1;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
+.studio .section-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.studio .section-slider input {
+  width: 100%;
+}
+
+.studio .tissue-3d-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.studio .tissue-3d-buttons button {
+  height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 450;
+  color: var(--ink-soft);
+}
+
+.studio .tissue-3d-buttons button[aria-pressed="false"] {
+  background: #17242f08;
+  color: var(--faint);
+  text-decoration: line-through;
+}
+
+.studio #tissue-3d-status {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--faint);
+}
+
+/* ---- Right panel: the inspector ----------------------------------------- */
+
+.studio .inspector {
+  position: absolute;
+  right: 84px;
+  top: 88px;
+  bottom: 132px;
+  width: 330px;
+  max-height: 720px;
+  display: none;
+  flex-direction: column;
+  padding: 22px 8px 18px 20px;
+  overflow: hidden;
+  border-left: 0;
+}
+
+body.details-open .studio .inspector {
+  display: flex;
+}
+
+.studio .inspector > * {
+  padding-right: 12px;
+}
+
+.studio .inspector .detail-heading {
+  flex-shrink: 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 2px;
+}
+
+.studio .detail-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: #17242f0d;
+  border-radius: 5px;
+  padding: 3px 7px;
+  margin-bottom: 11px;
+}
+
+.studio .inspector .detail-heading h2 {
+  font-size: 23px;
+  font-weight: 620;
+  letter-spacing: -0.6px;
+  line-height: 1.16;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.studio .inspector .detail-heading p {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.studio .inspector .detail-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 14px 12px 4px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #b9c1c8 transparent;
+}
+
+.studio .inspector .detail-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.studio .inspector .detail-body::-webkit-scrollbar-thumb {
+  background: #b9c1c8;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.studio .inspector h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+
+.studio .inspector p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+.studio .inspector .detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.studio .inspector .primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--navy);
+  border-radius: 10px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 550;
+}
+
+.studio .inspector .primary:hover {
+  background: #2c505c;
+}
+
+.studio .inspector .primary svg {
+  width: 15px;
+  height: 15px;
+}
+
+.studio .inspector .detail-actions button:not(.primary) {
+  height: 40px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.studio .learning-note {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 0;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  background: #54aab914;
+}
+
+.studio .learning-note > span {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 5px;
+}
+
+.studio .learning-note p {
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.studio .schematic-callout {
+  border-left-color: var(--teal);
+  background: #2f7f8c12;
+}
+
+.studio .fine-print {
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--faint);
+  margin-top: 14px;
+}
+
+.studio .close-inspector {
+  position: absolute;
+  right: 92px;
+  top: 96px;
+  z-index: 7;
+  display: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+body.details-open .studio .close-inspector {
+  display: grid;
+}
+
+/* ---- Hover label -------------------------------------------------------- */
+
+.part-hover {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  max-width: 260px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border-radius: 9px;
+  background: #1d2b36f5;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 6px 20px #18253626;
+}
+
+.part-hover .schematic-badge {
+  background: #ffffff26;
+  color: #cfe9ee;
+}
+
+.part-hover[hidden] {
+  display: none;
+}
+
+/* ---- Teaching views and the dialog -------------------------------------- */
+
+.studio #teaching-view {
+  position: absolute;
+  inset: 84px 26px 120px;
+  z-index: 4;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--panel-radius);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  padding: 22px;
+}
+
+.studio #teaching-view[hidden] {
+  display: none;
+}
+
+dialog#modal {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 24px 80px #18253626;
+  padding: 30px;
+  max-width: min(680px, calc(100vw - 32px));
+  max-height: min(82vh, 860px);
+  color: var(--ink);
+}
+
+dialog#modal::backdrop {
+  background: #16212c66;
+  backdrop-filter: blur(3px);
+}
+
+/* ---- Narrow desktop: give the model room by folding the side panels ----- */
+
+@media (max-width: 1240px) {
+  .studio .sidebar {
+    width: 244px;
+  }
+  .studio .inspector {
+    width: 296px;
+  }
+  .studio .stage-bottom,
+  .studio .stage-caption,
+  .studio .age-notice {
+    width: min(430px, calc(100vw - 600px));
+    max-width: calc(100vw - 600px);
+  }
+}
+
+@media (max-width: 1080px) {
+  body.details-open .studio .sidebar {
+    display: none;
+  }
+  .studio .stage-bottom {
+    width: min(430px, calc(100vw - 380px));
+  }
+  .studio .stage-caption,
+  .studio .age-notice {
+    max-width: calc(100vw - 380px);
+  }
+}
+
+/* ---- Touch layout ------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .studio .identity {
+    left: max(14px, env(safe-area-inset-left));
+    top: max(14px, env(safe-area-inset-top));
+    max-width: calc(100vw - 130px);
+  }
+  .studio .breadcrumb,
+  .studio .eyebrow {
+    display: none;
+  }
+  .studio h1#stage-title {
+    font-size: 21px;
+    margin-top: 8px;
+  }
+  .studio .top-actions {
+    top: max(14px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    gap: 5px;
+  }
+  .studio .top-actions label {
+    display: none;
+  }
+  .studio .top-actions > button {
+    height: 44px;
+    min-width: 44px;
+    padding: 0 12px;
+  }
+  .studio .top-actions .icon-button {
+    width: 44px;
+  }
+
+  .studio .tab-bar {
+    top: auto;
+    bottom: calc(max(10px, env(safe-area-inset-bottom)) + 6px);
+    left: 12px;
+    right: 12px;
+    transform: none;
+    justify-content: space-between;
+  }
+  .studio .nav-button {
+    flex: 1;
+    justify-content: center;
+    height: 44px;
+    padding: 0 6px;
+  }
+  .studio .nav-button span {
+    display: none;
+  }
+  .studio .nav-button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .studio .sidebar {
+    display: none;
+    left: 12px;
+    right: 12px;
+    top: auto;
+    bottom: 146px;
+    width: auto;
+    max-height: min(56dvh, 460px);
+    padding: 10px 6px 0 14px;
+  }
+  .studio .sidebar.expanded {
+    display: flex;
+    z-index: 30;
+  }
+  .studio #mobile-library {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 12px;
+    bottom: 88px;
+    z-index: 20;
+    height: 44px;
+    padding: 0 15px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--glass);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+  .studio .sidebar.expanded ~ #mobile-library {
+    display: none;
+  }
+
+  .studio .view-controls {
+    top: auto;
+    bottom: 88px;
+    right: 12px;
+    left: auto;
+    transform: none;
+    flex-direction: row;
+    padding: 4px;
+  }
+  .studio .view-controls .view-pills,
+  .studio .view-controls .zoom-controls {
+    flex-direction: row;
+  }
+  .studio .view-controls button {
+    width: 44px;
+    height: 44px;
+    font-size: 10px;
+  }
+  .studio .view-controls .view-pills button span {
+    font-size: 10px;
+  }
+  .studio .view-controls i {
+    width: 1px;
+    height: auto;
+    margin: 6px 4px;
+  }
+
+  .studio .stage-bottom {
+    left: 12px;
+    right: 12px;
+    bottom: 146px;
+    width: auto;
+    max-width: none;
+    transform: none;
+  }
+  .studio .stage-caption {
+    bottom: 216px;
+    max-width: calc(100vw - 32px);
+    white-space: normal;
+    text-align: center;
+    font-size: 9px;
+  }
+  .studio .age-notice {
+    bottom: 240px;
+    max-width: calc(100vw - 32px);
+  }
+  .studio .studio-footer {
+    display: none;
+  }
+  .studio #mode-bar {
+    bottom: 246px;
+    left: 12px;
+    right: 12px;
+    transform: none;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .studio #dental-3d-controls {
+    left: 12px;
+    right: 12px;
+    bottom: 146px;
+    width: auto;
+  }
+
+  .studio .inspector {
+    right: 12px;
+    left: 12px;
+    top: auto;
+    bottom: 146px;
+    width: auto;
+    max-height: min(52dvh, 480px);
+    padding: 18px 6px 14px 16px;
+  }
+  .studio .close-inspector {
+    right: 18px;
+    top: auto;
+    bottom: calc(146px + min(52dvh, 480px) - 40px);
+    width: 34px;
+    height: 34px;
+  }
+  .studio .inspector .detail-heading h2 {
+    font-size: 19px;
+  }
+  .studio #teaching-view {
+    inset: 74px 12px 146px;
+    padding: 16px;
+  }
+  body.details-open .studio .stage-bottom,
+  body.details-open .studio .stage-caption,
+  body.details-open .studio .age-notice,
+  body.details-open .studio #mobile-library {
+    display: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .studio h1#stage-title {
+    font-size: 18px;
+  }
+  .studio .brand-word {
+    font-size: 16px;
+  }
+  .studio .top-actions > button {
+    padding: 0 9px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ---- Corrections found in browser QA ------------------------------------ */
+
+/* The camera strip needs room for a readable word; 42px clipped every label. */
+.studio .view-controls button {
+  width: 62px;
+  font-size: 10.5px;
+  letter-spacing: 0.01em;
+}
+
+.studio .view-controls .zoom-controls button {
+  font-size: 17px;
+}
+
+/* Four presets in a 240px column: shrink the type and let them breathe rather
+   than letting "SkeletonVessels" run together. */
+.studio .layer-presets {
+  gap: 3px;
+}
+
+.studio .layer-presets button {
+  padding: 0 2px;
+  font-size: 10px;
+  letter-spacing: -0.1px;
+}
+
+/* The caption band and the dentition notice both sit above the selection dock
+   and both wrap on narrow windows, so they are stacked in one column instead
+   of being positioned independently and colliding. */
+.studio .caption-stack {
+  position: absolute;
+  left: 50%;
+  bottom: 106px;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: min(560px, calc(100vw - 640px));
+  pointer-events: none;
+}
+
+.studio .caption-stack .age-notice,
+.studio .caption-stack .stage-caption {
+  position: static;
+  transform: none;
+  bottom: auto;
+  left: auto;
+  width: auto;
+  max-width: 100%;
+}
+
+/* The stack sits under the dock, so the dock and its neighbours move up. */
+.studio .stage-bottom {
+  bottom: 74px;
+}
+
+.studio #mode-bar {
+  bottom: 176px;
+}
+
+@media (max-width: 1240px) {
+  .studio .caption-stack {
+    width: min(460px, calc(100vw - 600px));
+  }
+}
+
+@media (max-width: 1080px) {
+  .studio .caption-stack {
+    width: min(460px, calc(100vw - 380px));
+  }
+}
+
+@media (max-width: 860px) {
+  .studio .view-controls button {
+    width: 46px;
+    font-size: 9.5px;
+  }
+  .studio .caption-stack {
+    left: 12px;
+    right: 12px;
+    bottom: 216px;
+    width: auto;
+    transform: none;
+  }
+  .studio .stage-bottom {
+    bottom: 146px;
+  }
+  .studio #mode-bar {
+    bottom: 268px;
+  }
+  body.details-open .studio .caption-stack {
+    display: none;
+  }
+}
+
+/* The camera strip is 72px wide at the right margin, so the inspector has to
+   start clear of it or the two panels overlap. */
+.studio .inspector {
+  right: 112px;
+}
+
+.studio .close-inspector {
+  right: 120px;
+}
+
+/* The caption stack belongs above the selection dock, not under it. */
+.studio .caption-stack {
+  bottom: 150px;
+}
+
+@media (max-width: 1240px) {
+  .studio .inspector {
+    right: 108px;
+  }
+  .studio .close-inspector {
+    right: 116px;
+  }
+}
+
+@media (max-width: 860px) {
+  .studio .inspector {
+    right: 12px;
+  }
+  .studio .close-inspector {
+    right: 18px;
+  }
+  .studio .caption-stack {
+    bottom: 222px;
+  }
+}
+
+/* The caption band sits directly over the render now that the scene is full
+   bleed, so it needs its own ground to stay readable against bone or muscle. */
+.studio .caption-stack .age-notice,
+.studio .caption-stack .stage-caption {
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: #ffffffd6;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 3px #24334410;
+}
+
+.studio .caption-stack .age-notice:empty {
+  display: none;
+}
+
+/* A short fade tells the reader the notes continue below the fold. */
+.studio .inspector::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 0;
+  height: 26px;
+  pointer-events: none;
+  border-radius: 0 0 var(--panel-radius) var(--panel-radius);
+  background: linear-gradient(to top, var(--glass), #ffffff00);
+}
+
+/* ---- Dentition and learning level --------------------------------------
+
+   These two selects live inside the layers panel in the markup so that the
+   touch layout can show them: on a phone the top bar has room for two buttons
+   and nothing else, and hiding them there took away the only way to reach the
+   child dentition. On a wide window they are lifted out of the panel and sit
+   with the other top-right controls, which is where they belong when there is
+   space for them. */
+
+.studio .choices {
+  display: flex;
+  gap: 7px;
+  margin: 0 8px 10px 0;
+}
+
+.studio .choices label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  border: 0;
+  padding: 0;
+  background: none;
+  height: auto;
+}
+
+.studio .choices select {
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--control-radius);
+  background: #17242f06;
+  font-size: 12px;
+  font-weight: 450;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-soft);
+}
+
+
+@media (max-width: 860px) {
+  /* Pinch handles zoom on touch, so the strip carries only the camera views
+     and leaves room for the library button beside it. */
+  .studio .view-controls .zoom-controls,
+  .studio .view-controls i {
+    display: none;
+  }
+  .studio .view-controls {
+    bottom: 70px;
+  }
+  .studio #mobile-library {
+    bottom: 70px;
+  }
+  .studio .stage-bottom {
+    bottom: 126px;
+  }
+  .studio .sidebar {
+    bottom: 126px;
+    max-height: min(58dvh, 470px);
+  }
+  .studio #dental-3d-controls {
+    bottom: 126px;
+  }
+  .studio .caption-stack {
+    bottom: 202px;
+  }
+  .studio #mode-bar {
+    bottom: 250px;
+  }
+  .studio .inspector {
+    bottom: 126px;
+  }
+  .studio .close-inspector {
+    bottom: calc(126px + min(52dvh, 480px) - 40px);
+  }
+}
+
+/* The library toggle is a sibling of the panel it opens: as a child it shared
+   the panel's display:none on touch layouts and never rendered. */
+.studio #mobile-library {
+  gap: 7px;
+}
+
+.studio #mobile-library svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 860px) {
+  /* Four camera labels do not fit side by side at 390px, so they shorten. */
+  .studio .view-pills button span {
+    display: none;
+  }
+  .studio .view-pills button::after {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .studio .view-pills [data-view="oblique"]::after {
+    content: "OBL";
+  }
+  .studio .view-pills [data-view="anterior"]::after {
+    content: "ANT";
+  }
+  .studio .view-pills [data-view="lateral"]::after {
+    content: "LAT";
+  }
+  .studio .view-pills [data-view="inferior"]::after {
+    content: "INF";
+  }
+  .studio .view-controls button {
+    width: 44px;
+  }
+}
+
+@media (max-width: 860px) {
+  /* 44px buttons plus the panel's padding overflowed the strip. */
+  .studio .view-controls {
+    padding: 4px;
+  }
+  .studio .view-controls button {
+    height: 40px;
+  }
+}
+
+/* The dentition and level selects stay in the layers panel at every width.
+   Lifting them into the top bar on wide windows is not possible in CSS alone:
+   the panel carries a backdrop-filter, which makes it the containing block
+   even for position: fixed, so an absolutely placed child cannot escape it.
+   The panel is where the other scope controls live anyway. */
+@media (min-width: 861px) {
+  .studio #toggle-details {
+    display: inline-flex;
+    align-items: center;
+  }
+  .studio .sidebar {
+    top: 186px;
+  }
+}
+
+/* The old rules used id selectors, which outrank the class chain used by the
+   studio layout, so the close button needs its id here to win. */
+body.details-open .studio #close-inspector {
+  display: grid;
+  position: absolute;
+  right: 120px;
+  top: 96px;
+  z-index: 7;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--muted);
+}
+
+@media (max-width: 1240px) {
+  body.details-open .studio #close-inspector {
+    right: 116px;
+  }
+}
+
+@media (max-width: 860px) {
+  body.details-open .studio #close-inspector {
+    right: 20px;
+    top: auto;
+    bottom: calc(126px + min(52dvh, 480px) - 42px);
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* ---- Loading, separation dock, and layer solo ---------------------------
+
+   Three patterns taken from the reference project: a download this size needs
+   a percentage rather than a spinner, the separation slider deserves to be a
+   first class control instead of living in a collapsed block, and a layer row
+   should offer both "show only this" and "toggle this". */
+
+.studio #load-status {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  align-items: stretch;
+  text-align: left;
+  min-width: 280px;
+}
+
+.studio #load-status strong {
+  font-size: 14px;
+  font-weight: 550;
+  color: var(--ink);
+}
+
+.studio #load-status span {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.studio .loading-track {
+  height: 3px;
+  border-radius: 2px;
+  background: #17242f14;
+  overflow: hidden;
+}
+
+.studio .loading-track i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  background: var(--teal);
+  transition: width 0.35s ease;
+}
+
+.studio #load-status.load-error {
+  border-color: #a8574a40;
+}
+
+.studio #load-status.load-error .loading-track {
+  display: none;
+}
+
+.studio #reload-viewer {
+  align-self: flex-start;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.studio .explode-dock {
+  position: absolute;
+  left: 50%;
+  bottom: 150px;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: min(430px, calc(100vw - 640px));
+  padding: 13px 16px;
+}
+
+.studio .explode-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.studio .explode-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+
+.studio .explode-label output {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: #17242f0d;
+  border: 1px solid var(--line-soft);
+  border-radius: 6px;
+  padding: 2px 7px;
+  min-width: 46px;
+  text-align: center;
+}
+
+.studio .explode-control input[type="range"] {
+  width: 100%;
+  accent-color: var(--navy);
+}
+
+.studio .slider-endpoints {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3px;
+  font-size: 9.5px;
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+
+.studio #reassemble-dock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  height: auto;
+  padding: 6px 0 6px 16px;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  font-size: 10px;
+  font-weight: 450;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.studio #reassemble-dock:hover {
+  color: var(--ink);
+  background: none;
+}
+
+.studio #reassemble-dock svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* The caption band and the mode bar move up to clear the new dock. */
+.studio .caption-stack {
+  bottom: 226px;
+}
+
+.studio #mode-bar {
+  bottom: 268px;
+}
+
+/* A layer row is now a solo button plus its own switch. */
+.studio .layer-name {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 5px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  text-align: left;
+  font-size: 12.5px;
+  font-weight: 450;
+  color: inherit;
+}
+
+.studio .layer-name:hover {
+  background: #17242f0a;
+}
+
+.studio .layer-name > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio .sliders {
+  margin: 4px 3px 10px;
+}
+
+.studio .sliders label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.studio .sliders input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--navy);
+}
+
+.studio .sliders output {
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  min-width: 32px;
+  text-align: right;
+}
+
+@media (max-width: 1240px) {
+  .studio .explode-dock {
+    width: min(400px, calc(100vw - 600px));
+  }
+}
+
+@media (max-width: 1080px) {
+  .studio .explode-dock {
+    width: min(400px, calc(100vw - 380px));
+  }
+}
+
+@media (max-width: 860px) {
+  .studio .explode-dock {
+    left: 12px;
+    right: 12px;
+    bottom: 202px;
+    width: auto;
+    transform: none;
+  }
+  .studio .caption-stack {
+    bottom: 292px;
+  }
+  .studio #mode-bar {
+    bottom: 336px;
+  }
+  body.details-open .studio .explode-dock {
+    display: none;
+  }
+}
+
+/* ---- Bottom cluster placement -------------------------------------------
+
+   Centring the dock on the viewport put it under the inspector on a 1280px
+   window, because the free space is not centred: the layers panel takes the
+   left edge and the inspector plus the camera strip take the right. Offsetting
+   both edges and letting the margins do the centring keeps the cluster inside
+   whatever space is actually free, at any width and whether or not the
+   inspector is open. */
+
+.studio .explode-dock,
+.studio .stage-bottom,
+.studio .caption-stack {
+  left: 310px;
+  right: 124px;
+  width: auto;
+  max-width: 470px;
+  transform: none;
+  margin-inline: auto;
+}
+
+body.details-open .studio .explode-dock,
+body.details-open .studio .stage-bottom,
+body.details-open .studio .caption-stack {
+  right: 460px;
+}
+
+.studio .caption-stack {
+  max-width: 520px;
+}
+
+.studio .stage-caption {
+  white-space: normal;
+  text-align: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.studio .age-notice {
+  text-align: center;
+}
+
+@media (max-width: 1240px) {
+  .studio .explode-dock,
+  .studio .stage-bottom,
+  .studio .caption-stack {
+    left: 286px;
+    right: 120px;
+  }
+  body.details-open .studio .explode-dock,
+  body.details-open .studio .stage-bottom,
+  body.details-open .studio .caption-stack {
+    right: 422px;
+  }
+}
+
+/* Below this the layers panel hides whenever the inspector is open, so the
+   cluster only has to clear one of them. */
+@media (max-width: 1080px) {
+  body.details-open .studio .explode-dock,
+  body.details-open .studio .stage-bottom,
+  body.details-open .studio .caption-stack {
+    left: 26px;
+    right: 422px;
+  }
+}
+
+@media (max-width: 860px) {
+  .studio .explode-dock,
+  .studio .stage-bottom,
+  .studio .caption-stack,
+  body.details-open .studio .explode-dock,
+  body.details-open .studio .stage-bottom,
+  body.details-open .studio .caption-stack {
+    left: 12px;
+    right: 12px;
+    max-width: none;
+  }
+}
+
+/* The dock is centred in the free band, so the layers panel can run most of
+   the window height instead of stopping level with it. */
+.studio .sidebar {
+  bottom: 62px;
+  max-height: none;
+}
+
+/* The tooth controls take the same corner, so the list yields to them. */
+body.tooth-inspection .studio .sidebar {
+  bottom: 262px;
+}
+
+@media (max-width: 860px) {
+  .studio .sidebar,
+  body.tooth-inspection .studio .sidebar {
+    bottom: 126px;
+    max-height: min(58dvh, 470px);
+  }
+}
+
+/* The dock stands 88px tall, so the caption band clears it at 250. */
+.studio .caption-stack {
+  bottom: 250px;
+}
+
+.studio #mode-bar {
+  bottom: 322px;
+}
+
+@media (max-width: 860px) {
+  .studio .caption-stack {
+    bottom: 300px;
+  }
+  .studio #mode-bar {
+    bottom: 348px;
   }
 }

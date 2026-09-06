@@ -62,18 +62,19 @@ const state = {
   layers: new Set([
     "bones",
     "teeth",
+    "gingiva",
     "neck",
-    "muscles",
     "arteries",
     "veins",
     "nerves",
     "glands",
     "soft",
-    "eyes",
+    "airway",
   ]),
   age: "adult",
   arches: false,
   toothDetail: false,
+  perioFocus: false,
   cutaway: true,
   sectionDepth: 0,
   autoDetail: true,
@@ -94,6 +95,7 @@ const state = {
   tissue: "pulp",
   tissueLayers: new Set(tissues.map((t) => t.id)),
   pattern: 0,
+  schematic: true,
 };
 try {
   state.saved = new Set(JSON.parse(localStorage.getItem("omf-saved") || "[]"));
@@ -101,27 +103,56 @@ try {
 let atlas, viewer;
 
 document.querySelector("#app").innerHTML = `
-  <header><a class="brand" href="/" aria-label="OMF Atlas home"><span class="brand-mark">${icon("tooth")}</span><span>OMF<span class="brand-light"> Atlas</span><small>Oral & maxillofacial anatomy</small></span></a>
-  <nav aria-label="Main navigation">${[
-    ["anatomy", "layers", "Explore anatomy"],
-    ["dental", "tooth", "Dental atlas"],
-    ["study", "book", "Study guide"],
-    ["quiz", "quiz", "Self-test"],
+  <div class="studio">
+  <div id="viewer" class="scene"></div><div class="vignette" aria-hidden="true"></div>
+  <div id="teaching-view" hidden></div>
+
+  <div class="identity">
+    <a class="brand" href="/" aria-label="OMF Atlas home"><span class="brand-mark">${icon("tooth")}</span><span class="brand-word">OMF<span class="brand-light"> Atlas</span></span></a>
+    <span class="eyebrow"><span class="live-dot"></span>Oral &amp; maxillofacial anatomy</span>
+    <span class="breadcrumb">Anatomy / Head &amp; neck</span>
+    <h1 id="stage-title">Head &amp; neck</h1>
+    <small id="resolution-status" role="status">Preparing surface detail</small>
+  </div>
+
+  <nav class="tab-bar" aria-label="Main navigation">${[
+    ["anatomy", "layers", "Explore", "Explore anatomy"],
+    ["dental", "tooth", "Dental", "Dental atlas"],
+    ["study", "book", "Study", "Study guide"],
+    ["quiz", "quiz", "Test", "Self-test"],
   ]
     .map(
-      ([id, i, label]) =>
-        `<button data-tab="${id}" class="nav-button ${id === "anatomy" ? "active" : ""}">${icon(i)}<span>${label}</span></button>`,
+      ([id, i, short, label]) =>
+        `<button data-tab="${id}" class="nav-button ${id === "anatomy" ? "active" : ""}" title="${label}">${icon(i)}<span>${short}</span></button>`,
     )
     .join("")}</nav>
-  <label class="age-choice">Dentition<select id="age"><option value="adult">Adult · permanent</option><option value="child">Child · primary</option><option value="mixed">Child · mixed</option></select></label><label class="audience">Learning level<select id="role"><option value="student">Dental student</option><option value="dentist">Dentist</option><option value="specialist">Dental specialist</option></select></label><button id="toggle-details" aria-expanded="false">Details</button></header>
-  <div class="workspace"><aside class="sidebar"><div class="sidebar-heading"><h2>Head & neck</h2><span class="small-tag">3D atlas</span></div><p class="muted sidebar-intro">Explore the anatomy behind your practice.</p>
-  <label class="search">${icon("search")}<input id="search" type="search" placeholder="Find a structure or FDI number…" aria-label="Search structures or FDI number"><kbd>/</kbd></label>
-  <button id="mobile-library" aria-expanded="false">Layers & structure library</button><div id="browser"></div><div class="sidebar-bottom"><button id="coverage">${icon("info")} Model coverage & sources</button><span id="source-caption">BodyParts3D 4.0 · Adult reference</span></div></aside>
-  <main class="stage"><div class="stage-top"><div><span class="breadcrumb">Anatomy / Head & neck</span><h1 id="stage-title">Head & neck</h1><small id="resolution-status" role="status">Preparing surface detail</small></div><button class="icon-button" id="reset" title="Reset view and layers" aria-label="Reset view and layers">${icon("reset")}</button></div>
-  <div id="viewer"></div><div id="teaching-view" hidden></div><div id="mode-bar" hidden><button data-mode="3d" class="active">3D anatomy</button><button data-mode="section">Tooth & periodontium</button><button data-mode="canals">Root canal explorer</button></div><div id="load-status" role="status">Loading head & neck anatomy…</div>
-  <div class="view-pills" aria-label="Camera views">${["oblique", "anterior", "lateral", "inferior"].map((v, i) => `<button data-view="${v}" class="${i === 0 ? "active" : ""}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div>
-  <div class="zoom-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit" aria-label="Fit visible anatomy" title="Fit visible anatomy">${icon("expand")}</button></div>
-  <p class="age-notice" id="age-notice"></p><section id="dental-3d-controls" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><label>Section depth <input id="section-depth" type="range" min="0" max="100" value="50"></label><div class="tissue-3d-buttons">${[
+
+  <div class="top-actions">
+    <button class="icon-button" id="reset" title="Reset view and layers" aria-label="Reset view and layers">${icon("reset")}</button>
+    <button id="toggle-details" aria-expanded="false">Details</button>
+  </div>
+
+  <aside class="sidebar panel">
+    <div class="choices">
+      <label class="age-choice"><span>Dentition</span><select id="age"><option value="adult">Adult · permanent</option><option value="child">Child · primary</option><option value="mixed">Child · mixed</option></select></label>
+      <label class="audience"><span>Level</span><select id="role"><option value="student">Dental student</option><option value="dentist">Dentist</option><option value="specialist">Dental specialist</option></select></label>
+    </div>
+    <label class="search">${icon("search")}<input id="search" type="search" placeholder="Find a structure or FDI number…" aria-label="Search structures or FDI number"><kbd>/</kbd></label>
+    <div id="browser"></div>
+    <div class="sidebar-bottom"><button id="coverage">${icon("info")} Model coverage</button><span id="source-caption">BodyParts3D 4.0 · Adult reference</span></div>
+  </aside>
+  <button id="mobile-library" aria-expanded="false">${icon("layers")}<span>Layers</span></button>
+
+  <div class="view-controls panel" aria-label="Camera views">
+    <div class="view-pills">${["oblique", "anterior", "lateral", "inferior"].map((v, i) => `<button data-view="${v}" class="${i === 0 ? "active" : ""}" title="${v[0].toUpperCase() + v.slice(1)} view"><span>${v[0].toUpperCase() + v.slice(1)}</span></button>`).join("")}</div>
+    <i role="presentation"></i>
+    <div class="zoom-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit" aria-label="Fit visible anatomy" title="Fit visible anatomy">${icon("expand")}</button></div>
+  </div>
+
+  <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active">3D anatomy</button><button data-mode="section">Tooth &amp; periodontium</button><button data-mode="canals">Root canal explorer</button></div>
+  <div id="load-status" class="panel" role="status"><strong>Preparing the anatomy</strong><span id="load-detail">Loading the head and neck assembly</span><div class="loading-track"><i id="load-bar"></i></div></div>
+
+  <section id="dental-3d-controls" class="panel" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><label class="section-slider">Section depth <input id="section-depth" type="range" min="0" max="100" value="50"></label><div class="tissue-3d-buttons">${[
     ["enamel", "Enamel"],
     ["dentin", "Dentin"],
     ["pulp", "Pulp & canals"],
@@ -137,11 +168,37 @@ document.querySelector("#app").innerHTML = `
     .join(
       "",
     )}</div><span id="tissue-3d-status" role="status">Rotate to inspect the section. Teaching geometry, not a scan.</span></section>
-  <div class="stage-caption"><span class="live-dot"></span><span id="visible-count">Preparing anatomy</span><span class="drag-hint">Drag to rotate · Scroll to zoom</span></div>
-  <div class="stage-bottom"><div><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} Isolate structure</button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div></main>
-  <aside class="inspector" id="inspector" aria-label="Anatomy details"></aside><button class="close-inspector" id="close-inspector" aria-label="Close anatomy details">×</button></div>
-  <footer><span>Built for dental learning.</span><span>Educational reference. Not for diagnosis or treatment planning.</span><button id="credits">Credits & references</button></footer>
+
+  <div class="caption-stack"><p class="age-notice" id="age-notice"></p><div class="stage-caption"><span id="visible-count">Preparing anatomy</span><i class="caption-line"></i><span class="drag-hint">Drag to rotate · Scroll to zoom</span></div></div>
+  <div class="explode-dock panel"><div class="explode-control"><div class="explode-label"><label for="explode">Separate structures</label><output id="explode-output">0%</output></div><input id="explode" type="range" min="0" max="100" value="0" aria-label="Separate structures"><div class="slider-endpoints"><span>Assembled</span><span>Every structure</span></div></div><button id="reassemble-dock" title="Reassemble and reset the view">${icon("reset")}<span>Reset</span></button></div>
+  <div class="stage-bottom panel"><div class="stage-bottom-name"><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} <span>Isolate structure</span></button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div>
+
+  <aside class="inspector panel" id="inspector" aria-label="Anatomy details"></aside><button class="close-inspector" id="close-inspector" aria-label="Close anatomy details">×</button>
+
+  <footer class="studio-footer"><span>Built for dental learning.</span><span class="footer-note">Educational reference. Not for diagnosis or treatment planning.</span><button id="credits">Credits &amp; references</button></footer>
+  </div>
+  <div id="part-hover" class="part-hover" hidden aria-hidden="true"></div>
   <dialog id="modal"><button id="close-modal" class="close" aria-label="Close dialog">×</button><div id="modal-content"></div></dialog>`;
+
+// Schematic structures are labeled everywhere they are named, so a reader
+// never has to guess which meshes came from the scan and which were built.
+const SCHEMATIC_BADGE = '<span class="schematic-badge" title="Schematic teaching geometry, not a segmented source mesh">Schematic</span>';
+const isSchematic = (part) => Boolean(part?.schematic);
+
+const hoverBox = () => document.querySelector("#part-hover");
+function showHover(part, at) {
+  const box = hoverBox();
+  if (!part || !at) {
+    box.hidden = true;
+    return;
+  }
+  box.innerHTML = `${escape(displayName(part))}${isSchematic(part) ? SCHEMATIC_BADGE : ""}`;
+  box.hidden = false;
+  // Keep the label inside the window; flip it when the pointer nears an edge.
+  const { width, height } = box.getBoundingClientRect();
+  box.style.left = `${Math.min(at.x + 16, innerWidth - width - 12)}px`;
+  box.style.top = `${at.y + height + 26 > innerHeight ? at.y - height - 14 : at.y + 18}px`;
+}
 
 function updateScene() {
   document.body.classList.toggle(
@@ -162,7 +219,9 @@ function updateScene() {
         ? displayName(part)
         : "Head & neck";
   document.querySelector("#selection-caption").textContent = state.toothDetail
-    ? "Schematic 3D internal anatomy"
+    ? state.perioFocus
+      ? "Schematic 3D periodontium"
+      : "Schematic 3D internal anatomy"
     : state.isolated
       ? "Isolated view"
       : state.selected ? "Selected structure" : "Click a structure to inspect it";
@@ -181,7 +240,9 @@ function updateScene() {
       ? "Back to head & neck"
       : "Back to dental arches";
   document.querySelector("#age-notice").textContent = state.toothDetail
-    ? "Schematic tooth anatomy · Tissue thickness exaggerated for visibility"
+    ? state.perioFocus
+      ? "Schematic periodontium · Gingiva, ligament, cementum and alveolar bone at the cervical third"
+      : "Schematic tooth anatomy · Tissue thickness exaggerated for visibility"
     : state.age === "adult"
       ? state.arches
         ? "Permanent dentition · 32 teeth including third molars · Schematic arches"
@@ -192,18 +253,19 @@ function updateScene() {
 }
 
 function showDetails(open = true) {
-  open = open || matchMedia("(min-width: 761px)").matches;
   document.body.classList.toggle("details-open", open);
   document
     .querySelector("#toggle-details")
     .setAttribute("aria-expanded", String(open));
   document.querySelector("#inspector").inert = !open;
 }
-matchMedia("(min-width: 761px)").addEventListener("change", (event) => showDetails(event.matches));
+const wideWindow = matchMedia("(min-width: 861px)");
+wideWindow.addEventListener("change", (event) => showDetails(event.matches));
 
-function inspectTooth(fdi = state.fdi) {
+function inspectTooth(fdi = state.fdi, { periodontium = false } = {}) {
   state.explode = 0;
   state.fdi = fdi;
+  state.perioFocus = periodontium;
   state.selected = partForTooth(atlas.parts,fdi)?.id || `tooth:${fdi}`;
   state.toothDetail = true;
   state.isolated = false;
@@ -213,6 +275,14 @@ function inspectTooth(fdi = state.fdi) {
   document.querySelector("#inspector").scrollTop = 0;
   if (matchMedia("(max-width: 767px)").matches) showDetails(false);
   updateScene();
+  if (periodontium) {
+    state.cutaway = true;
+    state.sectionDepth = 50;
+    const cutaway = document.querySelector("#cutaway");
+    if (cutaway) cutaway.checked = true;
+    const depth = document.querySelector("#section-depth");
+    if (depth) depth.value = "50";
+  }
   document
     .querySelectorAll("[data-tissue3d]")
     .forEach((b) => b.setAttribute("aria-pressed", "true"));
@@ -326,10 +396,10 @@ function renderBrowser() {
     const type = tissueGroup(p);
     const heading = inventory && (index === 0 || tissueGroup(matching[index-1]) !== type)
       ? `<h4 class="inventory-type" data-inventory-type="${type}">${escape(groups[type].name)}</h4>` : "";
-    return `${heading}<button data-part="${p.id}" class="structure ${p.id === state.selected ? "selected" : ""}"><span class="tiny-dot" style="background:${groups[p.group].color}"></span><span>${escape(displayName(p))}</span>${toothNumber(p.name) ? `<small>${toothNumber(p.name)}</small>` : ""}${icon("arrow")}</button>`;
+    return `${heading}<button data-part="${p.id}" class="structure ${p.id === state.selected ? "selected" : ""} ${isSchematic(p) ? "is-schematic" : ""}"><span class="tiny-dot" style="background:${groups[p.group].color}"></span><span>${escape(displayName(p))}</span>${isSchematic(p) ? SCHEMATIC_BADGE : ""}${toothNumber(p.name) ? `<small>${toothNumber(p.name)}</small>` : ""}${icon("arrow")}</button>`;
   }).join("");
   const browser = document.querySelector("#browser");
-  browser.innerHTML = `<div class="section-label"><h3>${query ? "Search results" : "Systems"}</h3><span>${matching.length}</span></div>${!query ? '<div class="layer-presets"><button data-preset="all">All</button><button data-preset="skeleton">Skeleton</button><button data-preset="vascular">Vessels</button><button data-preset="none">Hide all</button></div>' : ""}
+  browser.innerHTML = `<div class="section-label"><h3>${query ? "Search results" : "Systems"}</h3><span>${matching.length}</span></div>${!query ? `<div class="layer-presets"><button data-preset="all">All</button><button data-preset="skeleton">Skeleton</button><button data-preset="vascular">Vessels</button><button data-preset="neuro">Nerves</button><button data-preset="none">Hide all</button></div><label class="layer schematic-switch"><span class="layer-dot schematic-dot"></span><span>Schematic structures</span><span class="layer-count">${atlas.parts.filter(isSchematic).length}</span><input type="checkbox" data-schematic ${state.schematic ? "checked" : ""} aria-label="Show schematic structures"></label><p class="fine-print schematic-note">Nerves, vessels, glands, the sinus and the joint disc that the source scan omits, drawn onto this skull.</p>` : ""}
     ${
       query
         ? ""
@@ -337,11 +407,15 @@ function renderBrowser() {
             .filter(([key]) => atlas.parts.some((p) => p.group === key))
             .map(
               ([key, g]) =>
-                `<label class="layer"><span class="layer-dot" style="background:${g.color}"></span><span>${g.name}</span><span class="layer-count">${atlas.parts.filter((p) => p.group === key).length}</span><input type="checkbox" data-layer="${key}" ${state.layers.has(key) ? "checked" : ""} aria-label="Show ${g.name}"></label>`,
+                (() => {
+                  const inGroup = atlas.parts.filter((p) => p.group === key);
+                  const drawn = inGroup.filter(isSchematic).length;
+                  return `<div class="layer"><button class="layer-name" data-solo="${key}" title="Show only ${g.name.toLowerCase()}"><span class="layer-dot" style="background:${g.color}"></span><span>${g.name}</span><span class="layer-count">${inGroup.length - drawn}${drawn ? `<i title="${drawn} schematic structures">+${drawn}</i>` : ""}</span></button><input type="checkbox" data-layer="${key}" ${state.layers.has(key) ? "checked" : ""} aria-label="Show ${g.name}"></div>`;
+                })(),
             )
             .join("")
     }
-    ${!query ? `<details class="display-controls"><summary>Display controls</summary><div class="sliders"><label>Bone opacity <output>${Math.round(state.opacity * 100)}%</output><input id="opacity" type="range" min="10" max="100" value="${state.opacity * 100}"></label><label>Separate structures <output>${state.explode}%</output><input id="explode" type="range" min="0" max="100" value="${state.explode}"></label></div></details><div class="section-label"><h3>Structure library</h3><span>${atlas.parts.length}</span></div>` : ""}
+    ${!query ? `<div class="sliders"><label>Bone opacity <output>${Math.round(state.opacity * 100)}%</output><input id="opacity" type="range" min="10" max="100" value="${state.opacity * 100}"></label></div><div class="section-label"><h3>Structure library</h3><span>${atlas.parts.length}</span></div>` : ""}
     ${inventory ? `<div class="inventory-heading"><strong>Parts inventory · ${matching.length}</strong><p>Every visible structure is separated in the 3D view. Select a name below; zoom in to reassemble. Use All to include hidden systems.</p><button id="reassemble">Reassemble head & neck</button></div>` : ""}
     <details id="structure-library" ${query || inventory ? "open" : ""}><summary>${inventory ? "Names of displayed parts" : "Browse named structures"}</summary><div class="structure-list">${matching.length ? structureRows : '<p class="empty">No matching structure. Try “mandible”, “tongue”, or “36”.</p>'}</div></details>`;
   browser.querySelector("#reassemble")?.addEventListener("click", () => setExplosion(0));
@@ -359,10 +433,29 @@ function renderBrowser() {
               ? ["bones", "neck", "teeth"]
               : b.dataset.preset === "vascular"
                 ? ["arteries", "veins"]
-                : [],
+                : b.dataset.preset === "neuro"
+                  ? ["nerves", "bones", "teeth"]
+                  : [],
         );
         state.toothDetail = false;
         state.isolated = false;
+        updateScene();
+        renderBrowser();
+      }),
+  );
+  const schematicSwitch = browser.querySelector("[data-schematic]");
+  if (schematicSwitch)
+    schematicSwitch.onchange = () => {
+      state.schematic = schematicSwitch.checked;
+      updateScene();
+      renderBrowser();
+    };
+  browser.querySelectorAll("[data-solo]").forEach(
+    (button) =>
+      (button.onclick = () => {
+        state.layers = new Set([button.dataset.solo]);
+        state.isolated = false;
+        state.toothDetail = false;
         updateScene();
         renderBrowser();
       }),
@@ -384,26 +477,22 @@ function renderBrowser() {
     .forEach(
       (button) => (button.onclick = () => selectPart(button.dataset.part)),
     );
-  for (const key of ["opacity", "explode"]) {
-    const input = browser.querySelector(`#${key}`);
-    if (input)
-      input.oninput = () => {
-        if (key === "explode") { setExplosion(Number(input.value)); return; }
-        state[key] = Number(input.value) / (key === "opacity" ? 100 : 1);
-        input.previousElementSibling.value = `${input.value}%`;
-        updateScene();
-      };
-  }
+  const opacity = browser.querySelector("#opacity");
+  if (opacity)
+    opacity.oninput = () => {
+      state.opacity = Number(opacity.value) / 100;
+      opacity.previousElementSibling.value = `${opacity.value}%`;
+      updateScene();
+    };
 }
 
 function setExplosion(progress) {
   const wasInventory = state.explode >= 95;
   state.explode = Math.round(Math.max(0, Math.min(100, progress)));
   const input = document.querySelector("#explode");
-  if (input) {
-    input.value = String(state.explode);
-    input.previousElementSibling.value = `${state.explode}%`;
-  }
+  if (input) input.value = String(state.explode);
+  const output = document.querySelector("#explode-output");
+  if (output) output.value = `${state.explode}%`;
   updateScene();
   if (wasInventory !== (state.explode >= 95)) {
     renderBrowser();
@@ -478,6 +567,32 @@ function renderInspector() {
     return;
   }
   const topic = topics.find((t) => t.id === state.topic);
+  if (isSchematic(part)) {
+    panel.innerHTML =
+      heading(
+        escape(displayName(part)),
+        `${groups[part.group].name} · schematic teaching geometry`,
+        "Schematic anatomy",
+      ) +
+      `<div class="detail-body">
+      <div class="detail-actions"><button class="primary" id="detail-isolate">${icon("expand")} ${state.isolated ? "Restore" : "Inspect in 3D"}</button><button id="save">${state.saved.has(part.id) ? "✓ Saved" : "+ Save"}</button><button data-clear-selection>Clear selection</button></div>
+      <h3>Overview</h3><p>${escape(part.note)}</p>
+      <div class="learning-note schematic-callout"><span>How this was made</span><p>BodyParts3D 4.0 contains no maxillary or mandibular division of the trigeminal nerve, no facial nerve, no external carotid branches, no parotid gland, no paranasal sinus, and no articular disc. This structure is drawn instead, with its course fitted to landmarks measured on this assembly's own meshes: the tooth apices, the mandibular and mental foramina, the maxilla, and the condyle. Caliber and course are representative of typical anatomy, not a segmentation and not a patient.</p></div>
+      <h3>Explore the relationships</h3><p>Turn the surrounding bone down with the opacity control to follow this structure through the jaws, or isolate it to see its whole course.</p>
+      <p class="fine-print">Educational reference. Not for diagnosis, anesthesia planning, or surgical planning. Individual anatomy varies, and variation in these structures is common.</p></div>`;
+    panel.querySelector("#detail-isolate").onclick = toggleIsolate;
+    panel.querySelector("#save").onclick = () => {
+      state.saved.has(part.id)
+        ? state.saved.delete(part.id)
+        : state.saved.add(part.id);
+      localStorage.setItem("omf-saved", JSON.stringify([...state.saved]));
+      renderInspector();
+    };
+    panel
+      .querySelectorAll("[data-clear-selection]")
+      .forEach((b) => (b.onclick = clearSelection));
+    return;
+  }
   panel.innerHTML =
     heading(
       escape(displayName(part)),
@@ -630,7 +745,7 @@ function dentalContent(tooth) {
 
 function setMode(mode) {
   state.mode = mode;
-  document.querySelector(".stage").classList.toggle("teaching", mode !== "3d");
+  document.body.classList.toggle("teaching", mode !== "3d");
   document.querySelector("#viewer").hidden = mode !== "3d";
   document.querySelector("#teaching-view").hidden = mode === "3d";
   document
@@ -746,11 +861,12 @@ function setTab(tab) {
       "BodyParts3D 4.0 · Adult reference";
     if (atlas) renderBrowser();
   }
-  showDetails(tab !== "anatomy");
+  // Every tab except anatomy renders into the inspector, so the panel has to
+  // be open or the tab looks empty. Anatomy keeps it open when a structure is
+  // selected, since that is what the panel would be showing.
+  showDetails(tab !== "anatomy" || Boolean(state.selected));
   document.querySelector("#mode-bar").hidden = tab !== "dental";
-  document
-    .querySelector(".stage")
-    .classList.toggle("dental-stage", tab === "dental");
+  document.body.classList.toggle("dental-stage", tab === "dental");
   if (tab !== "dental") setMode("3d");
   document.querySelectorAll("[data-tab]").forEach((b) => {
     b.classList.toggle("active", b.dataset.tab === tab);
@@ -789,6 +905,7 @@ function toggleIsolate() {
 }
 function exitTooth() {
   state.toothDetail = false;
+  state.perioFocus = false;
   state.isolated = false;
   updateScene();
   requestAnimationFrame(() =>
@@ -800,7 +917,9 @@ function exitTooth() {
 function coverage() {
   document.querySelector("#modal-content").innerHTML =
     `<h2>Source anatomy and teaching models</h2>
-  <p>The adult explorer contains ${atlas.parts.length} BodyParts3D meshes cropped to the head and neck. Colors identify systems, not natural tissue colors. Cut ends at the lower neck remain open.</p>
+  <p>The adult explorer contains ${atlas.parts.filter((p) => !isSchematic(p)).length} BodyParts3D meshes cropped to the head and neck, plus ${atlas.parts.filter(isSchematic).length} schematic structures the source dataset does not contain. Colors identify systems, not natural tissue colors. Cut ends at the lower neck remain open.</p>
+  <h3>Schematic oral and maxillofacial structures</h3><p>BodyParts3D 4.0 has no maxillary or mandibular division of the trigeminal nerve, no facial nerve, no external carotid artery or any of its branches, no parotid gland, no facial vein, no paranasal sinus, and no temporomandibular articular disc. Its entire nerve set is 55 orbital concepts and its arteries are intracranial. For an oral and maxillofacial atlas those absences cover most of the subject, so those structures are drawn instead. Their courses are fitted at run time to landmarks measured on this assembly: the root apices of the 28 source teeth, the mandibular and mental foramina found on the mandible mesh, the maxilla, the palatine bone, the condyle, and the carotid bifurcation. They are teaching geometry, not segmentation, and they are labeled as schematic wherever they are named. Turn them off with the switch above the structure library.</p>
+  <h3>Still absent</h3><p>The glossopharyngeal, vagus, accessory, and hypoglossal nerves, the pterygopalatine and submandibular ganglia, the palatine tonsils, the lymph nodes of the neck, and the frontal, ethmoid, and sphenoid sinuses are neither in the source nor drawn.</p>
   <h3>Available systems</h3><p>${Object.entries(groups)
     .filter(([id]) => atlas.parts.some((p) => p.group === id))
     .map(([, g]) => g.name)
@@ -950,21 +1069,50 @@ try {
   atlas.parts.push(...facial.parts);
   renderBrowser();
   renderInspector();
-  showDetails(false);
-  viewer = await createViewer(
-    document.querySelector("#viewer"),
-    atlas,
-    selectPart,
-    () => {
+  showDetails(wideWindow.matches);
+  const explodeInput = document.querySelector("#explode");
+  explodeInput.oninput = () => setExplosion(Number(explodeInput.value));
+  document.querySelector("#reassemble-dock").onclick = () => {
+    setExplosion(0);
+    viewer?.view("oblique", true);
+  };
+  viewer = await createViewer(document.querySelector("#viewer"), atlas, {
+    onSelect: selectPart,
+    onReady: () => {
       document.querySelector("#load-status").hidden = true;
     },
-    inspectTooth,
-    (fdi) => inspectTooth(fdi),
-    exitTooth,
-    setExplosion,
-  );
+    onProgress: (percent) => {
+      const bar = document.querySelector("#load-bar");
+      if (bar) bar.style.width = `${percent}%`;
+      const detail = document.querySelector("#load-detail");
+      if (detail)
+        detail.textContent =
+          percent < 100
+            ? `${percent}% · Loading the head and neck assembly`
+            : "Building the anatomy";
+    },
+    onDetail: inspectTooth,
+    onToothSelect: (fdi) => inspectTooth(fdi),
+    onExitDetail: exitTooth,
+    onExplode: setExplosion,
+    onHover: showHover,
+    // The facial muscles arrive after the first frame, so the counts and the
+    // structure list are rebuilt once they are in the scene.
+    onPartsChanged: ({ failed, message }) => {
+      if (failed)
+        document.querySelector("#load-status").hidden = false,
+          (document.querySelector("#load-status").textContent =
+            `Facial and masticatory muscles unavailable. ${message}`);
+      renderBrowser();
+      updateScene();
+    },
+  });
   updateScene();
 } catch (error) {
-  document.querySelector("#load-status").textContent =
-    `3D viewer unavailable. ${error.message} Try reloading or a browser with WebGL enabled. The reference panels remain available.`;
+  const panel = document.querySelector("#load-status");
+  panel.hidden = false;
+  panel.classList.add("load-error");
+  panel.setAttribute("role", "alert");
+  panel.innerHTML = `<strong>The 3D viewer could not start</strong><span>${escape(error.message)} A browser with WebGL enabled is required. The reference panels remain available.</span><button id="reload-viewer">Reload the viewer</button>`;
+  panel.querySelector("#reload-viewer").onclick = () => location.reload();
 }

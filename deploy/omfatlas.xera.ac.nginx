@@ -1,0 +1,57 @@
+# OMF Atlas nginx vhost. Serves the static Vite build in /var/www/omfatlas/dist.
+#
+# deploy/deploy.sh copies this file to the server's home directory on every run,
+# so ~/omfatlas.xera.ac.nginx is always a fresh copy of this file.
+#
+# Install (needs root):
+#   sudo cp ~/omfatlas.xera.ac.nginx /etc/nginx/sites-available/omfatlas.xera.ac
+#   sudo ln -sfn /etc/nginx/sites-available/omfatlas.xera.ac /etc/nginx/sites-enabled/omfatlas.xera.ac
+#   sudo nginx -t && sudo systemctl reload nginx
+#   sudo certbot --nginx -d omfatlas.xera.ac --agree-tos -m ahmad.pub@gmail.com --redirect
+#
+# This file is HTTP-only on purpose. certbot --nginx rewrites it in place, adding
+# the listen 443 block, the certificate paths, and the 80 to 443 redirect, exactly
+# as it did for the sibling sites on this box.
+
+# IPv4 only, exactly like every sibling vhost on this box. This is deliberate.
+# omfatlas.xera.ac is an A record, and no other vhost here binds [::]:80. If this
+# file were the only one to bind it, nginx would make this server block the
+# DEFAULT for IPv6 port 80, and an IPv6 request for any OTHER xera.ac site would
+# land on this site. Matching the siblings avoids that entirely.
+server {
+    listen 80;
+    server_name omfatlas.xera.ac;
+
+    root /var/www/omfatlas/dist;
+    index index.html;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/html;
+    }
+
+    # Single page app: unknown paths fall back to the shell.
+    # No add_header here, so the global security headers in
+    # /etc/nginx/conf.d/security.conf still apply to the HTML.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Vite content-hashes these filenames, so they can be cached forever.
+    location /assets/ {
+        add_header Cache-Control "public, immutable, max-age=31536000";
+    }
+
+    # Anatomy binaries are NOT content-hashed: a new build reuses the same
+    # names. One day of caching, never immutable, or a geometry update would
+    # strand returning visitors on stale meshes.
+    #
+    # deploy.sh writes a .gz next to every .bin and .json, and gzip_static
+    # serves it directly. omf.bin alone drops from 17.8 MB to 10.0 MB with
+    # no per-request compression cost.
+    location /models/ {
+        gzip_static on;
+        add_header Cache-Control "public, max-age=86400";
+        types { application/octet-stream bin; application/json json; }
+        default_type application/octet-stream;
+    }
+}

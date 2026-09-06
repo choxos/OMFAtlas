@@ -2,22 +2,25 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { groups, toothNumber } from "./content.js";
 import { createExplosionLayout, tissueSeparation } from "./explosion-layout.js";
+import { createSchematicParts } from "./schematic-anatomy.js";
 import {
   createToothModel,
   createDentitionModel,
   setToothSection,
 } from "./dental-geometry.js";
 
-export async function createViewer(
-  host,
-  atlas,
-  onSelect,
-  onReady,
-  onDetail,
-  onToothSelect,
-  onExitDetail,
-  onExplode = () => {},
-) {
+export async function createViewer(host, atlas, handlers) {
+  const {
+    onSelect,
+    onReady,
+    onDetail,
+    onToothSelect,
+    onExitDetail,
+    onExplode = () => {},
+    onPartsChanged = () => {},
+    onHover = () => {},
+    onProgress = () => {},
+  } = handlers;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, 0.001, 10);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -42,13 +45,40 @@ export async function createViewer(
   const fill = new THREE.DirectionalLight(0xc7e4ff, 1.1);
   fill.position.set(2, 0, -1);
   scene.add(fill);
-  const buffers = new Map(await Promise.all(
-    [...new Set(atlas.parts.map((part) => part.bufferUrl || "/models/omf.bin"))].map(async (url) => {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`The anatomy geometry could not be loaded: ${url} (HTTP ${response.status}).`);
-      return [url, await response.arrayBuffer()];
-    }),
-  ));
+  const BASE_BUFFER = "/models/omf.bin";
+  async function loadBuffer(url, report) {
+    const response = await fetch(url);
+    if (!response.ok)
+      throw new Error(
+        `The anatomy geometry could not be loaded: ${url} (HTTP ${response.status}).`,
+      );
+    const total = Number(response.headers.get("content-length")) || 0;
+    // Without a length header, or without a readable stream, fall back to the
+    // whole buffer at once rather than reporting a progress bar that lies.
+    if (!report || !total || !response.body) return response.arrayBuffer();
+    const reader = response.body.getReader();
+    const chunks = [];
+    let received = 0;
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      received += value.length;
+      report(Math.min(99, Math.round((received / total) * 100)));
+    }
+    const buffer = new Uint8Array(received);
+    let offset = 0;
+    for (const chunk of chunks) {
+      buffer.set(chunk, offset);
+      offset += chunk.length;
+    }
+    report(100);
+    return buffer.buffer;
+  }
+  // Only the base assembly is awaited. The registered facial muscles are
+  // another 15.6 MB and the first frame does not need them, so they arrive
+  // afterwards and their meshes join the scene when they do.
+  const buffers = new Map([[BASE_BUFFER, await loadBuffer(BASE_BUFFER, onProgress)]]);
   function geometryFrom(part, buffer) {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
@@ -75,19 +105,47 @@ export async function createViewer(
     geometry.computeBoundingBox();
     return geometry;
   }
-  const meshes = atlas.parts.map((part) => {
-    const geometry = geometryFrom(part, buffers.get(part.bufferUrl || "/models/omf.bin"));
+  const meshes = [];
+  function addMesh(part, geometry) {
     const material = new THREE.MeshStandardMaterial({
       color: groups[part.group].color,
-      roughness: 0.64,
+      // Schematic structures get a flatter, slightly self-lit surface so they
+      // never read as scanned tissue next to the source meshes.
+      roughness: part.schematic ? 0.9 : 0.64,
+      emissive: part.schematic ? groups[part.group].color : 0x000000,
+      emissiveIntensity: part.schematic ? 0.16 : 0,
       metalness: 0,
       side: THREE.DoubleSide,
     });
     const mesh = new THREE.Mesh(geometry, material);
     mesh.userData.part = part;
     scene.add(mesh);
+    meshes.push(mesh);
     return mesh;
-  });
+  }
+  for (const part of atlas.parts)
+    if ((part.bufferUrl || BASE_BUFFER) === BASE_BUFFER)
+      addMesh(part, geometryFrom(part, buffers.get(BASE_BUFFER)));
+
+  // The source dataset stops short of most oral and maxillofacial
+  // neurovascular anatomy, so those structures are built from this assembly's
+  // own landmarks. See src/schematic-anatomy.js for what that means.
+  const baseVertices = (part) => {
+    const values = new Float32Array(
+      buffers.get(BASE_BUFFER),
+      part.positions,
+      part.vertexCount * 3,
+    );
+    const out = [];
+    for (let i = 0; i < values.length; i += 3)
+      out.push([values[i], values[i + 1], values[i + 2]]);
+    return out;
+  };
+  for (const built of createSchematicParts(atlas.parts, baseVertices)) {
+    const { geometry, ...part } = built;
+    atlas.parts.push(part);
+    addMesh(part, geometry);
+  }
   const target = new THREE.Vector3(0, 1.57, 0.005);
   let currentState;
   let dentalModel = null,
@@ -167,6 +225,23 @@ export async function createViewer(
       }
     });
     scene.remove(model);
+  }
+  /** The modeled tooth in one jaw whose centre is closest to the orbit target. */
+  function nearestTooth(upper) {
+    let best = null;
+    let bestDistance = Infinity;
+    const centre = new THREE.Vector3();
+    for (const mesh of meshes) {
+      const fdi = toothNumber(mesh.userData.part.name);
+      if (!fdi || fdi < 30 !== upper) continue;
+      mesh.geometry.boundingBox.getCenter(centre);
+      const distance = centre.distanceTo(controls.target);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = fdi;
+      }
+    }
+    return best;
   }
   let previousDistance = null,
     detailExitDistance = Infinity,
@@ -275,22 +350,29 @@ export async function createViewer(
       const part = meshes.find(
         (m) => m.userData.part.id === currentState.selected,
       );
-      const tooth = dentalModel
+      // Zooming into the gums opens the same cutaway as zooming into a tooth,
+      // framed on the periodontium instead of the crown. The tooth it opens on
+      // is the one nearest whatever the camera is already looking at, so
+      // zooming into the front of the mouth gives an incisor.
+      const gingivaJaw = part && /^Gingiva of (upper|lower) jaw$/.exec(part.userData.part.name)?.[1];
+      const target = dentalModel
         ? dentalModel.children.find((m) => m.userData.fdi === currentState.fdi)
         : part;
       const fdi = dentalModel
         ? currentState.fdi
-        : part && toothNumber(part.userData.part.name);
+        : gingivaJaw
+          ? nearestTooth(gingivaJaw === "upper")
+          : part && toothNumber(part.userData.part.name);
       if (
         fdi &&
-        tooth?.visible &&
+        target?.visible &&
         camera.position.distanceTo(
-          new THREE.Box3().setFromObject(tooth).getCenter(new THREE.Vector3()),
+          new THREE.Box3().setFromObject(target).getCenter(new THREE.Vector3()),
         ) < 0.055
       ) {
         detailPending = true;
         queueMicrotask(() => {
-          onDetail(fdi);
+          onDetail(fdi, { periodontium: Boolean(gingivaJaw) });
           detailPending = false;
         });
       }
@@ -305,6 +387,22 @@ export async function createViewer(
     currentDirection = direction;
     let center = target.clone(),
       size = 0.3;
+    // The tooth model is built with its cervical line at the origin, so
+    // framing the periodontium means framing a short band around y = 0.
+    if (fit && currentState?.toothDetail && currentState.perioFocus && dentalModel?.visible) {
+      controls.target.set(0, 0, 0);
+      camera.up.set(0, 1, 0);
+      camera.position
+        .set(0, 0, 0)
+        .add(new THREE.Vector3(0.55, 0.16, 1).normalize().multiplyScalar(0.032));
+      camera.far = 1;
+      camera.updateProjectionMatrix();
+      controls.update();
+      detailExitDistance = 0.032 * 1.65;
+      render();
+      framing = false;
+      return;
+    }
     if (fit && currentState) {
       const box = new THREE.Box3();
       if (dentalModel?.visible) box.expandByObject(dentalModel);
@@ -366,18 +464,74 @@ export async function createViewer(
   });
   resize.observe(host);
   controls.addEventListener("change", render);
+  // A tap is a single pointer that went down and came up without travelling
+  // and without a second pointer joining it. Tracking only one pointer let the
+  // end of a pinch count as a tap and select whatever sat under the finger.
+  const taps = new Map();
+  let multiTouch = false;
+  const tapThreshold = (event) => (event.pointerType === "touch" ? 12 : 5);
   let down = null;
   renderer.domElement.addEventListener("pointerdown", (e) => {
-    down = e.isPrimary ? { x: e.clientX, y: e.clientY } : null;
+    if (taps.size === 0) multiTouch = false;
+    taps.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (taps.size > 1) multiTouch = true;
+    down = taps.size === 1 ? { x: e.clientX, y: e.clientY } : null;
   });
-  renderer.domElement.addEventListener("pointercancel", () => {
+  renderer.domElement.addEventListener("pointercancel", (e) => {
+    taps.delete(e.pointerId);
+    multiTouch = true;
     down = null;
   });
+  // Naming the structure under the cursor is the fastest way to read an
+  // unfamiliar assembly, so the pointer picks continuously. The pick is
+  // throttled to one animation frame and skipped while dragging.
+  const pointer = new THREE.Vector2();
+  const hoverRay = new THREE.Raycaster();
+  let hoverQueued = false;
+  let hoverId = null;
+  function pickAt(clientX, clientY) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    hoverRay.setFromCamera(
+      pointer.set(
+        ((clientX - rect.left) / rect.width) * 2 - 1,
+        (-(clientY - rect.top) / rect.height) * 2 + 1,
+      ),
+      camera,
+    );
+    return hoverRay.intersectObjects(
+      dentalModel?.visible ? [dentalModel] : meshes.filter((m) => m.visible),
+      true,
+    )[0];
+  }
   renderer.domElement.addEventListener("pointermove", (e) => {
-    if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) down = null;
+    const start = taps.get(e.pointerId);
+    if (start && Math.hypot(e.clientX - start.x, e.clientY - start.y) > tapThreshold(e))
+      multiTouch = true;
+    if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > tapThreshold(e))
+      down = null;
+    if (e.pointerType === "touch" || hoverQueued) return;
+    hoverQueued = true;
+    requestAnimationFrame(() => {
+      hoverQueued = false;
+      const hit = pickAt(e.clientX, e.clientY);
+      const data = hit?.object.userData;
+      const part = data?.part;
+      const id = part ? part.id : data?.tissue ? `tissue:${data.tissue}` : null;
+      if (id === hoverId) return;
+      hoverId = id;
+      onHover(part || null, { x: e.clientX, y: e.clientY });
+    });
+  });
+  renderer.domElement.addEventListener("pointerleave", () => {
+    hoverId = null;
+    onHover(null);
   });
   renderer.domElement.addEventListener("pointerup", (e) => {
-    if (!down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > 5) return;
+    const start = taps.get(e.pointerId);
+    const singleTap = Boolean(start) && taps.size === 1 && !multiTouch;
+    taps.delete(e.pointerId);
+    if (!singleTap || !down || Math.hypot(e.clientX - down.x, e.clientY - down.y) > tapThreshold(e))
+      return;
     down = null;
     const rect = renderer.domElement.getBoundingClientRect();
     const ray = new THREE.Raycaster();
@@ -457,6 +611,7 @@ export async function createViewer(
         const part = mesh.userData.part;
         mesh.visible =
           !dentalModel &&
+          (part.schematic ? state.schematic !== false : true) &&
           (state.isolated
             ? part.id === state.selected
             : state.layers.has(part.group));
@@ -524,5 +679,28 @@ export async function createViewer(
   camera.updateProjectionMatrix();
   view();
   onReady();
+
+  // Registered facial and masticatory muscles, fetched after the first frame.
+  // A failure here leaves the rest of the atlas usable, so it reports rather
+  // than rejecting the viewer that already exists.
+  const deferred = atlas.parts.filter(
+    (part) => part.bufferUrl && part.bufferUrl !== BASE_BUFFER,
+  );
+  if (deferred.length)
+    (async () => {
+      const urls = [...new Set(deferred.map((part) => part.bufferUrl))];
+      try {
+        for (const url of urls) buffers.set(url, await loadBuffer(url));
+      } catch (error) {
+        onPartsChanged({ pending: 0, failed: deferred.length, message: error.message });
+        return;
+      }
+      for (const part of deferred)
+        addMesh(part, geometryFrom(part, buffers.get(part.bufferUrl)));
+      layoutKey = "";
+      if (currentState) api.update(currentState);
+      onPartsChanged({ pending: 0, failed: 0 });
+    })();
+
   return api;
 }
