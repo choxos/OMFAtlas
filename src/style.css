@@ -6333,3 +6333,140 @@ body:not(.details-open) .studio .caption-stack {
     inset: 150px auto 322px 26px;
   }
 }
+
+/* ---- Touch layout, second pass -------------------------------------------
+
+   On a phone the caption band, a two row dock, the camera row and the tab bar
+   together took about half the screen, and the model had to live in what was
+   left. The caption band goes (the dock already names the selection), the
+   separation row loses its endpoint labels and its button text to become one
+   line, and everything above the tab bar is restacked tighter. */
+
+@media (max-width: 860px) {
+  .studio .caption-stack,
+  body.details-open .studio .caption-stack {
+    display: none;
+  }
+
+  .studio .dock-selection {
+    padding: 9px 12px;
+    gap: 9px;
+  }
+
+  .studio .dock-selection strong {
+    font-size: 13px;
+  }
+
+  .studio .dock-selection span {
+    font-size: 10.5px;
+  }
+
+  .studio #isolate {
+    height: 36px;
+    padding: 0 11px;
+    font-size: 11.5px;
+  }
+
+  .studio .stage-bottom [data-clear-selection] {
+    width: 36px;
+    height: 36px;
+  }
+
+  .studio .dock-separation {
+    padding: 7px 12px 9px;
+    gap: 10px;
+  }
+
+  .studio .dock-separation .slider-endpoints {
+    display: none;
+  }
+
+  .studio .dock-separation .explode-label {
+    margin-bottom: 3px;
+    font-size: 11px;
+  }
+
+  .studio .dock-separation .explode-label output {
+    font-size: 10px;
+    min-width: 40px;
+    padding: 1px 6px;
+  }
+
+  .studio .dock-separation #reassemble-dock {
+    padding: 2px 0 2px 10px;
+    gap: 2px;
+  }
+
+  .studio .dock-separation #reassemble-dock span {
+    display: none;
+  }
+
+  /* One tighter stack: tab bar, then the camera row, then the dock. */
+  .studio .tab-bar {
+    inset: auto 12px calc(max(8px, env(safe-area-inset-bottom)) + 2px) 12px;
+  }
+
+  .studio .nav-button {
+    height: 42px;
+  }
+
+  .studio .view-controls {
+    inset: auto 12px 62px auto;
+  }
+
+  .studio #mobile-library {
+    inset: auto auto 62px 12px;
+    height: 42px;
+  }
+
+  .studio .view-controls button {
+    height: 38px;
+    width: 42px;
+  }
+
+  .studio .stage-bottom {
+    inset: auto 12px 114px 12px;
+  }
+
+  .studio .sidebar,
+  body.tooth-inspection .studio .sidebar {
+    inset: auto 12px 114px 12px;
+    max-height: min(62dvh, 500px);
+  }
+
+  .studio .inspector {
+    inset: auto 12px 114px 12px;
+    max-height: min(58dvh, 520px);
+  }
+
+  body.details-open .studio #close-inspector {
+    inset: auto 20px calc(114px + min(58dvh, 520px) - 42px) auto;
+  }
+
+  .studio #dental-3d-controls {
+    inset: auto 12px 114px 12px;
+  }
+
+  .studio #mode-bar {
+    inset: auto 12px 224px 12px;
+  }
+
+  body.teaching .studio #mode-bar {
+    inset: auto 12px 62px 12px;
+  }
+
+  body.teaching .studio #teaching-view,
+  body.teaching.details-open .studio #teaching-view {
+    inset: 70px 12px 114px 12px;
+  }
+
+  /* The title block is the only thing competing with the model up top. */
+  .studio h1#stage-title {
+    font-size: 19px;
+    margin-top: 6px;
+  }
+
+  .studio #resolution-status {
+    font-size: 10px;
+  }
+}
