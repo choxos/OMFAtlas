@@ -29,6 +29,14 @@ import {
   perioSources,
 } from "./periodontium.js";
 import { clinicalLibrary } from "./clinical-library.js";
+import {
+  stages,
+  tissueOrigins,
+  chronology,
+  anomalies,
+  embryologySources,
+  toothGermDiagram,
+} from "./embryology.js";
 import { getDentitionFDIs } from "./dental-geometry.js";
 import { TISSUE_ORDER, tissueGroup } from "./explosion-layout.js";
 
@@ -95,6 +103,7 @@ const state = {
   tissue: "pulp",
   tissueLayers: new Set(tissues.map((t) => t.id)),
   pattern: 0,
+  stage: "cap",
   schematic: true,
 };
 try {
@@ -149,7 +158,7 @@ document.querySelector("#app").innerHTML = `
     <div class="zoom-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit" aria-label="Fit visible anatomy" title="Fit visible anatomy">${icon("expand")}</button></div>
   </div>
 
-  <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active">3D anatomy</button><button data-mode="section">Tooth &amp; periodontium</button><button data-mode="canals">Root canal explorer</button></div>
+  <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active">3D anatomy</button><button data-mode="section">Tooth &amp; periodontium</button><button data-mode="canals">Root canal explorer</button><button data-mode="development">Tooth development</button></div>
   <div id="load-status" class="panel" role="status"><strong>Preparing the anatomy</strong><span id="load-detail">Loading the head and neck assembly</span><div class="loading-track"><i id="load-bar"></i></div></div>
 
   <section id="dental-3d-controls" class="panel" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><label class="section-slider">Section depth <input id="section-depth" type="range" min="0" max="100" value="50"></label><div class="tissue-3d-buttons">${[
@@ -523,7 +532,7 @@ function renderInspector() {
         "Short explorations to connect structure with practice.",
         "Study guide",
       ) +
-      `<div class="study-list">${topics.map((t) => `<button data-topic="${t.id}"><span>${icon(t.id === "dentition" ? "tooth" : "book")}</span><div><strong>${t.title}</strong><small>${t.subtitle}</small></div>${icon("arrow")}</button>`).join("")}</div><div class="detail-body clinical-library"><h3>Clinical anatomy reference</h3>${clinicalLibrary.map((item) => `<details><summary>${item.title}</summary>${item.sections.map(([title, text]) => `<h3>${title}</h3><p>${text}</p>`).join("")}${sourceLink(item.source)}</details>`).join("")}</div><div class="note"><h3>Your saved structures</h3>${
+      `<div class="study-list">${topics.map((t) => `<button data-topic="${t.id}"><span>${icon(t.id === "dentition" ? "tooth" : "book")}</span><div><strong>${t.title}</strong><small>${t.subtitle}</small></div>${icon("arrow")}</button>`).join("")}<button id="open-development"><span>${icon("tooth")}</span><div><strong>How a tooth develops</strong><small>Odontogenesis, chronology &amp; developmental anomalies</small></div>${icon("arrow")}</button></div><div class="detail-body clinical-library"><h3>Clinical anatomy reference</h3>${clinicalLibrary.map((item) => `<details><summary>${item.title}</summary>${item.sections.map(([title, text]) => `<h3>${title}</h3><p>${text}</p>`).join("")}${sourceLink(item.source)}</details>`).join("")}</div><div class="note"><h3>Your saved structures</h3>${
         state.saved.size
           ? atlas.parts
               .filter((p) => state.saved.has(p.id))
@@ -534,6 +543,10 @@ function renderInspector() {
               .join("")
           : "<p>Save a structure from its anatomy notes to revisit it here.</p>"
       }</div>`;
+    panel.querySelector("#open-development").onclick = () => {
+      setTab("dental");
+      setMode("development");
+    };
     panel.querySelectorAll("[data-topic]").forEach(
       (b) =>
         (b.onclick = () => {
@@ -755,6 +768,43 @@ function setMode(mode) {
   if (atlas) updateScene();
 }
 
+function renderDevelopment(host) {
+  const stage = stages.find((s) => s.id === state.stage) || stages[2];
+  const faults = anomalies[stage.id] || [];
+  host.innerHTML = `<div class="teaching-intro"><strong>How a tooth develops</strong><span>Odontogenesis · Select a stage to follow it through</span></div>
+  <div class="stage-track" role="tablist" aria-label="Stages of tooth development">${stages
+    .map(
+      (s, index) =>
+        `<button role="tab" aria-selected="${s.id === stage.id}" data-stage="${s.id}" class="${s.id === stage.id ? "active" : ""}"><span class="stage-index">${index + 1}</span><strong>${escape(s.name)}</strong><small>${escape(s.when)}</small></button>`,
+    )
+    .join("")}</div>
+  ${toothGermDiagram(stage.id)}
+  <div class="stage-explanation" role="status"><strong>${escape(stage.name)}</strong><p>${escape(stage.summary)}</p><p>${escape(stage.detail)}</p><p class="fine-print">Derived from: ${escape(stage.origin)}.</p></div>
+  ${faults.length ? `<div class="detail-body stage-faults"><h3>What goes wrong at this stage</h3>${faults.map(([name, text]) => `<div class="fault"><strong>${escape(name)}</strong><p>${escape(text)}</p></div>`).join("")}</div>` : ""}
+  <div class="detail-body"><h3>Where each tissue comes from</h3><div class="origin-table" role="table">${tissueOrigins
+    .map(
+      ([tissue, germLayer, note]) =>
+        `<div role="row"><span role="cell"><strong>${escape(tissue)}</strong></span><span role="cell" class="germ-layer">${escape(germLayer)}</span><span role="cell">${escape(note)}</span></div>`,
+    )
+    .join("")}</div>
+  <h3>Chronology</h3><p class="fine-print">Population ranges as usually taught. Individual timing varies widely, and a single child is not late because a tooth is outside a range.</p>
+  ${chronology
+    .map(
+      (table) =>
+        `<h4 class="chronology-title">${escape(table.dentition)} dentition</h4><div class="chronology" role="table"><div role="row" class="chronology-head">${table.columns.map((c) => `<span role="columnheader">${escape(c)}</span>`).join("")}</div>${table.rows.map((row) => `<div role="row">${row.map((cell, i) => `<span role="cell"${i === 0 ? ' class="chronology-tooth"' : ""}>${escape(cell)}</span>`).join("")}</div>`).join("")}</div>`,
+    )
+    .join("")}
+  <h3>Sources</h3>${embryologySources.map(sourceLink).join("")}</div>`;
+  host.querySelectorAll("[data-stage]").forEach(
+    (button) =>
+      (button.onclick = () => {
+        state.stage = button.dataset.stage;
+        renderTeaching();
+        host.scrollTop = 0;
+      }),
+  );
+}
+
 function renderTeaching() {
   if (state.mode === "3d") return;
   const host = document.querySelector("#teaching-view");
@@ -776,6 +826,7 @@ function renderTeaching() {
     };
     return;
   }
+  if (state.mode === "development") return renderDevelopment(host);
   const tooth = dentalProfile(state.fdi),
     endo = endoProfile(tooth),
     pattern = canalPatterns[state.pattern];

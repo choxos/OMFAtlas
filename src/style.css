@@ -5180,3 +5180,304 @@ body.tooth-inspection .studio .sidebar {
     bottom: 348px;
   }
 }
+
+/* ---- Tooth development -------------------------------------------------- */
+
+.studio .stage-track {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+  margin: 14px 0 18px;
+}
+
+.studio .stage-track button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  height: auto;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  text-align: left;
+}
+
+.studio .stage-track button:hover {
+  background: #17242f0a;
+}
+
+.studio .stage-track .stage-index {
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #17242f0d;
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.studio .stage-track button strong {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.studio .stage-track button small {
+  font-size: 10.5px;
+  color: var(--faint);
+  line-height: 1.35;
+}
+
+.studio .stage-track .active {
+  border-color: var(--navy);
+  background: var(--navy);
+}
+
+.studio .stage-track .active strong {
+  color: #fff;
+}
+
+.studio .stage-track .active small {
+  color: #ffffffb8;
+}
+
+.studio .stage-track .active .stage-index {
+  background: #ffffff2e;
+  color: #fff;
+}
+
+.studio .germ-diagram {
+  display: block;
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  height: auto;
+}
+
+.studio .stage-explanation {
+  max-width: 620px;
+  margin: 6px auto 4px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 11px 11px 0;
+  background: #54aab914;
+}
+
+.studio .stage-explanation strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.studio .stage-explanation p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+
+.studio .stage-faults .fault {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.studio .stage-faults .fault strong {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 3px;
+}
+
+.studio .stage-faults .fault p {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+.studio .origin-table [role="row"] {
+  display: grid;
+  grid-template-columns: 132px 128px 1fr;
+  gap: 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.studio .germ-layer {
+  font-size: 11px;
+  color: var(--teal);
+}
+
+.studio .chronology-title {
+  margin: 16px 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.studio .chronology {
+  border: 1px solid var(--line-soft);
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.studio .chronology [role="row"] {
+  display: grid;
+  grid-template-columns: 1.5fr 1.2fr 1.1fr 1.1fr 1fr;
+  gap: 10px;
+  padding: 9px 12px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.studio .chronology [role="row"]:last-child {
+  border-bottom: 0;
+}
+
+.studio .chronology-head {
+  background: #17242f08;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.studio .chronology-tooth {
+  font-weight: 550;
+  color: var(--ink);
+}
+
+@media (max-width: 860px) {
+  .studio .origin-table [role="row"] {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .studio .chronology {
+    overflow-x: auto;
+  }
+  .studio .chronology [role="row"] {
+    grid-template-columns: 130px 110px 100px 100px 90px;
+    min-width: 540px;
+  }
+}
+
+/* ---- Teaching modes -----------------------------------------------------
+
+   The 2D diagrams replace the scene rather than floating over it, so the
+   controls that only mean something for the 3D view step aside and the
+   teaching layer takes the same free band the model had. */
+
+body.teaching .studio .caption-stack,
+body.teaching .studio .explode-dock,
+body.teaching .studio .stage-bottom,
+body.teaching .studio .view-controls,
+body.teaching .studio #mobile-library,
+body.teaching .studio .vignette {
+  display: none;
+}
+
+body.teaching .studio #mode-bar {
+  top: 92px;
+  bottom: auto;
+  left: 310px;
+  right: 124px;
+  transform: none;
+  margin-inline: auto;
+  width: fit-content;
+  max-width: calc(100% - 440px);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+body.teaching.details-open .studio #mode-bar {
+  right: 460px;
+  max-width: calc(100% - 780px);
+}
+
+body.teaching .studio #teaching-view {
+  top: 146px;
+  bottom: 62px;
+  left: 310px;
+  right: 124px;
+  inset-inline-start: 310px;
+  padding: 22px 26px;
+}
+
+body.teaching.details-open .studio #teaching-view {
+  right: 460px;
+}
+
+.studio #teaching-view .teaching-intro {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.studio #teaching-view .teaching-intro strong {
+  display: block;
+  font-size: 17px;
+  font-weight: 620;
+  letter-spacing: -0.4px;
+  color: var(--ink);
+}
+
+.studio #teaching-view .teaching-intro span {
+  font-size: 11px;
+  color: var(--faint);
+}
+
+.studio #teaching-view .detail-body {
+  max-width: 660px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1240px) {
+  body.teaching .studio #mode-bar,
+  body.teaching .studio #teaching-view {
+    left: 286px;
+    right: 120px;
+  }
+  body.teaching.details-open .studio #mode-bar,
+  body.teaching.details-open .studio #teaching-view {
+    right: 422px;
+  }
+}
+
+@media (max-width: 1080px) {
+  body.teaching.details-open .studio #mode-bar,
+  body.teaching.details-open .studio #teaching-view {
+    left: 26px;
+  }
+}
+
+@media (max-width: 860px) {
+  body.teaching .studio #mode-bar {
+    top: auto;
+    bottom: 74px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+  }
+  body.teaching .studio #teaching-view,
+  body.teaching.details-open .studio #teaching-view {
+    inset: 74px 12px 132px;
+    left: 12px;
+    right: 12px;
+    padding: 16px;
+  }
+  body.teaching .studio .sidebar {
+    display: none;
+  }
+}

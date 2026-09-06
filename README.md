@@ -19,11 +19,13 @@ npm run build
 npm run preview
 ```
 
-The production site is written to `dist/` and can be served by a static host at its root. The app currently uses root-relative asset paths. Google Fonts is optional; local sans-serif fallbacks remain available when offline.
+The production site is written to `dist/` and can be served by a static host at its root. The app uses root-relative asset paths and loads no external resources at all: Inter is served from `public/fonts/`, which is what lets the site run behind a Content-Security-Policy whose `font-src` is `'self'`. `deploy/` holds the nginx vhost and the build script used for omfatlas.xera.ac.
 
 ## Included
 
 - Head-and-neck-only 3D explorer: 643 selectable source meshes across 14 layers, including 47 registered facial and masticatory muscles recovered from BodyParts3D 3.0.
+- 77 schematic oral and maxillofacial structures for what the source dataset does not contain: the maxillary and mandibular divisions of the trigeminal nerve and their oral branches, the facial nerve and its five terminal branches, the external carotid artery and the facial, lingual, maxillary, inferior alveolar, superficial temporal, posterior superior alveolar and greater palatine arteries, the facial and retromandibular veins, the external jugular vein, the pterygoid plexus, the parotid gland with Stensen's duct, Wharton's duct, the maxillary sinus, and the temporomandibular articular disc. These are drawn, not segmented, and they are labeled as schematic wherever they are named. One switch turns the whole set off. See [schematic anatomy](#schematic-anatomy).
+- A tooth development section covering the seven stages of odontogenesis with a labeled diagram for each, the germ layer origin of every dental tissue, the eruption chronology for both dentitions, and the developmental anomalies that arise at each stage.
 - Original-archive surface detail loads on selection for 549 structures, including all 28 source teeth and the mandible/maxillae. Upgraded meshes have 2.61 times the aggregate triangle count of their optimized equivalents; this is source geometry, not synthetic subdivision.
 - A model-first studio interface inspired by Human Atlas, with floating layers, an always-visible desktop inspector (collapsible on mobile), search, opacity, separation, camera presets, zoom, and isolation. Selecting a part does not change the model viewport's desktop position or size.
 - Adult/child selection changes the actual 3D teaching arches: 32 permanent, 20 primary, or a representative 24-tooth mixed dentition. Child teeth use different tissue proportions and root divergence, not a scaled adult skull.
@@ -37,6 +39,16 @@ The production site is written to `dist/` and can be served by a static host at 
 - Periodontal anatomy, clinical study connections, learning-level notes, saved structures, guided study, and a scored self-test.
 - In-app references and explicit model-coverage information.
 
+## Schematic anatomy
+
+BodyParts3D 4.0 is a whole-body dataset, and for the head it is mostly bone, muscle, brain, and orbit. Its complete nerve set is 55 concepts, all orbital: there is no maxillary or mandibular division of the trigeminal nerve, no facial nerve, and none of the lower cranial nerves. Its arteries in this region are the carotids and the intracranial tree; the external carotid artery and every branch that supplies the jaws are absent, as are the parotid gland, the facial vein, the paranasal sinuses, and the articular disc of the temporomandibular joint. For an oral and maxillofacial atlas those absences cover most of the subject, so `src/schematic-anatomy.js` builds those structures instead.
+
+What keeps them honest is that no waypoint is a typed-in coordinate. Every course is fitted at run time to landmarks measured on this particular assembly: the root apices of the 28 source teeth give the arch and the alveolar heights, the mandible mesh gives the condyle, the gonial angle, the medial ramus surface at the mandibular foramen, and the buccal plate at the mental foramen; the maxilla, palatine bone, temporal bone, and carotid bifurcation supply the rest. The inferior alveolar nerve therefore runs under the apices of this skull's molars and leaves through a mental foramen found on this mandible's own surface.
+
+They remain teaching geometry. Caliber and course are representative of typical anatomy, variation in these structures is common, and none of it is a segmentation of a scan. `tests/schematic-anatomy.test.mjs` asserts the anchoring rules rather than fixed coordinates, so the geometry cannot drift away from the bone it is drawn onto.
+
+Not built, and absent from the source: the glossopharyngeal, vagus, accessory, and hypoglossal nerves, the pterygopalatine and submandibular ganglia, the palatine tonsils, the cervical lymph nodes, and the frontal, ethmoid, and sphenoid sinuses.
+
 ## Educational scope
 
 The source assembly contains 28 permanent teeth through the second molars and 615 other head-and-neck meshes. Some named structures consist of multiple source meshes. Anatomy is cropped below the C7 disk; crossing structures have open cut ends. See [model coverage](documentation/qa/MODEL-COVERAGE.md) and [facial muscle registration](documentation/qa/FACIAL-SOURCE.md) for source details. The cross-version facial overlay has a held-out bone surface RMS mismatch of 0.26 mm; clinical attachment accuracy has not been independently validated.
@@ -47,9 +59,9 @@ This release is not an exhaustive clinical dentistry reference. Parotid gland, f
 
 ## Data and maintenance
 
-`src/dental.js`, `src/endodontics.js`, and `src/periodontium.js` hold dental content and source links. `src/content.js` holds regional study notes. `src/viewer.js` renders the extracted binary meshes with Three.js. The interface is plain JavaScript and CSS, built with Vite.
+`src/dental.js`, `src/endodontics.js`, `src/periodontium.js`, and `src/embryology.js` hold dental content and source links. `src/content.js` holds regional study notes. `src/viewer.js` renders the extracted binary meshes with Three.js. The interface is plain JavaScript and CSS, built with Vite.
 
-`src/dental-geometry.js` builds the schematic dental arches and internal tissues. [Validation evidence](documentation/qa/VALIDATION.md) distinguishes software checks from medical editorial review.
+`src/dental-geometry.js` builds the schematic dental arches and internal tissues, and `src/schematic-anatomy.js` builds the neurovascular, glandular, sinus, and joint structures the source dataset omits. [Validation evidence](documentation/qa/VALIDATION.md) distinguishes software checks from medical editorial review.
 
 To reproduce the geometry, check out Human Atlas at `7a383d3ee2759e3ddf157c704fb8814fd0c50bcb`, then run:
 

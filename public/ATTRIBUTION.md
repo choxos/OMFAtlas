@@ -18,6 +18,10 @@ OMF Atlas extracts and repacks 596 head-and-neck meshes from that geometry into 
 
 549 higher-detail surface meshes are also repacked directly from the official `isa_BP3D_4.0_obj_99.zip` archive, removing the reference application's additional simplification. The same coordinate transform and neck crop apply. These assets retain the archive's own reduced resolution, not unreduced scans. They are stored individually for on-demand loading. Archive SHA-256: `40665852c49f218326590e204db91064a1ecfc3c6f8cbd7bbbcaac62c7cd409e`.
 
+The 77 schematic oral and maxillofacial structures are original teaching geometry, not BodyParts3D assets and not derived from any third-party model. BodyParts3D 4.0 contains no maxillary or mandibular division of the trigeminal nerve, no facial nerve, no external carotid artery or any of its branches, no parotid gland, no facial vein, no paranasal sinus, and no temporomandibular articular disc; those structures are built at run time from landmarks measured on the licensed meshes. They are labeled as schematic wherever the application names them.
+
+The tooth development diagrams are original schematic illustrations. They are drawn, not traced from histological sections, and no third-party figure is reproduced.
+
 The procedural 3D teeth, adult/primary/mixed dental arches, tooth-section and canal diagrams are original schematic teaching illustrations. They are not scans, histological sections, or reconstructions of the BodyParts3D meshes. Tissue proportions and canal locations are conceptual; roots are spread into the section plane for inspection. No pediatric skull is fabricated from the adult source. Text describes typical anatomy and selected variants, with sources linked in the application. No source textbook illustrations are redistributed. The studio UI is inspired by Human Atlas.
 
 ## Human Atlas MIT notice

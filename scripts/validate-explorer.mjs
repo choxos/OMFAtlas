@@ -41,7 +41,15 @@ for(let i=0;i<15 && progress()<100;i++) run("click","#zoom-out");
 assert.equal(progress(),100);
 assert.equal(js('document.querySelector("#structure-library").open'),"true");
 assert.equal(js('document.querySelector("#browser").firstElementChild.className'),"inventory-heading");
-assert.equal(js('JSON.stringify([...document.querySelectorAll("[data-inventory-type]")].slice(0,2).map(el=>el.dataset.inventoryType))'),'["bones","muscles"]',"Names are grouped bones first, muscles next");
+// The blocks must follow TISSUE_ORDER. Asserting which layers happen to be on
+// pinned the default layer set instead, which is a display choice, not the
+// invariant this check is about.
+const TISSUE_ORDER = ["bones","neck","muscles","teeth","gingiva","soft","glands","arteries","veins","nerves","brain","eyes","airway","skin"];
+const blocks = JSON.parse(js('JSON.stringify([...document.querySelectorAll("[data-inventory-type]")].map(el=>el.dataset.inventoryType))'));
+assert.ok(blocks.length>1,"The inventory groups names into tissue blocks");
+assert.equal(blocks[0],"bones","Bones lead the parts inventory");
+const ranks = blocks.map(id=>TISSUE_ORDER.indexOf(id));
+assert.ok(ranks.every((rank,i)=>rank>=0 && (i===0 || rank>ranks[i-1])),`Tissue blocks must follow TISSUE_ORDER, got ${blocks.join(", ")}`);
 assert.equal(Number(js('document.querySelectorAll("#structure-library [data-part]").length')),
   Number(js('parseInt(document.querySelector("#visible-count").textContent)')));
 run("click","#zoom-in");

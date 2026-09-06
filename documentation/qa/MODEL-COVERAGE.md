@@ -46,3 +46,20 @@ Twenty-six meshes intersect the plane but are excluded as torso/shoulder structu
 The current extraction has **535,567 vertices, 749,913 triangles, 18,639,752 binary bytes**. It adds no simplification. The reference uses meshoptimizer with a 0.2% relative-error limit and a 22% index-count target. The [official download page](https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html) provides `isa_BP3D_4.0_obj_99.zip` (136 MB), itself labeled 99% polygon reduction. Those OBJ files remove the reference's additional simplification, not restore unreduced anatomy. Filenames map to IDs, e.g. `FJ1252.obj`. Transform: `[x * .001, z * .001 + .0781112, -y * .001 - .1]` from millimeters/Z-up.
 
 Extraction ran successfully. All source and output positions were finite, triangle indices valid, retained coordinates within the crop, and torso-exclusion names absent. An independent post-write read checked all 596 buffer extents, finite coordinates and index limits. The extractor includes an executable crossing-triangle assertion. `node --check scripts/extract-models.mjs` passed. Visual integration and pediatric/tooth-detail behavior require separate application QA.
+
+## Schematic additions
+
+Added September 6, 2026. `src/schematic-anatomy.js` builds 77 structures that the source dataset does not contain, because the gaps cover most of what an oral and maxillofacial atlas is about. BodyParts3D 4.0 has 55 nerve concepts in total and every one is orbital; its head arteries are the carotids and the intracranial tree.
+
+| Group | Built | Notes |
+| --- | ---: | --- |
+| Nerves | 43 | V3 with the inferior alveolar, mental, incisive, lingual, buccal, mylohyoid and auriculotemporal branches; V2 with the infraorbital, posterior/middle/anterior superior alveolar, greater and lesser palatine branches; the midline nasopalatine nerve; the facial nerve trunk and its five terminal branches |
+| Arteries | 16 | External carotid, lingual, facial, maxillary, inferior alveolar, superficial temporal, posterior superior alveolar, greater palatine |
+| Veins | 8 | Facial, retromandibular, external jugular, pterygoid plexus |
+| Glands | 6 | Parotid gland, parotid duct, submandibular duct |
+| Airway | 2 | Maxillary sinus |
+| Soft tissue | 2 | Temporomandibular articular disc |
+
+Every one of these carries `schematic: true`, is badged in the structure list, the hover label and the inspector, and can be hidden as a set. Courses are fitted at run time to landmarks measured on the licensed meshes, never typed in; `tests/schematic-anatomy.test.mjs` asserts those anchoring rules.
+
+Still absent from both the source and the schematic set: the glossopharyngeal, vagus, accessory and hypoglossal nerves; the pterygopalatine and submandibular ganglia; the palatine tonsils; the cervical lymph nodes; and the frontal, ethmoid and sphenoid sinuses. Independent dental-specialist review of the schematic courses has not been carried out.
