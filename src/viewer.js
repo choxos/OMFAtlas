@@ -146,7 +146,9 @@ export async function createViewer(host, atlas, handlers) {
     atlas.parts.push(part);
     addMesh(part, geometry);
   }
-  const target = new THREE.Vector3(0, 1.57, 0.005);
+  // Look at the jaws, not the middle of the cranium. This is a dental atlas,
+  // and it also lifts the mandible clear of the dock along the bottom edge.
+  const target = new THREE.Vector3(0, 1.543, 0.005);
   let currentState;
   let dentalModel = null,
     dentalKey = "",
@@ -413,9 +415,11 @@ export async function createViewer(host, atlas, handlers) {
         size = box.getSize(new THREE.Vector3()).length();
       }
     }
+    // The scene fills the window now rather than sitting in a grid cell, so
+    // the old overview multiplier framed the head much tighter than intended.
     let distance = Math.max(
       0.04,
-      (size * (currentState?.toothDetail ? 1.5 : 1.7)) /
+      (size * (currentState?.toothDetail ? 1.5 : 2.2)) /
         Math.min(camera.aspect, 1),
     );
     if (explosion > 0 && canExplode()) {
