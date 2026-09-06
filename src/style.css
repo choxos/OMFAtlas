@@ -6142,3 +6142,45 @@ body:not(.details-open) .studio .caption-stack {
     inset: 128px 460px 54px 310px;
   }
 }
+
+/* On a short window the seven stage cards pushed the diagram below the fold,
+   which is the wrong thing to hide: the diagram is what the section is for.
+   The cards become one compact scrolling row and give the height back. */
+@media (max-height: 820px) {
+  .studio .stage-track {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-bottom: 4px;
+    margin: 10px 0 12px;
+    scrollbar-width: thin;
+  }
+  .studio .stage-track button {
+    flex: 0 0 auto;
+    min-width: 104px;
+    padding: 7px 9px;
+    gap: 1px;
+  }
+  .studio .stage-track .stage-index {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
+    margin-bottom: 1px;
+  }
+  .studio .stage-track button strong {
+    font-size: 11.5px;
+  }
+  .studio .stage-track button small {
+    font-size: 9.5px;
+  }
+  .studio #teaching-view .teaching-intro strong {
+    font-size: 15px;
+  }
+  .studio .germ-diagram {
+    max-width: 540px;
+  }
+  .studio .stage-explanation {
+    max-width: 540px;
+  }
+}
