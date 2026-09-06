@@ -1,9 +1,13 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { groups, toothNumber } from "./content.js";
+import { MASTICATORY, groups, toothNumber } from "./content.js";
 import { createExplosionLayout, tissueSeparation } from "./explosion-layout.js";
 import { createSchematicParts, deriveLandmarks } from "./schematic-anatomy.js";
-import { createModelGroup } from "./dental-models.js";
+import {
+  createModelGroup,
+  createPublishedDentitionModel,
+  createPublishedToothModel,
+} from "./dental-models.js";
 import {
   createToothModel,
   createDentitionModel,
@@ -179,6 +183,10 @@ export async function createViewer(host, atlas, handlers) {
     return { texture, ratio: canvas.width / canvas.height };
   };
 
+  // Every tooth one of the two published datasets can show.
+  const PUBLISHED_TEETH = new Set([
+    31, 32, 33, 34, 35, 36, 37, 41, 42, 43, 44, 45, 46, 47,
+  ]);
   let dentalModels = null;
   let dentalModelsPending = null;
   async function loadDentalModels() {
@@ -197,6 +205,9 @@ export async function createViewer(host, atlas, handlers) {
       })();
     return dentalModelsPending;
   }
+
+  // One plane, reused by every published cutaway.
+  const sectionPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
   const pin = new THREE.Group();
   pin.visible = false;
@@ -703,6 +714,14 @@ export async function createViewer(host, atlas, handlers) {
   const api = {
     landmarks: () => landmarks.map((l) => ({ ...l })),
     modelManifest: () => dentalModels?.manifest || null,
+    publishedArch: () => dentalModel?.userData.publishedArch || null,
+    publishedTooth: () =>
+      dentalModel?.userData.published
+        ? {
+            ...dentalModel.userData.published,
+            tissues: dentalModel.userData.tissues,
+          }
+        : null,
     modelGroups: (viewId) => {
       const view = dentalModels?.manifest?.parts;
       if (!view) return [];
@@ -751,10 +770,42 @@ export async function createViewer(host, atlas, handlers) {
               .catch((error) =>
                 onPartsChanged({ failed: 1, message: error.message }),
               );
-        } else if (key)
-          dentalModel = state.toothDetail
-            ? createToothModel(state.fdi)
-            : createDentitionModel(state.age);
+        } else if (key) {
+          const published =
+            state.age !== "adult"
+              ? null
+              : state.toothDetail
+                ? createPublishedToothModel(
+                    dentalModels?.manifest,
+                    dentalModels?.buffer,
+                    state.fdi,
+                  )
+                : createPublishedDentitionModel(
+                    dentalModels?.manifest,
+                    dentalModels?.buffer,
+                  );
+          if (published) dentalModel = published;
+          else {
+            dentalModel = state.toothDetail
+              ? createToothModel(state.fdi)
+              : createDentitionModel(state.age);
+            // The published buffer may simply not be here yet. Fetch it and
+            // rebuild rather than leaving the drawn tooth in place.
+            if (
+              state.age === "adult" &&
+              !dentalModels &&
+              (!state.toothDetail || PUBLISHED_TEETH.has(state.fdi))
+            )
+              loadDentalModels()
+                .then(() => {
+                  dentalKey = "";
+                  if (currentState) api.update(currentState);
+                  onModelsReady();
+                  api.view("oblique", true);
+                })
+                .catch(() => {});
+          }
+        }
         dentalKey = key;
         sectionKey = "";
         if (dentalModel) scene.add(dentalModel);
@@ -762,10 +813,20 @@ export async function createViewer(host, atlas, handlers) {
         camera.updateProjectionMatrix();
         // A published model is metres across in its own frame, so it has to be
         // framed once it is actually in the scene rather than before.
-        if (dentalModel && state.mode === "models")
+        if (
+          dentalModel &&
+          (state.mode === "models" ||
+            dentalModel.userData.published ||
+            dentalModel.userData.publishedArch)
+        )
           requestAnimationFrame(() => view("oblique", true));
       }
-      if (dentalModel && state.mode !== "models")
+      if (
+        dentalModel &&
+        state.mode !== "models" &&
+        !dentalModel.userData.published &&
+        !dentalModel.userData.publishedArch
+      )
         resolutionStatus("Schematic teaching geometry");
       else upgradeSelected();
       if (dentalModel && state.mode === "models") {
@@ -779,7 +840,35 @@ export async function createViewer(host, atlas, handlers) {
           mesh.material.depthWrite = fade >= 1;
         }
       }
-      if (dentalModel && state.toothDetail) {
+      if (dentalModel?.userData.publishedArch) {
+        resolutionStatus(dentalModel.userData.publishedArch.caption);
+        for (const mesh of dentalModel.children) {
+          mesh.visible = !state.hiddenTissues.has(mesh.userData.tissue);
+          const fade = state.opacity?.get(`model-${mesh.userData.tissue}`) ?? 1;
+          mesh.material.transparent = fade < 1;
+          mesh.material.opacity = fade;
+          mesh.material.depthWrite = fade >= 1;
+        }
+      }
+      if (dentalModel && state.toothDetail && dentalModel.userData.published) {
+        const plan = dentalModel.userData.published;
+        resolutionStatus(plan.caption);
+        const radius = dentalModel.userData.radius || 0.01;
+        // The plane sweeps from behind the tooth to its middle, which is what
+        // the depth slider meant on the drawn cutaway.
+        const offset = ((state.sectionDepth ?? 50) / 100) * 2 * radius - radius;
+        sectionPlane.constant = -offset;
+        for (const mesh of dentalModel.children) {
+          mesh.visible = !state.hiddenTissues.has(mesh.userData.tissue);
+          mesh.material.clippingPlanes = state.cutaway ? [sectionPlane] : null;
+          mesh.material.clipShadows = true;
+          const fade = state.opacity?.get(`model-${mesh.userData.tissue}`) ?? 1;
+          mesh.material.transparent = fade < 1;
+          mesh.material.opacity = fade;
+          mesh.material.depthWrite = fade >= 1;
+          mesh.material.needsUpdate = true;
+        }
+      } else if (dentalModel && state.toothDetail) {
         const nextSection = `${state.cutaway}-${state.sectionDepth}`;
         if (nextSection !== sectionKey) {
           setToothSection(dentalModel, state.cutaway, state.sectionDepth);
@@ -797,7 +886,10 @@ export async function createViewer(host, atlas, handlers) {
           (part.schematic ? state.schematic !== false : true) &&
           (state.isolated
             ? part.id === state.selected
-            : state.layers.has(part.group));
+            : state.layers.has(part.group) ||
+              // The muscles of mastication stay on when the muscle layer is
+              // off, because they are the subject rather than a system.
+              (state.masticatory !== false && MASTICATORY.has(part.id)));
         const selected = part.id === state.selected;
         mesh.material.color.set(
           selected ? "#54aab9" : groups[part.group].color,

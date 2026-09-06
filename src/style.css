@@ -7283,3 +7283,48 @@ body.source-models .studio .caption-stack {
     display: none;
   }
 }
+
+/* The dock grew by a line when the separation note moved next to its control,
+   and the caption band above it was pinned to a pixel offset that no longer
+   cleared it. */
+.studio .caption-stack {
+  inset: auto auto 248px 50%;
+}
+
+.studio #mode-bar {
+  inset: auto auto 312px 50%;
+}
+
+@media (min-width: 861px) and (max-height: 800px) {
+  .studio .caption-stack {
+    inset: auto auto 224px 50%;
+  }
+
+  .studio #mode-bar {
+    inset: auto auto 284px 50%;
+  }
+}
+
+/* A published cutaway states what it is under its controls. */
+.studio #dental-3d-controls.published #tissue-3d-status {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.studio #dental-3d-controls.published #tissue-3d-status strong {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.studio #dental-3d-controls.published #tissue-3d-status button {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--teal);
+  text-decoration: underline;
+}

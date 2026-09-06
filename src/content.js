@@ -1,3 +1,23 @@
+// The five muscles of mastication, as the fourteen meshes that carry them.
+// They are the reason this atlas exists, so they are on whether or not the
+// whole muscle layer is, which is 175 meshes and mostly not oral.
+export const MASTICATORY = new Set([
+  "BP3-FMA49001", // superficial masseter, right
+  "BP3-FMA49002", // superficial masseter, left
+  "BP3-FMA49004", // deep masseter, right
+  "BP3-FMA49005", // deep masseter, left
+  "BP3-FMA49007", // temporalis, right
+  "BP3-FMA49008", // temporalis, left
+  "BP3-FMA49012", // medial pterygoid, right
+  "BP3-FMA49013", // medial pterygoid, left
+  "BP3-FMA49022", // lower head of lateral pterygoid, right
+  "BP3-FMA49023", // lower head of lateral pterygoid, left
+  "BP3-FMA49024", // upper head of lateral pterygoid, right
+  "BP3-FMA49025", // upper head of lateral pterygoid, left
+  "BP3-FMA46835", // buccinator, right
+  "BP3-FMA46836", // buccinator, left
+]);
+
 export const groups = {
   bones: { name: "Bones & landmarks", color: "#e2d4b9" },
   teeth: { name: "Permanent dentition", color: "#fff7e4" },

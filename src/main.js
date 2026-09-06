@@ -1,6 +1,7 @@
 import "./style.css";
 import { createViewer } from "./viewer.js";
 import {
+  MASTICATORY,
   groups,
   topics,
   questions,
@@ -100,6 +101,7 @@ const state = {
   isolated: false,
   opacity: new Map(),
   landmark: null,
+  masticatory: true,
   hidden: new Set(),
   modelView: "jaw",
   explode: 0,
@@ -335,10 +337,14 @@ function updateScene() {
   document.querySelector("#isolate").disabled = !state.selected && !state.toothDetail;
   document.querySelector("#isolate").innerHTML =
     `${icon("eye")} <span>${state.toothDetail ? "Back to assembly" : state.arches || state.age !== "adult" ? "Inspect selected tooth" : state.isolated ? "Restore assembly" : "Isolate structure"}</span>`;
+  const publishedArch = viewer?.publishedArch?.();
+  const publishedTooth = viewer?.publishedTooth?.();
   document.querySelector("#visible-count").textContent = state.toothDetail
     ? "3D tooth & periodontium"
     : state.arches || state.age !== "adult"
-      ? `${getDentitionFDIs(state.age).length} schematic teeth`
+      ? publishedArch
+        ? "14 published lower teeth"
+        : `${getDentitionFDIs(state.age).length} schematic teeth`
       : `${state.isolated ? 1 : atlas.parts.filter((p) => state.layers.has(p.group)).length} structures visible`;
   document.querySelector("#dental-3d-controls").hidden =
     !state.toothDetail || state.mode !== "3d";
@@ -347,12 +353,16 @@ function updateScene() {
       ? "Back to head & neck"
       : "Back to dental arches";
   document.querySelector("#age-notice").textContent = state.toothDetail
-    ? state.perioFocus
-      ? "Schematic periodontium · Gingiva, ligament, cementum and alveolar bone at the cervical third"
-      : "Schematic tooth anatomy · Tissue thickness exaggerated for visibility"
+    ? publishedTooth
+      ? publishedTooth.caption
+      : state.perioFocus
+        ? "Schematic periodontium · Gingiva, ligament, cementum and alveolar bone at the cervical third"
+        : "Schematic tooth anatomy · Tissue thickness exaggerated for visibility"
     : state.age === "adult"
       ? state.arches
-        ? "Permanent dentition · 32 teeth including third molars · Schematic arches"
+        ? publishedArch
+          ? publishedArch.caption
+          : "Permanent dentition · 32 teeth including third molars · Schematic arches"
         : "Adult male reference · Select a tooth, then zoom to reveal internal anatomy"
       : state.age === "child"
         ? "Primary dentition · 20 teeth · Schematic arches, not a pediatric head scan"
@@ -393,8 +403,12 @@ function inspectTooth(fdi = state.fdi, { periodontium = false } = {}) {
   document
     .querySelectorAll("[data-tissue3d]")
     .forEach((b) => b.setAttribute("aria-pressed", "true"));
+  renderToothTissues();
   requestAnimationFrame(() =>
-    requestAnimationFrame(() => viewer?.view("oblique", true)),
+    requestAnimationFrame(() => {
+      viewer?.view("oblique", true);
+      renderToothTissues();
+    }),
   );
 }
 
@@ -512,7 +526,7 @@ function renderBrowser() {
     return `${heading}<button data-part="${p.id}" class="structure ${p.id === state.selected ? "selected" : ""} ${isSchematic(p) ? "is-schematic" : ""}"><span class="tiny-dot" style="background:${groups[p.group].color}"></span><span>${escape(displayName(p))}</span>${isSchematic(p) ? SCHEMATIC_BADGE : ""}${toothNumber(p.name) ? `<small>${toothNumber(p.name)}</small>` : ""}${icon("arrow")}</button>`;
   }).join("");
   const browser = document.querySelector("#browser");
-  browser.innerHTML = `<div class="section-label"><h3>${query ? "Search results" : "Systems"}</h3><span>${matching.length}</span></div>${!query ? `<div class="layer-presets"><button data-preset="all">All</button><button data-preset="skeleton">Skeleton</button><button data-preset="vascular">Vessels</button><button data-preset="neuro">Nerves</button><button data-preset="none">Hide all</button></div><label class="layer schematic-switch"><span class="layer-dot schematic-dot"></span><span>Schematic structures</span><span class="layer-count">${atlas.parts.filter(isSchematic).length}</span><input type="checkbox" data-schematic ${state.schematic ? "checked" : ""} aria-label="Show schematic structures"></label><p class="fine-print schematic-note">Nerves, vessels, glands, the sinus and the joint disc that the source scan omits, drawn onto this skull.</p>` : ""}
+  browser.innerHTML = `<div class="section-label"><h3>${query ? "Search results" : "Systems"}</h3><span>${matching.length}</span></div>${!query ? `<div class="layer-presets"><button data-preset="all">All</button><button data-preset="skeleton">Skeleton</button><button data-preset="vascular">Vessels</button><button data-preset="neuro">Nerves</button><button data-preset="none">Hide all</button></div><label class="layer schematic-switch"><span class="layer-dot schematic-dot"></span><span>Schematic structures</span><span class="layer-count">${atlas.parts.filter(isSchematic).length}</span><input type="checkbox" data-schematic ${state.schematic ? "checked" : ""} aria-label="Show schematic structures"></label><p class="fine-print schematic-note">Nerves, vessels, glands, the sinus and the joint disc that the source scan omits, drawn onto this skull.</p><label class="layer schematic-switch"><span class="layer-dot" style="background:${groups.muscles.color}"></span><span>Muscles of mastication</span><span class="layer-count">${atlas.parts.filter((p) => MASTICATORY.has(p.id)).length}</span><input type="checkbox" data-masticatory ${state.masticatory ? "checked" : ""} aria-label="Show the muscles of mastication"></label><p class="fine-print schematic-note">Masseter, temporalis, the pterygoids and buccinator stay on with the muscle layer off, because they are what this atlas is about.</p>` : ""}
     ${
       query
         ? ""
@@ -595,7 +609,14 @@ function renderBrowser() {
   if (showHidden)
     showHidden.onclick = () => {
       state.hidden.clear();
+  state.masticatory = true;
       renderBrowser();
+      updateScene();
+    };
+  const masticatory = browser.querySelector("[data-masticatory]");
+  if (masticatory)
+    masticatory.onchange = () => {
+      state.masticatory = masticatory.checked;
       updateScene();
     };
   browser.querySelectorAll("[data-opacity]").forEach((slider) => {
@@ -856,6 +877,37 @@ function renderModelControls() {
     };
   });
   host.querySelector("#model-sources").onclick = () => modelSources();
+}
+
+function renderToothTissues() {
+  const published = viewer?.publishedTooth?.();
+  const host = document.querySelector(".tissue-3d-buttons");
+  const status = document.querySelector("#tissue-3d-status");
+  if (!host) return;
+  if (!published) {
+    document.querySelector("#dental-3d-controls")?.classList.remove("published");
+    return;
+  }
+  document.querySelector("#dental-3d-controls")?.classList.add("published");
+  host.innerHTML = published.tissues
+    .map(
+      (tissue) =>
+        `<button data-tissue3d="${tissue.id}" aria-pressed="${!state.hiddenTissues.has(tissue.id)}">${tissue.name}</button>`,
+    )
+    .join("");
+  host.querySelectorAll("[data-tissue3d]").forEach((button) => {
+    button.onclick = () => {
+      const id = button.dataset.tissue3d;
+      state.hiddenTissues.has(id)
+        ? state.hiddenTissues.delete(id)
+        : state.hiddenTissues.add(id);
+      button.setAttribute("aria-pressed", String(!state.hiddenTissues.has(id)));
+      updateScene();
+    };
+  });
+  if (status)
+    status.innerHTML = `<strong>${escape(published.note)}</strong><span>${escape(published.limits)}</span><button id="tooth-model-sources">Sources and method</button>`;
+  status.querySelector("#tooth-model-sources").onclick = () => modelSources();
 }
 
 function landmarkBlock(part) {
@@ -1457,6 +1509,7 @@ try {
     onOrient: drawOrientation,
     onModelsReady: () => {
       if (state.mode === "models") renderModelControls();
+      if (state.toothDetail) renderToothTissues();
     },
     // The facial muscles arrive after the first frame, so the counts and the
     // structure list are rebuilt once they are in the scene.

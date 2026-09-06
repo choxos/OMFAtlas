@@ -132,3 +132,188 @@ export function groupsInView(manifest, viewId) {
       seen.push(key);
   return seen;
 }
+
+// ---- The zoom in cutaway --------------------------------------------------
+//
+// Zooming into a tooth used to open procedural geometry for every tooth in the
+// mouth. Where a published model of that tooth exists it is used instead, and
+// only one dataset is ever used at a time: mixing a pulp cavity from one jaw
+// into a crown from another would be inventing anatomy, not showing it.
+//
+//   Lower first molars come from Kang, which is the only one of the two that
+//   carries a pulp cavity, so it is the only one that can show a canal.
+//   The other lower teeth come from Diaz, with their ligament and the alveolar
+//   bone they sit in. That dataset has no pulp, and the interface says so.
+//   Upper teeth have no published model here and stay procedural.
+
+const CUTAWAY_TISSUES = {
+  tooth: { name: "Tooth", color: "#f2e7cf" },
+  pulp: { name: "Pulp & canals", color: "#b8455c" },
+  pdl: { name: "Ligament", color: "#c05f7a" },
+  bone: { name: "Bone", color: "#d9cfba" },
+};
+
+/** Which published parts serve this tooth, or null if none do. */
+export function publishedToothPlan(manifest, fdi) {
+  if (!manifest) return null;
+  const has = (id) => manifest.parts.find((part) => part.id === id);
+  if (fdi === 46 || fdi === 36) {
+    const parts = [
+      { part: has("fang-tooth"), tissue: "tooth" },
+      { part: has("fang-pulp"), tissue: "pulp" },
+      { part: has("fang-pdl"), tissue: "pdl" },
+    ].filter((entry) => entry.part);
+    if (parts.length < 3) return null;
+    return {
+      source: "fang",
+      // Kang modeled the right first molar. The left one is its mirror, and
+      // that is a reflection rather than a second measurement.
+      mirrored: fdi === 36,
+      caption: `FDI ${fdi} · immature first molar · Kang 2024`,
+      note: "The outer surface, the pulp cavity and the ligament of a mandibular first permanent molar, modeled from the cone beam CT of a seven year old. The roots are still forming and the apices are open.",
+      limits:
+        "An immature tooth in mixed dentition, not an adult standard form, and its outer surface is not divided into enamel and dentin. The pulp cavity is the cavity that was modeled, not pulp tissue: no apical foramen, no lateral canals, no vessels and no nerve, and no canal length or preparation amount can be measured from it. The ligament is an even shell; the source gives 0.15 mm in its methods and 0.2 mm in its discussion.",
+      parts,
+    };
+  }
+  const tooth = has(`tooth-${fdi}`);
+  const pdl = has(`pdl-${fdi}`);
+  if (!tooth || !pdl) return null;
+  return {
+    source: "diaz",
+    mirrored: false,
+    caption: `FDI ${fdi} · synthetic lower jaw · Diaz and colleagues 2024`,
+    note: "The tooth, the ligament shell around its root and the alveolar bone it sits in, from a synthetic lower jaw. Fade the bone to follow the root into its socket.",
+    limits:
+      "A synthetic model of one jaw, not a patient and not a scan. The ligament is an even 0.25 mm shell extruded around the root, so its width is a modeling choice and cannot be read as a measurement. This dataset carries no pulp, so this tooth has no canal to show: the first molars do, and they come from a different study.",
+    parts: [
+      { part: tooth, tissue: "tooth" },
+      { part: pdl, tissue: "pdl" },
+      { part: has("jaw-cortical"), tissue: "bone" },
+      { part: has("jaw-cancellous"), tissue: "bone" },
+    ].filter((entry) => entry.part),
+  };
+}
+
+function geometryFor(part, buffer) {
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(
+      new Float32Array(buffer, part.positions, part.vertexCount * 3),
+      3,
+    ),
+  );
+  geometry.setAttribute(
+    "normal",
+    new THREE.BufferAttribute(
+      new Float32Array(buffer, part.normals, part.vertexCount * 3),
+      3,
+    ),
+  );
+  geometry.setIndex(
+    new THREE.BufferAttribute(
+      new Uint32Array(buffer, part.indices, part.indexCount),
+      1,
+    ),
+  );
+  return geometry;
+}
+
+/** The cutaway for one tooth, centred on that tooth and scaled to metres. */
+export function createPublishedToothModel(manifest, buffer, fdi) {
+  const plan = publishedToothPlan(manifest, fdi);
+  if (!plan) return null;
+
+  // Centre on the tooth itself, not on the bone that surrounds it, so a whole
+  // jaw of alveolar bone does not drag the view away from the root.
+  const anchor = plan.parts.find((entry) => entry.tissue === "tooth").part;
+  const center = anchor.bounds[0].map(
+    (low, axis) => (low + anchor.bounds[1][axis]) / 2,
+  );
+
+  const group = new THREE.Group();
+  const tissues = [];
+  for (const { part, tissue } of plan.parts) {
+    const style = CUTAWAY_TISSUES[tissue];
+    const mesh = new THREE.Mesh(
+      geometryFor(part, buffer),
+      new THREE.MeshStandardMaterial({
+        color: style.color,
+        roughness: 0.58,
+        metalness: 0,
+        side: THREE.DoubleSide,
+      }),
+    );
+    mesh.position.set(-center[0], -center[1], -center[2]);
+    mesh.userData.tissue = tissue;
+    mesh.userData.modelPart = part;
+    mesh.renderOrder = tissue === "pulp" ? 2 : tissue === "pdl" ? 1 : 0;
+    group.add(mesh);
+    if (!tissues.includes(tissue)) tissues.push(tissue);
+  }
+  group.scale.set(plan.mirrored ? -0.001 : 0.001, 0.001, 0.001);
+  group.rotation.x = -Math.PI / 2;
+  group.userData.published = plan;
+  group.userData.tissues = tissues.map((id) => ({ id, ...CUTAWAY_TISSUES[id] }));
+  group.userData.radius =
+    0.001 *
+    Math.hypot(
+      ...anchor.bounds[1].map((high, axis) => high - anchor.bounds[0][axis]),
+    ) *
+    0.5;
+  return group;
+}
+
+/** The whole published lower dentition: fourteen teeth, their ligaments and
+ *  the bone they sit in. The upper arch has no published model in either
+ *  dataset, so this is a lower arch and the interface says so. */
+export function createPublishedDentitionModel(manifest, buffer) {
+  if (!manifest) return null;
+  const teeth = manifest.parts.filter(
+    (part) => part.source === "diaz" && part.group === "tooth",
+  );
+  if (teeth.length !== 14) return null;
+  const wanted = manifest.parts.filter((part) => part.source === "diaz");
+
+  const lo = [Infinity, Infinity, Infinity];
+  const hi = [-Infinity, -Infinity, -Infinity];
+  for (const part of teeth)
+    for (let axis = 0; axis < 3; axis++) {
+      lo[axis] = Math.min(lo[axis], part.bounds[0][axis]);
+      hi[axis] = Math.max(hi[axis], part.bounds[1][axis]);
+    }
+  const center = lo.map((low, axis) => (low + hi[axis]) / 2);
+
+  const group = new THREE.Group();
+  for (const part of wanted) {
+    const style = CUTAWAY_TISSUES[part.group] || MODEL_GROUPS[part.group];
+    const mesh = new THREE.Mesh(
+      geometryFor(part, buffer),
+      new THREE.MeshStandardMaterial({
+        color: style.color,
+        roughness: 0.58,
+        metalness: 0,
+        side: THREE.DoubleSide,
+      }),
+    );
+    mesh.position.set(-center[0], -center[1], -center[2]);
+    mesh.userData.tissue = part.group;
+    mesh.userData.modelPart = part;
+    if (part.fdi) mesh.userData.fdi = part.fdi;
+    group.add(mesh);
+  }
+  group.scale.setScalar(0.001);
+  group.rotation.x = -Math.PI / 2;
+  group.userData.publishedArch = {
+    caption: "Lower arch · synthetic lower jaw · Diaz and colleagues 2024",
+    note: "Fourteen lower teeth with a ligament shell around every root, in the alveolar bone they sit in. Select a tooth to inspect it, or fade the bone to follow a root into its socket.",
+    limits:
+      "A synthetic model of one lower jaw, not a patient and not a scan. Its ligament is an even 0.25 mm shell extruded around each root, so its width is a modeling choice. The upper arch is not part of this dataset and no published model of it is redistributed here; the schematic arches remain available for that.",
+  };
+  group.userData.tissues = ["tooth", "pdl", "bone"].map((id) => ({
+    id,
+    ...CUTAWAY_TISSUES[id],
+  }));
+  return group;
+}
