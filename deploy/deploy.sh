@@ -20,5 +20,6 @@ find dist/models -type f \( -name '*.bin' -o -name '*.json' \) -print0 |
     xargs -0 -P 4 -I {} gzip -9 -k -f {}
 
 cp deploy/omfatlas.xera.ac.nginx ~/omfatlas.xera.ac.nginx
+cp deploy/omfatlas-headers.conf deploy/omfatlas-install-csp.sh ~/
 
 echo "Built $(du -sh dist | cut -f1) into dist/. nginx serves it directly; no reload needed for content changes."

@@ -3,11 +3,19 @@
 # deploy/deploy.sh copies this file to the server's home directory on every run,
 # so ~/omfatlas.xera.ac.nginx is always a fresh copy of this file.
 #
-# Install (needs root):
+# First install (needs root):
 #   sudo cp ~/omfatlas.xera.ac.nginx /etc/nginx/sites-available/omfatlas.xera.ac
 #   sudo ln -sfn /etc/nginx/sites-available/omfatlas.xera.ac /etc/nginx/sites-enabled/omfatlas.xera.ac
 #   sudo nginx -t && sudo systemctl reload nginx
 #   sudo certbot --nginx -d omfatlas.xera.ac --agree-tos -m ahmad.pub@gmail.com --redirect
+#
+# AFTER certbot has run, do NOT copy this file over the installed one again:
+# certbot rewrote that file in place to add the TLS block, and this copy is
+# still HTTP only, so overwriting it would take the certificate configuration
+# with it. To change the headers, edit deploy/omfatlas-headers.conf and run:
+#   sudo ~/omfatlas-install-csp.sh
+# which inserts them into the block certbot produced and rolls back if nginx
+# rejects the result.
 #
 # This file is HTTP-only on purpose. certbot --nginx rewrites it in place, adding
 # the listen 443 block, the certificate paths, and the 80 to 443 redirect, exactly
