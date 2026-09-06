@@ -40,6 +40,7 @@ import {
 import { getDentitionFDIs } from "./dental-geometry.js";
 import { TISSUE_ORDER, tissueGroup } from "./explosion-layout.js";
 
+const touchLayout = () => matchMedia("(max-width: 860px)").matches;
 const icon = (name) => {
   const paths = {
     search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>',
@@ -56,6 +57,7 @@ const icon = (name) => {
     eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
     sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.5 1.5m11.2 11.2 1.5 1.5M19.1 4.9l-1.5 1.5M6.4 17.6l-1.5 1.5"/>',
     moon: '<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>',
+    separate: '<path d="M12 4v16"/><path d="m7 9-4 3 4 3"/><path d="m17 9 4 3-4 3"/>',
   };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.tooth}</svg>`;
 };
@@ -155,7 +157,7 @@ document.querySelector("#app").innerHTML = `
     <div id="browser"></div>
     <div class="sidebar-bottom"><button id="coverage">${icon("info")} Model coverage</button><span id="source-caption">BodyParts3D 4.0 · Adult reference</span></div>
   </aside>
-  <button id="mobile-library" aria-expanded="false">${icon("layers")}<span>Layers</span></button>
+  <button id="mobile-library" aria-expanded="false" aria-label="Layers and structure library" title="Layers and structure library">${icon("layers")}<span>Layers</span></button>
 
   <div class="view-controls panel" aria-label="Camera views">
     <div class="view-pills">${["oblique", "anterior", "lateral", "inferior"].map((v, i) => `<button data-view="${v}" class="${i === 0 ? "active" : ""}" title="${v[0].toUpperCase() + v.slice(1)} view"><span>${v[0].toUpperCase() + v.slice(1)}</span></button>`).join("")}</div>
@@ -163,7 +165,7 @@ document.querySelector("#app").innerHTML = `
     <div class="zoom-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit" aria-label="Fit visible anatomy" title="Fit visible anatomy">${icon("expand")}</button></div>
   </div>
 
-  <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active">3D anatomy</button><button data-mode="section">Tooth &amp; periodontium</button><button data-mode="canals">Root canal explorer</button><button data-mode="development">Tooth development</button></div>
+  <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active"><span>3D anatomy</span></button><button data-mode="section"><span>Tooth &amp; periodontium</span></button><button data-mode="canals"><span>Root canal explorer</span></button><button data-mode="development"><span>Tooth development</span></button></div>
   <div id="load-status" class="panel" role="status"><strong>Preparing the anatomy</strong><span id="load-detail">Loading the head and neck assembly</span><div class="loading-track"><i id="load-bar"></i></div></div>
 
   <section id="dental-3d-controls" class="panel" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><label class="section-slider">Section depth <input id="section-depth" type="range" min="0" max="100" value="50"></label><div class="tissue-3d-buttons">${[
@@ -187,6 +189,7 @@ document.querySelector("#app").innerHTML = `
   <div class="stage-bottom panel">
     <div class="dock-row dock-selection"><div class="stage-bottom-name"><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} <span>Isolate structure</span></button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div>
     <div class="dock-row dock-separation"><div class="explode-control"><div class="explode-label"><label for="explode">Separate structures</label><output id="explode-output">0%</output></div><input id="explode" type="range" min="0" max="100" value="0" aria-label="Separate structures"><div class="slider-endpoints"><span>Assembled</span><span>Every structure</span></div></div><button id="reassemble-dock" title="Reassemble and reset the view">${icon("reset")}<span>Reset</span></button></div>
+    <button id="dock-switch" aria-pressed="false" aria-label="Separation controls" title="Separation controls">${icon("separate")}</button>
   </div>
 
   <aside class="inspector panel" id="inspector" aria-label="Anatomy details"></aside><button class="close-inspector" id="close-inspector" aria-label="Close anatomy details">×</button>
@@ -324,7 +327,7 @@ function updateScene() {
       : state.selected ? "Selected structure" : "Click a structure to inspect it";
   document.querySelector("#isolate").disabled = !state.selected && !state.toothDetail;
   document.querySelector("#isolate").innerHTML =
-    `${icon("eye")} ${state.toothDetail ? "Back to assembly" : state.arches || state.age !== "adult" ? "Inspect selected tooth" : state.isolated ? "Restore assembly" : "Isolate structure"}`;
+    `${icon("eye")} <span>${state.toothDetail ? "Back to assembly" : state.arches || state.age !== "adult" ? "Inspect selected tooth" : state.isolated ? "Restore assembly" : "Isolate structure"}</span>`;
   document.querySelector("#visible-count").textContent = state.toothDetail
     ? "3D tooth & periodontium"
     : state.arches || state.age !== "adult"
@@ -434,6 +437,8 @@ function selectPart(id) {
   state.toothDetail = false;
   state.selected = id;
   state.layers.add(part.group);
+  showSeparation(false);
+  if (touchLayout()) collapseLibrary();
   const fdi = toothNumber(part.name);
   if (fdi) {
     state.fdi = fdi;
@@ -590,12 +595,13 @@ function setExplosion(progress) {
   if (input) input.value = String(state.explode);
   const output = document.querySelector("#explode-output");
   if (output) output.value = `${state.explode}%`;
+  if (state.explode > 0 && touchLayout()) showSeparation(true);
   updateScene();
   if (wasInventory !== (state.explode >= 95)) {
     renderBrowser();
     document.querySelector("#browser").scrollTop = 0;
-    document.querySelector("#mobile-library").textContent = state.explode >= 95 ? "Parts inventory" : "Layers & structure library";
-    if (matchMedia("(max-width: 760px)").matches) {
+    document.querySelector("#mobile-library span").textContent = state.explode >= 95 ? "Parts inventory" : "Layers";
+    if (touchLayout()) {
       document.querySelector(".sidebar").classList.toggle("expanded", state.explode >= 95);
       document.querySelector("#mobile-library").setAttribute("aria-expanded", String(state.explode >= 95));
     }
@@ -852,6 +858,10 @@ function setMode(mode) {
   document
     .querySelectorAll("[data-mode]")
     .forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
+  /* A phone has one column, so the teaching layer and the notes sheet would
+     be drawn over each other. The teaching layer is what was just asked for;
+     the Details button reopens the notes over it. */
+  if (mode !== "3d" && touchLayout()) showDetails(false);
   renderTeaching();
   if (atlas) updateScene();
 }
@@ -1140,6 +1150,23 @@ document.querySelector("#mobile-library").onclick = (e) => {
   const open = document.querySelector(".sidebar").classList.toggle("expanded");
   e.currentTarget.setAttribute("aria-expanded", String(open));
 };
+/* The touch dock is one row deep, so the selection and separation controls
+   take turns in it. On wide windows both are on screen and the switch is not
+   rendered at all. */
+const collapseLibrary = () => {
+  document.querySelector(".sidebar").classList.remove("expanded");
+  document
+    .querySelector("#mobile-library")
+    .setAttribute("aria-expanded", "false");
+};
+const showSeparation = (on) => {
+  document.body.classList.toggle("separating", on);
+  document
+    .querySelector("#dock-switch")
+    .setAttribute("aria-pressed", String(on));
+};
+document.querySelector("#dock-switch").onclick = () =>
+  showSeparation(!document.body.classList.contains("separating"));
 document.querySelector("#search").oninput = (e) => {
   state.query = e.target.value;
   if (atlas) renderBrowser();

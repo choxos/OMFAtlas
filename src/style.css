@@ -6460,6 +6460,14 @@ body:not(.details-open) .studio .caption-stack {
     inset: 70px 12px 114px 12px;
   }
 
+  /* Between 761px and 860px the old layout hid the Details button because it
+     kept the notes column permanently open; this layout does not, so those
+     windows had a sheet with nothing to open it. Landscape phones live here. */
+  .studio #toggle-details {
+    display: inline-flex;
+    align-items: center;
+  }
+
   /* The title block is the only thing competing with the model up top. */
   .studio h1#stage-title {
     font-size: 19px;
@@ -6559,5 +6567,408 @@ body.tooth-inspection .studio #consent {
     bottom: 62px;
     width: auto;
     max-width: none;
+  }
+}
+
+/* Both dock rows are on screen at once on a wide window, so the switch that
+   swaps between them is only built for touch. */
+.studio #dock-switch {
+  display: none;
+}
+
+/* ---- Touch layout, third pass --------------------------------------------
+
+   Three bands of chrome plus the tab bar still took 228px of an 844px phone.
+   There is one band now, and it takes 108px:
+
+     tab bar   at --mb-safe, --mb-tabs tall
+     the band  at --mb-b, --mb-row tall
+     --mb-c    the first free line above it, for sheets and the tooth tools
+
+   Every panel derives its offset from those, so the stack cannot drift apart
+   again. Four things had to move for one band to be enough. The camera views
+   go to the top right under the window actions. The layers toggle sits in the
+   padding the dock row leaves at its left, because it is a sibling of the
+   dock and cannot be a flex item of it. The dock is one row deep, and the
+   selection and separation controls take turns in it. On the dental tab the
+   mode selector takes the band instead, and the dock steps aside for it.
+
+   Three things were also plainly broken on a phone and are fixed here: the
+   mode selector sat under the details sheet where no mode could be tapped,
+   opening the layers sheet hid the only button that closes it, and the tooth
+   cutaway's tissue toggles were pushed off the right edge of a 104px strip.
+   The notes sheet's floating close button anchored itself to a height the
+   sheet does not have, so it drifted out over the model; the Details button
+   in the corner already closes the sheet and is always on screen. */
+
+@media (max-width: 860px) {
+  .studio {
+    --mb-safe: max(8px, env(safe-area-inset-bottom));
+    --mb-tabs: 48px;
+    --mb-row: 46px;
+    --mb-b: calc(var(--mb-safe) + var(--mb-tabs) + 6px);
+    --mb-c: calc(var(--mb-b) + var(--mb-row) + 6px);
+  }
+
+  /* An old `nav { width: 100% }` rule outranked the left/right pair and hung
+     the bar 12px off the right edge of the window. */
+  .studio .tab-bar {
+    inset: auto 12px var(--mb-safe) 12px;
+    width: auto;
+  }
+
+  .studio .nav-button {
+    height: 40px;
+    min-height: 0;
+  }
+
+  /* Camera views, top right under the window actions. */
+  .studio .view-controls,
+  body.tooth-inspection .studio .view-controls {
+    inset: calc(max(14px, env(safe-area-inset-top)) + 52px)
+      max(12px, env(safe-area-inset-right)) auto auto;
+    left: auto;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  /* An old rule caps the pill row at `calc(100% - 72px)` to leave room for a
+     zoom cluster that this layout hides, which squeezed the four labels into
+     20px each. */
+  .studio .view-controls .view-pills {
+    max-width: none;
+  }
+
+  .studio .view-controls button {
+    flex: none;
+    width: 38px;
+    height: 32px;
+  }
+
+  .studio .view-pills button::after {
+    font-size: 9.5px;
+  }
+
+  /* The layers toggle is a sibling of the dock rather than a child, so it
+     cannot be a flex item of it; it is placed over the padding the dock row
+     leaves at its left instead. That is what removes the second band. */
+  .studio #mobile-library {
+    inset: auto auto calc(var(--mb-b) + 6px) 18px;
+    z-index: 7;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-right: 1px solid var(--line-soft);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--muted);
+  }
+
+  .studio #mobile-library span {
+    display: none;
+  }
+
+  .studio #mobile-library svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* The toggle is also the way back out of the sheet, so it cannot hide
+     behind it. The sheet stops above the dock and the toggle takes the open
+     state. */
+  .studio .sidebar.expanded ~ #mobile-library {
+    display: inline-flex;
+    background: var(--navy);
+    color: var(--on-navy);
+  }
+
+  /* Band B: the dental mode selector, which used to sit at 224px with the
+     details sheet drawn over it, so none of its four modes could be tapped. */
+  .studio #mode-bar,
+  body.teaching .studio #mode-bar,
+  body.teaching.details-open .studio #mode-bar,
+  body.tooth-inspection .studio #mode-bar {
+    inset: auto 12px var(--mb-b) 12px;
+    height: var(--mb-row);
+    z-index: 8;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    /* The teaching layout sizes this bar to its content and centers it beside
+       a sidebar that does not exist here; left alone it collapses to 8px. */
+    width: auto;
+    max-width: none;
+    margin-inline: 0;
+    padding: 3px;
+  }
+
+  .studio #mode-bar button {
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+    padding: 0 4px;
+    font-size: 11px;
+  }
+
+  /* Four full mode names do not fit at 390px, so they shorten in place. */
+  .studio #mode-bar button span {
+    display: none;
+  }
+
+  .studio #mode-bar [data-mode="3d"]::after {
+    content: "3D";
+  }
+
+  .studio #mode-bar [data-mode="section"]::after {
+    content: "Section";
+  }
+
+  .studio #mode-bar [data-mode="canals"]::after {
+    content: "Canals";
+  }
+
+  .studio #mode-bar [data-mode="development"]::after {
+    content: "Development";
+  }
+
+  /* One dock row, not two, and it carries the layers toggle on its left. */
+  .studio .stage-bottom {
+    inset: auto 12px var(--mb-b) 12px;
+    flex-direction: row;
+    align-items: stretch;
+    min-height: 0;
+  }
+
+  .studio .dock-row {
+    flex: 1;
+    min-width: 0;
+    gap: 8px;
+    height: 44px;
+    padding: 0 2px 0 52px;
+  }
+
+  .studio .dock-selection {
+    border-bottom: 0;
+  }
+
+  .studio .dock-separation {
+    display: none;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  body.separating .studio .dock-selection {
+    display: none;
+  }
+
+  body.separating .studio .dock-separation {
+    display: flex;
+  }
+
+  .studio #dock-switch {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 46px;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--line-soft);
+    border-radius: 0;
+    background: none;
+    color: var(--muted);
+  }
+
+  .studio #dock-switch svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .studio #dock-switch[aria-pressed="true"] {
+    background: var(--navy);
+    color: var(--on-navy);
+  }
+
+  .studio .stage-bottom-name {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .studio .dock-selection strong {
+    display: block;
+    overflow: hidden;
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* The row is one line tall, so the caption below the name goes. */
+  .studio .dock-selection #selection-caption {
+    display: none;
+  }
+
+  .studio #isolate {
+    flex-shrink: 0;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+
+  .studio #isolate span {
+    display: none;
+  }
+
+  .studio .stage-bottom [data-clear-selection] {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+  }
+
+  /* The separation row loses its stacked label and endpoints for the slider. */
+  .studio .dock-separation .explode-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* The slider's own label is stacked above it on a wide window, which this
+     row has no height for. The input carries its accessible name already. */
+  .studio .dock-separation .explode-control::before {
+    content: "Separate";
+    order: 0;
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-soft);
+  }
+
+  .studio .dock-separation .explode-control input[type="range"] {
+    order: 1;
+    flex: 1;
+    width: auto;
+  }
+
+  .studio .dock-separation .explode-label {
+    order: 2;
+    flex-shrink: 0;
+    margin: 0;
+  }
+
+  .studio .dock-separation .explode-label label {
+    display: none;
+  }
+
+  .studio .dock-separation .explode-label output {
+    min-width: 42px;
+    padding: 2px 6px;
+    font-size: 10.5px;
+  }
+
+  .studio .dock-separation .slider-endpoints {
+    display: none;
+  }
+
+  .studio .dock-separation #reassemble-dock {
+    flex-direction: row;
+    height: 36px;
+    padding: 0 4px 0 11px;
+  }
+
+  .studio .dock-separation #reassemble-dock span {
+    display: none;
+  }
+
+  /* The layers sheet stops above the dock so its own toggle stays reachable;
+     that was the only way to close it and the sheet was covering it. */
+  .studio .sidebar,
+  body.tooth-inspection .studio .sidebar {
+    inset: auto 12px var(--mb-c) 12px;
+    max-height: min(58dvh, 470px);
+  }
+
+  /* The dock is hidden while the notes are open, so they take its band. The
+     dental tab is the exception: the mode selector is sitting there. */
+  .studio .inspector {
+    inset: auto 12px var(--mb-b) 12px;
+    max-height: min(58dvh, 520px);
+  }
+
+  body.dental-stage .studio .inspector,
+  body.teaching .studio .inspector {
+    bottom: var(--mb-c);
+  }
+
+  /* The tooth panel was a horizontal strip that pushed the seven tissue
+     toggles off the right edge behind a scrollbar. It reads down the panel
+     instead, and the dock underneath it goes: the panel names its own way
+     out and the structure library has nothing to say about a cutaway. */
+  .studio #dental-3d-controls {
+    inset: auto 12px var(--mb-c) 12px;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 9px;
+    height: auto;
+    max-height: min(40dvh, 300px);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .studio #dental-3d-controls .section-slider {
+    flex-direction: row;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .studio #dental-3d-controls .section-slider input {
+    flex: 1;
+    width: auto;
+  }
+
+  /* The dock and the layers toggle would land on the band the mode selector
+     holds. Both belong to the head and neck explorer anyway: on this tab the
+     notes sheet names the selected tooth and opens its cutaway. */
+  body.dental-stage .studio .stage-bottom,
+  body.dental-stage .studio #mobile-library,
+  body.tooth-inspection .studio .stage-bottom,
+  body.tooth-inspection .studio #mobile-library {
+    display: none;
+  }
+
+  /* The floating close button anchored itself to the sheet's maximum height
+     rather than its actual one, so it drifted out over the model. The Details
+     button in the corner is always on screen and already closes the sheet. */
+  body.details-open .studio #close-inspector {
+    display: none;
+  }
+
+  body.teaching .studio #teaching-view,
+  body.teaching.details-open .studio #teaching-view {
+    inset: 84px 12px var(--mb-c) 12px;
+  }
+
+  /* The triangle count describes the 3D mesh, which the teaching layer covers
+     anyway, and the panel edge was cutting through it. */
+  body.teaching .studio #resolution-status {
+    display: none;
+  }
+
+  .studio #consent,
+  body.tooth-inspection .studio #consent {
+    inset: auto 12px var(--mb-c) 12px;
+    width: auto;
+    max-width: none;
+  }
+
+  /* The title block is the only thing competing with the model up top. */
+  .studio h1#stage-title {
+    margin-top: 4px;
+    font-size: 18px;
+  }
+
+  .studio #resolution-status {
+    font-size: 9.5px;
   }
 }
