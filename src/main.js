@@ -180,8 +180,10 @@ document.querySelector("#app").innerHTML = `
     )}</div><span id="tissue-3d-status" role="status">Rotate to inspect the section. Teaching geometry, not a scan.</span></section>
 
   <div class="caption-stack"><p class="age-notice" id="age-notice"></p><div class="stage-caption"><span id="visible-count">Preparing anatomy</span><i class="caption-line"></i><span class="drag-hint">Drag to rotate · Scroll to zoom</span></div></div>
-  <div class="explode-dock panel"><div class="explode-control"><div class="explode-label"><label for="explode">Separate structures</label><output id="explode-output">0%</output></div><input id="explode" type="range" min="0" max="100" value="0" aria-label="Separate structures"><div class="slider-endpoints"><span>Assembled</span><span>Every structure</span></div></div><button id="reassemble-dock" title="Reassemble and reset the view">${icon("reset")}<span>Reset</span></button></div>
-  <div class="stage-bottom panel"><div class="stage-bottom-name"><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} <span>Isolate structure</span></button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div>
+  <div class="stage-bottom panel">
+    <div class="dock-row dock-selection"><div class="stage-bottom-name"><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} <span>Isolate structure</span></button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div>
+    <div class="dock-row dock-separation"><div class="explode-control"><div class="explode-label"><label for="explode">Separate structures</label><output id="explode-output">0%</output></div><input id="explode" type="range" min="0" max="100" value="0" aria-label="Separate structures"><div class="slider-endpoints"><span>Assembled</span><span>Every structure</span></div></div><button id="reassemble-dock" title="Reassemble and reset the view">${icon("reset")}<span>Reset</span></button></div>
+  </div>
 
   <aside class="inspector panel" id="inspector" aria-label="Anatomy details"></aside><button class="close-inspector" id="close-inspector" aria-label="Close anatomy details">×</button>
 

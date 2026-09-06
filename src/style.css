@@ -6211,3 +6211,80 @@ body:not(.details-open) .studio .caption-stack {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* ---- One bottom dock ----------------------------------------------------
+
+   The selection bar and the separation dock were two stacked panels, and with
+   the caption band above them the bottom of the window carried about 250px of
+   chrome. On a 720px tall screen that is a third of the height, and the model
+   had to sit behind it. They are one panel now, in two rows, which halves it. */
+
+.studio .stage-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.studio .dock-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 13px;
+}
+
+.studio .dock-selection {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.studio .dock-separation {
+  padding-top: 8px;
+  padding-bottom: 9px;
+}
+
+.studio .explode-dock {
+  display: none;
+}
+
+.studio .dock-separation .explode-label {
+  margin-bottom: 5px;
+}
+
+.studio .dock-separation .slider-endpoints {
+  margin-top: 2px;
+}
+
+.studio .dock-separation #reassemble-dock {
+  padding: 4px 0 4px 13px;
+}
+
+/* The single dock is shorter, so everything above it drops closer to it. */
+.studio .caption-stack {
+  inset: auto auto 178px 50%;
+}
+
+.studio #mode-bar {
+  inset: auto auto 246px 50%;
+}
+
+@media (min-width: 861px) and (max-height: 800px) {
+  .studio .caption-stack {
+    inset: auto auto 162px 50%;
+  }
+  .studio #mode-bar {
+    inset: auto auto 226px 50%;
+  }
+  .studio .dock-row {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 860px) {
+  .studio .caption-stack {
+    inset: auto 12px 216px 12px;
+  }
+  .studio #mode-bar {
+    inset: auto 12px 280px 12px;
+  }
+}
