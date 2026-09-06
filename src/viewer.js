@@ -415,12 +415,17 @@ export async function createViewer(host, atlas, handlers) {
         size = box.getSize(new THREE.Vector3()).length();
       }
     }
-    // The scene fills the window now rather than sitting in a grid cell, so
-    // the old overview multiplier framed the head much tighter than intended.
+    // The scene fills the window rather than sitting in a grid cell, so the
+    // multiplier is larger than it used to be. Dividing by the aspect pulls
+    // the camera back far enough to fit the width, but on a phone in portrait
+    // that ratio is about 0.46 and the head ends up tiny in a tall window
+    // whose lower quarter is covered by the dock anyway. The divisor has a
+    // floor, which leaves wide windows untouched and stops the portrait case
+    // from over-compensating.
     let distance = Math.max(
       0.04,
       (size * (currentState?.toothDetail ? 1.5 : 2.2)) /
-        Math.min(camera.aspect, 1),
+        Math.max(0.62, Math.min(camera.aspect, 1)),
     );
     if (explosion > 0 && canExplode()) {
       const box = new THREE.Box3();
