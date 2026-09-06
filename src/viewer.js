@@ -629,9 +629,11 @@ export async function createViewer(host, atlas, handlers) {
           selected ? "#54aab9" : groups[part.group].color,
         );
         mesh.material.emissive.set(selected ? "#12383e" : "#000000");
-        mesh.material.transparent =
-          part.group === "bones" && state.opacity < 1 && !selected;
-        mesh.material.opacity = mesh.material.transparent ? state.opacity : 1;
+        // Every tissue group carries its own opacity, so bone can be faded
+        // to follow a nerve through it. The selected structure stays solid.
+        const fade = state.opacity?.get(part.group) ?? 1;
+        mesh.material.transparent = fade < 1 && !selected;
+        mesh.material.opacity = mesh.material.transparent ? fade : 1;
         mesh.material.depthWrite = !mesh.material.transparent;
       }
       applyExplosion();
