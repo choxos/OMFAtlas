@@ -7117,3 +7117,52 @@ body.teaching .studio #orientation,
 body.tooth-inspection .studio #orientation {
   display: none;
 }
+
+/* ---- Hiding one structure ------------------------------------------------
+
+   A layer switch turns off a whole system; the thing standing in front of what
+   a reader wants to see is usually one mesh. The count and the way back live
+   in the layers panel, because a hidden structure that cannot be found again
+   is a bug rather than a control. */
+
+.studio .hidden-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 3px 2px;
+  padding: 7px 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 9px;
+  background: #17242f06;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+.studio .hidden-row span {
+  flex: 1;
+}
+
+.studio .hidden-row button {
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* The claim a control makes belongs beside the control, not in a modal. */
+.studio .dock-note {
+  margin: 6px 0 0;
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--faint);
+}
+
+@media (max-width: 860px) {
+  .studio .dock-note {
+    display: none;
+  }
+}

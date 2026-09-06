@@ -99,6 +99,7 @@ const state = {
   isolated: false,
   opacity: new Map(),
   landmark: null,
+  hidden: new Set(),
   explode: 0,
   tab: "anatomy",
   query: "",
@@ -191,7 +192,7 @@ document.querySelector("#app").innerHTML = `
   <div class="caption-stack"><p class="age-notice" id="age-notice"></p><div class="stage-caption"><span id="visible-count">Preparing anatomy</span><i class="caption-line"></i><span class="drag-hint">Drag to rotate · Scroll to zoom</span></div></div>
   <div class="stage-bottom panel">
     <div class="dock-row dock-selection"><div class="stage-bottom-name"><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} <span>Isolate structure</span></button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div>
-    <div class="dock-row dock-separation"><div class="explode-control"><div class="explode-label"><label for="explode">Separate structures</label><output id="explode-output">0%</output></div><input id="explode" type="range" min="0" max="100" value="0" aria-label="Separate structures"><div class="slider-endpoints"><span>Assembled</span><span>Every structure</span></div></div><button id="reassemble-dock" title="Reassemble and reset the view">${icon("reset")}<span>Reset</span></button></div>
+    <div class="dock-row dock-separation"><div class="explode-control"><div class="explode-label"><label for="explode">Separate structures</label><output id="explode-output">0%</output></div><input id="explode" type="range" min="0" max="100" value="0" aria-label="Separate structures"><div class="slider-endpoints"><span>Assembled</span><span>Every structure</span></div><p class="dock-note">Separation is a layout of the parts list, not a dissection order.</p></div><button id="reassemble-dock" title="Reassemble and reset the view">${icon("reset")}<span>Reset</span></button></div>
     <button id="dock-switch" aria-pressed="false" aria-label="Separation controls" title="Separation controls">${icon("separate")}</button>
   </div>
 
@@ -524,6 +525,7 @@ function renderBrowser() {
             )
             .join("")
     }
+    ${!query && state.hidden.size ? `<div class="hidden-row"><span>${state.hidden.size} structure${state.hidden.size === 1 ? "" : "s"} hidden</span><button id="show-hidden">Show again</button></div>` : ""}
     ${!query ? `<p class="fine-print fade-note">Each slider fades that layer. Fading bone is how a nerve or vessel inside it becomes visible; a selected structure always stays solid.</p><div class="section-label"><h3>Structure library</h3><span>${atlas.parts.length}</span></div>` : ""}
     ${inventory ? `<div class="inventory-heading"><strong>Parts inventory · ${matching.length}</strong><p>Every visible structure is separated in the 3D view. Select a name below; zoom in to reassemble. Use All to include hidden systems.</p><button id="reassemble">Reassemble head & neck</button></div>` : ""}
     <details id="structure-library" ${query || inventory ? "open" : ""}><summary>${inventory ? "Names of displayed parts" : "Browse named structures"}</summary><div class="structure-list">${matching.length ? structureRows : '<p class="empty">No matching structure. Try “mandible”, “tongue”, or “36”.</p>'}</div></details>`;
@@ -586,6 +588,13 @@ function renderBrowser() {
     .forEach(
       (button) => (button.onclick = () => selectPart(button.dataset.part)),
     );
+  const showHidden = browser.querySelector("#show-hidden");
+  if (showHidden)
+    showHidden.onclick = () => {
+      state.hidden.clear();
+      renderBrowser();
+      updateScene();
+    };
   browser.querySelectorAll("[data-opacity]").forEach((slider) => {
     slider.oninput = () => {
       const value = Number(slider.value) / 100;
@@ -714,7 +723,7 @@ function renderInspector() {
       `${groups[part.group].name} · ${part.conceptId}`,
     ) +
     `<div class="detail-body">
-    <div class="detail-actions"><button class="primary" id="detail-isolate">${icon("expand")} ${state.isolated ? "Restore" : "Inspect in 3D"}</button><button id="save">${state.saved.has(part.id) ? "✓ Saved" : "+ Save"}</button><button data-clear-selection>Clear selection</button></div>
+    <div class="detail-actions"><button class="primary" id="detail-isolate">${icon("expand")} ${state.isolated ? "Restore" : "Inspect in 3D"}</button><button id="save">${state.saved.has(part.id) ? "✓ Saved" : "+ Save"}</button><button id="hide-part">Hide</button><button data-clear-selection>Clear selection</button></div>
     ${topic ? `<h3>Overview</h3><p>${topic.overview}</p><div class="learning-note"><span>Study focus</span><p>${[topic.student, topic.dentist, topic.specialist].filter(Boolean).join(" ")}</p></div><h3>Explore the relationships</h3><p>Rotate the assembly, fade a layer with its slider, or isolate a structure to examine its surfaces.</p>${sourceLink(sources[topic.source])}` : `<h3>Explore this structure</h3><p>This named surface mesh is part of the ${groups[part.group].name.toLowerCase()} layer. Compare its position with adjacent structures or isolate it for inspection.</p><div class="learning-note"><span>Reference identity</span><p>BodyParts3D mesh ${part.id}, mapped to ${part.conceptId}. Detailed clinical notes for this structure have not yet been authored.</p></div>`}
     ${landmarkBlock(part)}
     <div class="related"><h3>Continue exploring</h3>${atlas.parts
@@ -728,6 +737,12 @@ function renderInspector() {
         "",
       )}</div><p class="fine-print">Adult reference anatomy. Individual form and relationships vary.</p></div>`;
   panel.querySelector("#detail-isolate").onclick = toggleIsolate;
+  panel.querySelector("#hide-part").onclick = () => {
+    state.hidden.add(part.id);
+    state.isolated = false;
+    clearSelection();
+    renderBrowser();
+  };
   const landmark = panel.querySelector("#landmark");
   if (landmark)
     landmark.onchange = () => {
@@ -1269,6 +1284,7 @@ document.querySelector("#reset").onclick = () => {
   state.isolated = false;
   state.explode = 0;
   state.opacity.clear();
+  state.hidden.clear();
   state.landmark = null;
   viewer?.showLandmark(null);
   state.selected = "FJ3289";

@@ -719,6 +719,7 @@ export async function createViewer(host, atlas, handlers) {
         const part = mesh.userData.part;
         mesh.visible =
           !dentalModel &&
+          !state.hidden?.has(part.id) &&
           (part.schematic ? state.schematic !== false : true) &&
           (state.isolated
             ? part.id === state.selected
