@@ -7247,7 +7247,7 @@ body.source-models .studio .stage-bottom {
   .studio #model-controls {
     inset: auto 12px var(--mb-c) 12px;
     width: auto;
-    max-height: min(46dvh, 340px);
+    max-height: min(38dvh, 296px);
   }
 }
 

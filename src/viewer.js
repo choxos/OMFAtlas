@@ -528,6 +528,11 @@ export async function createViewer(host, atlas, handlers) {
       if (!box.isEmpty()) {
         center = box.getCenter(new THREE.Vector3());
         size = box.getSize(new THREE.Vector3()).length();
+        // On a phone the controls take the lower part of the window, so a
+        // model centred in the viewport sits behind them. Aim lower and it
+        // rides in the band that is actually visible.
+        if (currentState?.mode === "models" && camera.aspect < 0.9)
+          center.y -= size * 0.22;
       }
     }
     // The scene fills the window rather than sitting in a grid cell, so the
