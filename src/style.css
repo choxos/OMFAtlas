@@ -6184,3 +6184,14 @@ body:not(.details-open) .studio .caption-stack {
     max-width: 540px;
   }
 }
+
+/* The caption band was landing exactly on the dock's top edge on a short
+   window, so the two rounded panels read as one smudged shape. */
+@media (min-width: 861px) and (max-height: 800px) {
+  .studio .caption-stack {
+    inset: auto auto 236px 50%;
+  }
+  .studio #mode-bar {
+    inset: auto auto 300px 50%;
+  }
+}
