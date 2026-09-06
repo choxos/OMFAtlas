@@ -1,6 +1,27 @@
 # OMF Atlas
 
-An oral and maxillofacial anatomy website for dental students, dentists, and dental specialists, inspired by [Human Atlas](https://github.com/ashemag/human-atlas).
+**An interactive 3D atlas of oral and maxillofacial anatomy, for dental students, dentists, and dental specialists.**
+
+**[Open the atlas at omfatlas.xera.ac](https://omfatlas.xera.ac)** · No account, no API key, no backend.
+
+![Turning the head and neck assembly, then separating every structure into a parts inventory](documentation/screenshots/tour.gif)
+
+<sub>Two of the six scenes. [Watch the full 38 second tour](documentation/screenshots/tour.mp4).</sub>
+
+Built on BodyParts3D geometry and inspired by [Human Atlas](https://github.com/ashemag/human-atlas), whose model-first studio interface this follows.
+
+## What it contains
+
+- **643 source meshes** from BodyParts3D 4.0, cropped to the head and neck, including 47 facial and masticatory muscles recovered from the 3.0 archive and registered onto the 4.0 base.
+- **77 schematic structures** for the oral and maxillofacial anatomy the source dataset does not contain: the maxillary and mandibular divisions of the trigeminal nerve, the facial nerve, the external carotid tree, the parotid gland and its duct, the maxillary sinus, and the temporomandibular articular disc. [How that works, and why it was necessary](#schematic-anatomy).
+- **A 3D tooth cutaway** with enamel, dentin, pulp and canals, cementum, periodontal ligament, alveolar bone, and gingiva, on a movable section plane. Zooming into the gums opens the same cutaway framed on the periodontium.
+- **A tooth development section**: the seven stages of odontogenesis, the germ layer origin of every dental tissue, the eruption chronology for both dentitions, and the anomalies that arise at each stage.
+- Search, layer isolation, a separation control that lays the whole assembly out as a parts inventory, guided study notes, and a scored self-test.
+
+|  |  |
+| --- | --- |
+| ![The 3D tooth cutaway with the section plane open](documentation/screenshots/tooth-cutaway.png) | ![The bell stage of odontogenesis in the dark theme](documentation/screenshots/tooth-development-dark.png) |
+| The tooth cutaway, sectioned | Tooth development, dark theme |
 
 ## Run
 
@@ -21,7 +42,9 @@ npm run preview
 
 The production site is written to `dist/` and can be served by a static host at its root. The app uses root-relative asset paths and loads no external resources at all: Inter is served from `public/fonts/`, which is what lets the site run behind a Content-Security-Policy whose `font-src` is `'self'`. `deploy/` holds the nginx vhost and the build script used for omfatlas.xera.ac.
 
-## Included
+## Feature detail
+
+The summary above in full.
 
 - Head-and-neck-only 3D explorer: 643 selectable source meshes across 14 layers, including 47 registered facial and masticatory muscles recovered from BodyParts3D 3.0.
 - 77 schematic oral and maxillofacial structures for what the source dataset does not contain: the maxillary and mandibular divisions of the trigeminal nerve and their oral branches, the facial nerve and its five terminal branches, the external carotid artery and the facial, lingual, maxillary, inferior alveolar, superficial temporal, posterior superior alveolar and greater palatine arteries, the facial and retromandibular veins, the external jugular vein, the pterygoid plexus, the parotid gland with Stensen's duct, Wharton's duct, the maxillary sinus, and the temporomandibular articular disc. These are drawn, not segmented, and they are labeled as schematic wherever they are named. One switch turns the whole set off. See [schematic anatomy](#schematic-anatomy).
@@ -41,6 +64,7 @@ The production site is written to `dist/` and can be served by a static host at 
 - In-app references and explicit model-coverage information.
 
 ## Schematic anatomy
+<a id="schematic-anatomy"></a>
 
 BodyParts3D 4.0 is a whole-body dataset, and for the head it is mostly bone, muscle, brain, and orbit. Its complete nerve set is 55 concepts, all orbital: there is no maxillary or mandibular division of the trigeminal nerve, no facial nerve, and none of the lower cranial nerves. Its arteries in this region are the carotids and the intracranial tree; the external carotid artery and every branch that supplies the jaws are absent, as are the parotid gland, the facial vein, the paranasal sinuses, and the articular disc of the temporomandibular joint. For an oral and maxillofacial atlas those absences cover most of the subject, so `src/schematic-anatomy.js` builds those structures instead.
 

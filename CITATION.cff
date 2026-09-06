@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "OMF Atlas: an interactive 3D atlas of oral and maxillofacial anatomy"
+message: "If you use this software or its teaching material, please cite it as below."
+type: software
+authors:
+  - family-names: Sofi-Mahmudi
+    given-names: Ahmad
+    email: ahmad.pub@gmail.com
+    alias: choxos
+repository-code: "https://github.com/choxos/OMFAtlas"
+url: "https://omfatlas.xera.ac"
+abstract: >-
+  An interactive browser atlas of oral and maxillofacial anatomy for dental
+  education. It renders 643 head and neck meshes extracted from BodyParts3D,
+  together with 77 schematic nerve, vessel, gland, sinus and joint structures
+  that the source dataset does not contain, whose courses are fitted at run
+  time to landmarks measured on the loaded meshes. It also provides a
+  schematic 3D tooth and periodontium cutaway, a root canal configuration
+  explorer, and a tooth development section covering odontogenesis, eruption
+  chronology and developmental anomalies. It is an educational reference and
+  is not intended for diagnosis or treatment planning.
+keywords:
+  - anatomy
+  - dental education
+  - oral and maxillofacial anatomy
+  - odontogenesis
+  - 3D visualization
+  - open educational resources
+license: MIT
