@@ -35,7 +35,13 @@
           gtag("consent", "update", { analytics_storage: "granted" });
       } catch {}
       gtag("js", new Date());
-      gtag("config", "G-LCRYBDSQEP", { anonymize_ip: true });
+      // Without cookie_domain the tag picks the registrable domain, which is
+      // xera.ac, so this atlas's cookie would be readable by every sibling
+      // site on it. Pin it to this host.
+      gtag("config", "G-LCRYBDSQEP", {
+        anonymize_ip: true,
+        cookie_domain: location.hostname,
+      });
     </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LCRYBDSQEP"></script>
   </head>

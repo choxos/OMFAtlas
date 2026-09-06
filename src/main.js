@@ -227,12 +227,24 @@ function updateConsent(granted) {
   });
 }
 
-/** Drop the cookies Google Analytics sets, for a reader who changes their mind. */
+/**
+ * Drop the cookies Google Analytics sets, for a reader who changes their mind.
+ *
+ * A cookie can only be removed by naming the domain it was set on. The tag is
+ * pinned to this host now, but visits from before that change left cookies on
+ * the registrable domain, so this walks up the label chain and tries each one.
+ */
 function clearAnalyticsCookies() {
+  const labels = location.hostname.split(".");
+  const domains = [""];
+  for (let i = 0; i < labels.length - 1; i++) {
+    const domain = labels.slice(i).join(".");
+    domains.push(`; domain=${domain}`, `; domain=.${domain}`);
+  }
   for (const entry of document.cookie.split(";")) {
     const name = entry.split("=")[0].trim();
     if (!/^_ga/.test(name)) continue;
-    for (const domain of ["", `; domain=${location.hostname}`, `; domain=.${location.hostname}`])
+    for (const domain of domains)
       document.cookie = `${name}=; max-age=0; path=/${domain}`;
   }
 }
