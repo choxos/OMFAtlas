@@ -6195,3 +6195,19 @@ body:not(.details-open) .studio .caption-stack {
     inset: auto auto 300px 50%;
   }
 }
+
+/* Five presets in a 220px column pushed "Hide all" onto its own line and ran
+   "Skeleton" into "Vessels". A wrapping grid gives every preset the same width
+   and breaks into even rows instead. */
+.studio .layer-presets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+  gap: 3px;
+}
+
+.studio .layer-presets button {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
