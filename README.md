@@ -48,7 +48,7 @@ What keeps them honest is that no waypoint is a typed-in coordinate. Every cours
 
 They remain teaching geometry. Caliber and course are representative of typical anatomy, variation in these structures is common, and none of it is a segmentation of a scan. `tests/schematic-anatomy.test.mjs` asserts the anchoring rules rather than fixed coordinates, so the geometry cannot drift away from the bone it is drawn onto.
 
-Not built, and absent from the source: the glossopharyngeal, vagus, accessory, and hypoglossal nerves, the pterygopalatine and submandibular ganglia, the palatine tonsils, the cervical lymph nodes, and the frontal, ethmoid, and sphenoid sinuses.
+Not built, and absent from the source: the glossopharyngeal, vagus, accessory, and hypoglossal nerves, the chorda tympani, the pterygopalatine, submandibular, otic, and ciliary ganglia, the palatine tonsils, the cervical lymph nodes, and the frontal, ethmoid, and sphenoid sinuses.
 
 ## Educational scope
 
