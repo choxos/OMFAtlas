@@ -6470,3 +6470,94 @@ body:not(.details-open) .studio .caption-stack {
     font-size: 10px;
   }
 }
+
+/* ---- Analytics consent ---------------------------------------------------
+
+   Accept and Decline carry the same weight, because a consent choice that is
+   visually steered is not a free one. The card sits above the dock until it
+   is answered, and the footer keeps a way back to the choice. */
+
+.studio #consent {
+  position: absolute;
+  left: 26px;
+  bottom: 62px;
+  z-index: 40;
+  width: 340px;
+  max-width: calc(100vw - 52px);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.studio #consent[hidden] {
+  display: none;
+}
+
+.studio #consent strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.studio #consent p {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.studio .consent-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+.studio .consent-actions button {
+  flex: 1;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  font-size: 12.5px;
+  font-weight: 550;
+  color: var(--ink);
+}
+
+.studio .consent-actions button:hover {
+  background: var(--wash);
+}
+
+.studio #consent-accept {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: var(--on-navy);
+}
+
+.studio #consent-accept:hover {
+  background: var(--navy);
+  filter: brightness(1.12);
+}
+
+.studio .consent-state {
+  margin: 14px 0 4px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+/* While the tooth controls hold the bottom left corner, the card steps right. */
+body.tooth-inspection .studio #consent {
+  left: 310px;
+}
+
+@media (max-width: 860px) {
+  .studio #consent,
+  body.tooth-inspection .studio #consent {
+    left: 12px;
+    right: 12px;
+    bottom: 62px;
+    width: auto;
+    max-width: none;
+  }
+}

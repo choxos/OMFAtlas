@@ -191,10 +191,79 @@ document.querySelector("#app").innerHTML = `
 
   <aside class="inspector panel" id="inspector" aria-label="Anatomy details"></aside><button class="close-inspector" id="close-inspector" aria-label="Close anatomy details">×</button>
 
-  <footer class="studio-footer"><span>Built for dental learning.</span><span class="footer-note">Educational reference. Not for diagnosis or treatment planning.</span><button id="credits">Credits &amp; references</button></footer>
+  <footer class="studio-footer"><span>Built for dental learning.</span><span class="footer-note">Educational reference. Not for diagnosis or treatment planning.</span><button id="privacy">Privacy</button><button id="credits">Credits &amp; references</button></footer>
+  <div id="consent" class="panel" role="dialog" aria-modal="false" aria-labelledby="consent-title" hidden>
+    <strong id="consent-title">Analytics</strong>
+    <p>This atlas would like to count visits with Google Analytics, which sets cookies. Nothing is requested from Google unless you accept, and the atlas works either way.</p>
+    <div class="consent-actions"><button id="consent-accept">Accept</button><button id="consent-decline">Decline</button></div>
+  </div>
   </div>
   <div id="part-hover" class="part-hover" hidden aria-hidden="true"></div>
   <dialog id="modal"><button id="close-modal" class="close" aria-label="Close dialog">×</button><div id="modal-content"></div></dialog>`;
+
+// ---- Analytics consent ---------------------------------------------------
+//
+// Nothing is requested from Google until the reader accepts. The tag is not in
+// the document head: declining means no third-party request is ever made,
+// rather than a request being made and its cookies suppressed afterwards.
+
+const ANALYTICS_ID = "G-LCRYBDSQEP";
+const CONSENT_KEY = "omf-consent";
+
+const readConsent = () => {
+  try {
+    return localStorage.getItem(CONSENT_KEY);
+  } catch {
+    return null;
+  }
+};
+
+let analyticsStarted = false;
+function startAnalytics() {
+  if (analyticsStarted) return;
+  analyticsStarted = true;
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    window.dataLayer.push(arguments);
+  }
+  window.gtag = gtag;
+  // Only the analytics category is granted. Nothing here is for advertising.
+  gtag("consent", "default", {
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    analytics_storage: "granted",
+  });
+  gtag("js", new Date());
+  gtag("config", ANALYTICS_ID, { anonymize_ip: true });
+  const tag = document.createElement("script");
+  tag.async = true;
+  tag.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}`;
+  document.head.append(tag);
+}
+
+/** Drop the cookies Google Analytics sets, for a reader who changes their mind. */
+function clearAnalyticsCookies() {
+  for (const entry of document.cookie.split(";")) {
+    const name = entry.split("=")[0].trim();
+    if (!/^_ga/.test(name)) continue;
+    for (const domain of ["", `; domain=${location.hostname}`, `; domain=.${location.hostname}`])
+      document.cookie = `${name}=; max-age=0; path=/${domain}`;
+  }
+}
+
+function showConsent(open) {
+  document.querySelector("#consent").hidden = !open;
+}
+
+function setConsent(value) {
+  try {
+    localStorage.setItem(CONSENT_KEY, value);
+  } catch {}
+  showConsent(false);
+  if (value === "granted") startAnalytics();
+  else clearAnalyticsCookies();
+}
 
 // Schematic structures are labeled everywhere they are named, so a reader
 // never has to guess which meshes came from the scan and which were built.
@@ -987,6 +1056,28 @@ function exitTooth() {
     ),
   );
 }
+function privacy() {
+  const choice = readConsent();
+  document.querySelector("#modal-content").innerHTML =
+    `<h2>Privacy</h2>
+  <p>This atlas is a static site. It has no accounts, no login, and no server that stores anything about you. The anatomy is delivered as files and rendered in your browser.</p>
+  <h3>What is stored on your device</h3><p>Your theme, your saved structures, and your answer to the question below are kept in this browser's local storage. They never leave your device, and clearing your browser data removes them.</p>
+  <h3>Analytics</h3><p>If you accept, Google Analytics counts visits and sets cookies to do so. Nothing is requested from Google unless you accept: the tag is not loaded otherwise, so declining means no request is ever made rather than a request being made and ignored. Advertising and personalization signals are switched off, and IP addresses are anonymized. You can change your answer at any time.</p>
+  <p class="consent-state">Your current choice: <strong>${choice === "granted" ? "analytics accepted" : choice === "denied" ? "analytics declined" : "not answered yet"}</strong></p>
+  <div class="detail-actions"><button id="privacy-accept" class="primary">Accept analytics</button><button id="privacy-decline">Decline analytics</button></div>
+  <h3>Content</h3><p>Anatomy geometry comes from BodyParts3D under the licenses recorded in the credits. The schematic structures and teaching diagrams are original. This is an educational reference and is not for diagnosis or treatment planning.</p>`;
+  const modal = document.querySelector("#modal");
+  modal.querySelector("#privacy-accept").onclick = () => {
+    setConsent("granted");
+    modal.close();
+  };
+  modal.querySelector("#privacy-decline").onclick = () => {
+    setConsent("denied");
+    modal.close();
+  };
+  modal.showModal();
+}
+
 function coverage() {
   document.querySelector("#modal-content").innerHTML =
     `<h2>Source anatomy and teaching models</h2>
@@ -1104,6 +1195,12 @@ document.querySelector("#coverage").onclick = document.querySelector(
 ).onclick = () => {
   if (atlas) coverage();
 };
+document.querySelector("#consent-accept").onclick = () => setConsent("granted");
+document.querySelector("#consent-decline").onclick = () => setConsent("denied");
+document.querySelector("#privacy").onclick = () => privacy();
+if (readConsent() === "granted") startAnalytics();
+else if (readConsent() !== "denied") showConsent(true);
+
 document.querySelector("#close-modal").onclick = () =>
   document.querySelector("#modal").close();
 document.addEventListener("click",e=>{if(e.target.closest("[data-clear-selection]") && atlas)clearSelection();});
