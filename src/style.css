@@ -6288,3 +6288,34 @@ body:not(.details-open) .studio .caption-stack {
     inset: auto 12px 280px 12px;
   }
 }
+
+/* The merged dock is 144px tall and sits 74px up, so it occupies 74 to 218.
+   The caption band has to clear that, not sit inside it. */
+.studio .caption-stack {
+  inset: auto auto 228px 50%;
+}
+
+.studio #mode-bar {
+  inset: auto auto 292px 50%;
+}
+
+@media (min-width: 861px) and (max-height: 800px) {
+  .studio .stage-bottom {
+    inset: auto auto 58px 50%;
+  }
+  .studio .caption-stack {
+    inset: auto auto 204px 50%;
+  }
+  .studio #mode-bar {
+    inset: auto auto 264px 50%;
+  }
+}
+
+@media (max-width: 860px) {
+  .studio .caption-stack {
+    inset: auto 12px 282px 12px;
+  }
+  .studio #mode-bar {
+    inset: auto 12px 344px 12px;
+  }
+}
