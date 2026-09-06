@@ -74,6 +74,12 @@ They remain teaching geometry. Caliber and course are representative of typical 
 
 Not built, and absent from the source: the glossopharyngeal, vagus, accessory, and hypoglossal nerves, the chorda tympani, the pterygopalatine, submandibular, otic, and ciliary ganglia, the palatine tonsils, the cervical lymph nodes, and the frontal, ethmoid, and sphenoid sinuses.
 
+## Privacy
+
+The site is static: no accounts, no login, and no server that records anything about a visitor. Theme, saved structures, and the analytics answer are kept in the browser's local storage.
+
+Google Analytics runs under Consent Mode v2. The tag loads on every visit with every consent category denied, set before it initializes, so it stores nothing and sets no cookie until the visitor accepts. Accepting grants `analytics_storage` only; advertising and personalization stay denied either way, IP addresses are anonymized, and the cookie is pinned to this host rather than the registrable domain. Declining after accepting clears the cookies. The choice can be changed at any time from the Privacy button in the footer.
+
 ## Educational scope
 
 The source assembly contains 28 permanent teeth through the second molars and 615 other head-and-neck meshes. Some named structures consist of multiple source meshes. Anatomy is cropped below the C7 disk; crossing structures have open cut ends. See [model coverage](documentation/qa/MODEL-COVERAGE.md) and [facial muscle registration](documentation/qa/FACIAL-SOURCE.md) for source details. The cross-version facial overlay has a held-out bone surface RMS mismatch of 0.26 mm; clinical attachment accuracy has not been independently validated.
