@@ -7166,3 +7166,111 @@ body.tooth-inspection .studio #orientation {
     display: none;
   }
 }
+
+/* ---- Published dental models --------------------------------------------
+
+   Two datasets redistributed as their authors modeled them, next to a panel
+   that says what each one is and what it cannot be read for. The limits are
+   in the panel rather than behind a dialog because they are the difference
+   between a model of a jaw and a jaw. */
+
+.studio #model-controls {
+  position: absolute;
+  left: 26px;
+  bottom: 56px;
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 292px;
+  max-height: calc(100dvh - 300px);
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.studio #model-controls[hidden] {
+  display: none;
+}
+
+.studio .model-choice {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  background: #17242f06;
+}
+
+.studio .model-choice button {
+  flex: 1;
+  height: 30px;
+  border: 0;
+  border-radius: 7px;
+  background: none;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.studio .model-choice button.active {
+  background: var(--navy);
+  color: var(--on-navy);
+}
+
+.studio .model-note {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.studio .model-layers {
+  display: flex;
+  flex-direction: column;
+}
+
+.studio .model-credit button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--teal);
+  text-decoration: underline;
+}
+
+body.source-models .studio #dental-3d-controls,
+body.source-models .studio .stage-bottom {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .studio #model-controls {
+    inset: auto 12px var(--mb-c) 12px;
+    width: auto;
+    max-height: min(46dvh, 340px);
+  }
+}
+
+/* The head's systems have nothing to say about a published jaw model. */
+body.source-models .studio .sidebar,
+body.source-models .studio #mobile-library,
+body.source-models .studio .caption-stack {
+  display: none;
+}
+
+/* Five modes rather than four. */
+.studio #mode-bar button {
+  padding: 0 9px;
+  font-size: 11px;
+}
+
+@media (max-width: 860px) {
+  .studio #mode-bar button {
+    padding: 0 2px;
+    font-size: 10px;
+  }
+
+  .studio #mode-bar [data-mode="models"]::after {
+    content: "Source";
+  }
+}

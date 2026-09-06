@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { dentalProfile, partForTooth } from "../src/dental.js";
 import { toothNumber, groups, questions } from "../src/content.js";
 import { endoProfile, endoSources, canalPatterns } from "../src/endodontics.js";
@@ -172,4 +172,53 @@ test("original-detail manifest upgrades real source meshes with valid buffers", 
     for (const index of new Uint32Array(buffer, part.indices, part.indexCount))
       assert.ok(index < part.vertexCount, part.id);
   }
+});
+
+test("published dental models carry their source, licence and limits", () => {
+  const manifest = JSON.parse(
+    readFileSync(new URL("../public/models/dental/manifest.json", import.meta.url)),
+  );
+  const bytes = statSync(
+    new URL("../public/models/dental/dental.bin", import.meta.url),
+  ).size;
+  assert.equal(bytes, manifest.bufferBytes, "buffer matches the manifest");
+
+  for (const source of Object.values(manifest.sources)) {
+    assert.match(source.license, /^CC BY 4\.0$/);
+    assert.ok(source.doi.length > 8, "every source names a DOI");
+    // The limits are the difference between a model of a jaw and a jaw, so a
+    // source that does not state them cannot ship.
+    assert.ok(source.limits.length > 60, `${source.title} needs its limits`);
+    assert.ok(source.processing.length > 40, `${source.title} needs its method`);
+    assert.ok(source.pdlModel.length > 40, `${source.title} needs its ligament note`);
+  }
+
+  const groups = new Set(["bone", "tooth", "pdl", "pulp", "appliance"]);
+  for (const part of manifest.parts) {
+    assert.ok(groups.has(part.group), `${part.id} has an unknown group`);
+    assert.ok(manifest.sources[part.source], `${part.id} names no source`);
+    assert.match(part.sourceSha256, /^[0-9a-f]{64}$/, `${part.id} needs its digest`);
+    assert.ok(part.vertexCount > 0 && part.indexCount % 3 === 0, part.id);
+    // Every offset has to sit inside the buffer it points into.
+    for (const [at, length] of [
+      [part.positions, part.vertexCount * 12],
+      [part.normals, part.vertexCount * 12],
+      [part.indices, part.indexCount * 4],
+    ]) {
+      assert.equal(at % 4, 0, `${part.id} offset is unaligned`);
+      assert.ok(at + length <= manifest.bufferBytes, `${part.id} runs past the buffer`);
+    }
+    // A solid that is not closed cannot be faded without showing its inside.
+    assert.equal(part.openEdges, 0, `${part.id} has ${part.openEdges} open edges`);
+  }
+
+  const teeth = manifest.parts.filter((p) => p.source === "diaz" && p.group === "tooth");
+  const ligaments = manifest.parts.filter((p) => p.source === "diaz" && p.group === "pdl");
+  assert.equal(teeth.length, 14, "the lower arch is complete");
+  assert.equal(ligaments.length, 14, "every tooth has its ligament");
+  for (const tooth of teeth)
+    assert.ok(
+      ligaments.some((l) => l.fdi === tooth.fdi),
+      `no ligament for FDI ${tooth.fdi}`,
+    );
 });

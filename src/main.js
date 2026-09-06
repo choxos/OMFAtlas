@@ -39,6 +39,7 @@ import {
 } from "./embryology.js";
 import { getDentitionFDIs } from "./dental-geometry.js";
 import { TISSUE_ORDER, tissueGroup } from "./explosion-layout.js";
+import { MODEL_GROUPS, MODEL_VIEWS } from "./dental-models.js";
 
 const touchLayout = () => matchMedia("(max-width: 860px)").matches;
 const groupOpacity = (group) => state.opacity.get(group) ?? 1;
@@ -100,6 +101,7 @@ const state = {
   opacity: new Map(),
   landmark: null,
   hidden: new Set(),
+  modelView: "jaw",
   explode: 0,
   tab: "anatomy",
   query: "",
@@ -168,7 +170,7 @@ document.querySelector("#app").innerHTML = `
     <div class="zoom-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit" aria-label="Fit visible anatomy" title="Fit visible anatomy">${icon("expand")}</button></div>
   </div>
 
-  <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active"><span>3D anatomy</span></button><button data-mode="section"><span>Tooth &amp; periodontium</span></button><button data-mode="canals"><span>Root canal explorer</span></button><button data-mode="development"><span>Tooth development</span></button></div>
+  <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active"><span>3D anatomy</span></button><button data-mode="section"><span>Tooth &amp; periodontium</span></button><button data-mode="canals"><span>Root canal explorer</span></button><button data-mode="development"><span>Tooth development</span></button><button data-mode="models"><span>Source models</span></button></div>
   <div id="load-status" class="panel" role="status"><strong>Preparing the anatomy</strong><span id="load-detail">Loading the head and neck assembly</span><div class="loading-track"><i id="load-bar"></i></div></div>
 
   <section id="dental-3d-controls" class="panel" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><label class="section-slider">Section depth <input id="section-depth" type="range" min="0" max="100" value="50"></label><div class="tissue-3d-buttons">${[
@@ -189,6 +191,7 @@ document.querySelector("#app").innerHTML = `
     )}</div><span id="tissue-3d-status" role="status">Rotate to inspect the section. Teaching geometry, not a scan.</span></section>
 
   <svg id="orientation" viewBox="-50 -50 100 100" aria-hidden="true"><g id="orientation-axes"></g></svg>
+  <section id="model-controls" class="panel" hidden aria-label="Published dental models"></section>
   <div class="caption-stack"><p class="age-notice" id="age-notice"></p><div class="stage-caption"><span id="visible-count">Preparing anatomy</span><i class="caption-line"></i><span class="drag-hint">Drag to rotate · Scroll to zoom</span></div></div>
   <div class="stage-bottom panel">
     <div class="dock-row dock-selection"><div class="stage-bottom-name"><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} <span>Isolate structure</span></button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div>
@@ -797,6 +800,64 @@ function drawOrientation(axes) {
   host.innerHTML = arms.map((a) => a.markup).join("");
 }
 
+const MODEL_GROUP_ORDER = ["bone", "tooth", "pdl", "pulp", "appliance"];
+function renderModelControls() {
+  const host = document.querySelector("#model-controls");
+  const view = MODEL_VIEWS[state.modelView];
+  const present = viewer?.modelGroups?.(state.modelView) || MODEL_GROUP_ORDER;
+  host.innerHTML = `<div class="model-choice">${Object.values(MODEL_VIEWS)
+    .map(
+      (v) =>
+        `<button data-model-view="${v.id}" class="${v.id === state.modelView ? "active" : ""}">${v.name}</button>`,
+    )
+    .join("")}</div>
+    <p class="model-note">${escape(view.note)}</p>
+    <div class="model-layers">${MODEL_GROUP_ORDER.filter((key) => present.includes(key))
+      .map((key) => {
+        const on = !state.hiddenTissues.has(key);
+        const fade = Math.round((state.opacity.get(`model-${key}`) ?? 1) * 100);
+        return `<div class="layer"><button class="layer-name" data-model-solo="${key}"><span class="layer-dot" style="background:${MODEL_GROUPS[key].color}"></span><span>${MODEL_GROUPS[key].name}</span></button><input type="checkbox" data-model-layer="${key}" ${on ? "checked" : ""} aria-label="Show ${MODEL_GROUPS[key].name}"><input class="layer-fade" type="range" min="15" max="100" value="${fade}" data-model-opacity="${key}" aria-label="${MODEL_GROUPS[key].name} opacity"></div>`;
+      })
+      .join("")}</div>
+    <p class="fine-print">${escape(view.limits)}</p>
+    <p class="fine-print model-credit">${escape(view.caption)} · CC BY 4.0. Redistributed as modeled, not registered onto this skull. <button id="model-sources">Sources and method</button></p>`;
+  host.querySelectorAll("[data-model-view]").forEach((button) => {
+    button.onclick = () => {
+      state.modelView = button.dataset.modelView;
+      state.hiddenTissues = new Set();
+      renderModelControls();
+      updateScene();
+      requestAnimationFrame(() => viewer?.view("oblique", true));
+    };
+  });
+  host.querySelectorAll("[data-model-layer]").forEach((box) => {
+    box.onchange = () => {
+      const key = box.dataset.modelLayer;
+      box.checked ? state.hiddenTissues.delete(key) : state.hiddenTissues.add(key);
+      updateScene();
+    };
+  });
+  host.querySelectorAll("[data-model-solo]").forEach((button) => {
+    button.onclick = () => {
+      const key = button.dataset.modelSolo;
+      const only = state.hiddenTissues.size === present.length - 1 && !state.hiddenTissues.has(key);
+      state.hiddenTissues = new Set(only ? [] : present.filter((g) => g !== key));
+      renderModelControls();
+      updateScene();
+    };
+  });
+  host.querySelectorAll("[data-model-opacity]").forEach((slider) => {
+    slider.oninput = () => {
+      const value = Number(slider.value) / 100;
+      const key = `model-${slider.dataset.modelOpacity}`;
+      if (value >= 1) state.opacity.delete(key);
+      else state.opacity.set(key, value);
+      updateScene();
+    };
+  });
+  host.querySelector("#model-sources").onclick = () => modelSources();
+}
+
 function landmarkBlock(part) {
   const found = (viewer?.landmarks() || []).filter((l) => l.bone === part.id);
   if (!found.length) return "";
@@ -931,16 +992,25 @@ function dentalContent(tooth) {
 
 function setMode(mode) {
   state.mode = mode;
-  document.body.classList.toggle("teaching", mode !== "3d");
-  document.querySelector("#viewer").hidden = mode !== "3d";
-  document.querySelector("#teaching-view").hidden = mode === "3d";
+  const scene3d = mode === "3d" || mode === "models";
+  document.body.classList.toggle("teaching", !scene3d);
+  document.body.classList.toggle("source-models", mode === "models");
+  document.querySelector("#viewer").hidden = !scene3d;
+  document.querySelector("#teaching-view").hidden = scene3d;
   document
     .querySelectorAll("[data-mode]")
     .forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
   /* A phone has one column, so the teaching layer and the notes sheet would
      be drawn over each other. The teaching layer is what was just asked for;
      the Details button reopens the notes over it. */
-  if (mode !== "3d" && touchLayout()) showDetails(false);
+  if (!scene3d && touchLayout()) showDetails(false);
+  if (mode === "models") {
+    state.hiddenTissues = new Set();
+    renderModelControls();
+    updateScene();
+    requestAnimationFrame(() => viewer?.view("oblique", true));
+  }
+  document.querySelector("#model-controls").hidden = mode !== "models";
   renderTeaching();
   if (atlas) updateScene();
 }
@@ -1164,6 +1234,32 @@ function privacy() {
   modal.showModal();
 }
 
+/* Where the published models came from and what was done to them, in the app
+   rather than only in the repository. */
+function modelSources() {
+  const manifest = viewer?.modelManifest?.();
+  const sources = manifest?.sources;
+  document.querySelector("#modal-content").innerHTML = `<h2>Published dental models</h2>
+  <p>Two datasets are redistributed here as their authors modeled them. Neither is drawn by this project, neither is segmented from a patient by this project, and neither is registered onto the head assembly, because a position on this skull is not something either dataset carries. Both are CC BY 4.0.</p>
+  ${
+    sources
+      ? Object.entries(sources)
+          .map(
+            ([key, source]) =>
+              `<h3>${escape(source.title)}</h3>
+      <p>${escape(source.authors)}, ${source.year}. <a href="https://doi.org/${source.doi}" target="_blank" rel="noreferrer">doi:${source.doi}</a>${source.article ? ` · study: <a href="https://doi.org/${source.article}" target="_blank" rel="noreferrer">doi:${source.article}</a>` : ""} · <a href="${source.licenseUrl}" target="_blank" rel="noreferrer">CC BY 4.0</a></p>
+      <p><strong>What was done to it here.</strong> ${escape(source.processing)}${source.units ? ` ${escape(source.units)}` : ""}</p>
+      ${source.derivation ? `<p><strong>Where the shape came from.</strong> ${escape(source.derivation)}</p>` : ""}
+      <p><strong>The ligament.</strong> ${escape(source.pdlModel)}</p>
+      <p><strong>What it cannot show.</strong> ${escape(source.limits)}</p>`,
+          )
+          .join("")
+      : "<p>The models have not been loaded yet.</p>"
+  }
+  <h3>Why they are separate</h3><p>These are two different jaws, modeled by different groups for different studies, and they are never shown in one frame. The rest of the 3D dental views in this atlas are procedural teaching geometry built by this project and are labeled as such wherever they appear.</p>`;
+  document.querySelector("#modal").showModal();
+}
+
 function coverage() {
   document.querySelector("#modal-content").innerHTML =
     `<h2>Source anatomy and teaching models</h2>
@@ -1359,6 +1455,9 @@ try {
     onExplode: setExplosion,
     onHover: showHover,
     onOrient: drawOrientation,
+    onModelsReady: () => {
+      if (state.mode === "models") renderModelControls();
+    },
     // The facial muscles arrive after the first frame, so the counts and the
     // structure list are rebuilt once they are in the scene.
     onPartsChanged: ({ failed, message }) => {

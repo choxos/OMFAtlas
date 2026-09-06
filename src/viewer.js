@@ -3,6 +3,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { groups, toothNumber } from "./content.js";
 import { createExplosionLayout, tissueSeparation } from "./explosion-layout.js";
 import { createSchematicParts, deriveLandmarks } from "./schematic-anatomy.js";
+import { createModelGroup } from "./dental-models.js";
 import {
   createToothModel,
   createDentitionModel,
@@ -21,6 +22,7 @@ export async function createViewer(host, atlas, handlers) {
     onHover = () => {},
     onProgress = () => {},
     onOrient = () => {},
+    onModelsReady = () => {},
   } = handlers;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, 0.001, 10);
@@ -176,6 +178,25 @@ export async function createViewer(host, atlas, handlers) {
     texture.anisotropy = 4;
     return { texture, ratio: canvas.width / canvas.height };
   };
+
+  let dentalModels = null;
+  let dentalModelsPending = null;
+  async function loadDentalModels() {
+    if (dentalModels) return dentalModels;
+    if (!dentalModelsPending)
+      dentalModelsPending = (async () => {
+        const [manifest, buffer] = await Promise.all([
+          fetch("/models/dental/manifest.json").then((r) => {
+            if (!r.ok) throw new Error(`dental manifest ${r.status}`);
+            return r.json();
+          }),
+          loadBuffer("/models/dental/dental.bin"),
+        ]);
+        dentalModels = { manifest, buffer };
+        return dentalModels;
+      })();
+    return dentalModelsPending;
+  }
 
   const pin = new THREE.Group();
   pin.visible = false;
@@ -676,6 +697,17 @@ export async function createViewer(host, atlas, handlers) {
   });
   const api = {
     landmarks: () => landmarks.map((l) => ({ ...l })),
+    modelManifest: () => dentalModels?.manifest || null,
+    modelGroups: (viewId) => {
+      const view = dentalModels?.manifest?.parts;
+      if (!view) return [];
+      const source = viewId === "molar" ? "fang" : "diaz";
+      return [
+        ...new Set(
+          view.filter((p) => p.source === source).map((p) => p.group),
+        ),
+      ];
+    },
     showLandmark(id) {
       showLandmark(id);
       render();
@@ -684,27 +716,60 @@ export async function createViewer(host, atlas, handlers) {
       const previousExplosion = explosion;
       currentState = state;
       explosion = Number.isFinite(state.explode) ? THREE.MathUtils.clamp(state.explode, 0, 100) : 0;
-      const key = state.toothDetail
-        ? `tooth-${state.fdi}`
-        : state.arches || state.age !== "adult"
-          ? state.age
-          : "";
+      const key = state.mode === "models"
+        ? `model-${state.modelView}`
+        : state.toothDetail
+          ? `tooth-${state.fdi}`
+          : state.arches || state.age !== "adult"
+            ? state.age
+            : "";
       if (key !== dentalKey) {
         detailExitDistance = Infinity;
         if (dentalModel) disposeModel(dentalModel);
-        dentalModel = key
-          ? state.toothDetail
+        dentalModel = null;
+        if (state.mode === "models") {
+          // The buffer may not be here yet; the view rebuilds when it lands.
+          if (dentalModels)
+            dentalModel = createModelGroup(
+              dentalModels.manifest,
+              dentalModels.buffer,
+              state.modelView,
+            );
+          else
+            loadDentalModels()
+              .then(() => {
+                dentalKey = "";
+                if (currentState) api.update(currentState);
+                onModelsReady();
+                api.view("oblique", true);
+              })
+              .catch((error) =>
+                onPartsChanged({ failed: 1, message: error.message }),
+              );
+        } else if (key)
+          dentalModel = state.toothDetail
             ? createToothModel(state.fdi)
-            : createDentitionModel(state.age)
-          : null;
+            : createDentitionModel(state.age);
         dentalKey = key;
         sectionKey = "";
         if (dentalModel) scene.add(dentalModel);
         camera.far = dentalModel ? 1 : 10;
         camera.updateProjectionMatrix();
       }
-      if (dentalModel) resolutionStatus("Schematic teaching geometry");
+      if (dentalModel && state.mode !== "models")
+        resolutionStatus("Schematic teaching geometry");
       else upgradeSelected();
+      if (dentalModel && state.mode === "models") {
+        resolutionStatus(dentalModel.userData.view.caption);
+        for (const mesh of dentalModel.children) {
+          const part = mesh.userData.modelPart;
+          mesh.visible = !state.hiddenTissues.has(part.group);
+          const fade = state.opacity?.get(`model-${part.group}`) ?? 1;
+          mesh.material.transparent = fade < 1;
+          mesh.material.opacity = fade;
+          mesh.material.depthWrite = fade >= 1;
+        }
+      }
       if (dentalModel && state.toothDetail) {
         const nextSection = `${state.cutaway}-${state.sectionDepth}`;
         if (nextSection !== sectionKey) {

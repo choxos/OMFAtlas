@@ -1,0 +1,962 @@
+{
+ "generatedBy": "scripts/import-dental-models.mjs",
+ "buffer": "dental.bin",
+ "bufferBytes": 10321680,
+ "sources": {
+  "diaz": {
+   "title": "Data of synthetic 3D models of the human jaw, including teeth, ligaments, and bone structures",
+   "authors": "Cristian Diaz and colleagues",
+   "year": 2024,
+   "doi": "10.17632/xjsx7nfhj8.1",
+   "url": "https://data.mendeley.com/datasets/xjsx7nfhj8/1",
+   "license": "CC BY 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+   "units": "STL carries no unit. Millimeters follow the source modeling protocol; this is not a measurement tool.",
+   "processing": "Binary STL read and welded on exact coordinates. No decimation, smoothing, scaling or registration. Assembly positions are the source's own.",
+   "pdlModel": "The source built the ligament by extruding 0.25 mm radially around each root. It is a synthetic shell of even thickness, not a segmented ligament, and its width cannot be read as a measurement.",
+   "limits": "A synthetic model of one lower jaw. It carries no pulp, no cementum, no gingiva and no nerve, and it is not a patient."
+  },
+  "fang": {
+   "title": "Models for a finite element study of a band and loop space maintainer",
+   "authors": "Fang Fang Kang; study by Shi, Kang and Liu",
+   "year": 2024,
+   "doi": "10.6084/m9.figshare.24591537.v1",
+   "article": "10.7717/peerj.17456",
+   "license": "CC BY 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+   "units": "millimeter",
+   "processing": "STEP solids tessellated with OpenCASCADE through occt-import-js at a linear deflection of 0.0015 of the bounding box and an angular deflection of 0.5 radians. No smoothing, thinning or registration.",
+   "derivation": "Built from the cone beam CT of a seven year old in mixed dentition, so this is an immature first permanent molar and not an adult standard form.",
+   "pdlModel": "The source thickened the ligament to an even shell. Its methods give 0.15 mm and its discussion gives 0.2 mm; the paper states both.",
+   "limits": "The outer surface is not divided into enamel and dentin. The pulp cavity is the modeled cavity, not pulp tissue, and carries no apical foramen, lateral canal, vessel or nerve. Root canal length and preparation cannot be measured from it.",
+   "used": [
+    "tooth",
+    "pulp",
+    "pdl",
+    "maintainer"
+   ]
+  }
+ },
+ "parts": [
+  {
+   "id": "jaw-cortical",
+   "name": "Cortical bone, lower jaw",
+   "group": "bone",
+   "source": "diaz",
+   "positions": 0,
+   "normals": 503400,
+   "indices": 1006800,
+   "vertexCount": 41950,
+   "indexCount": 251880,
+   "bounds": [
+    [
+     -298.8140563964844,
+     -277.2891540527344,
+     -28.889423370361328
+    ],
+    [
+     -189.11695861816406,
+     -193.780517578125,
+     58.56413269042969
+    ]
+   ],
+   "openEdges": 0,
+   "sourceMember": "Human Lower Jaw Dataset/Bones/Cortical/Cortical bone lower jaw with boolean.stl",
+   "sourceSha256": "2f753c65ed60d617cd2fe9fd7a83b4f94352f83c72261ed1c3ce23695e2f7519"
+  },
+  {
+   "id": "jaw-cancellous",
+   "name": "Cancellous bone, lower jaw",
+   "group": "bone",
+   "source": "diaz",
+   "positions": 2014320,
+   "normals": 2454516,
+   "indices": 2894712,
+   "vertexCount": 36683,
+   "indexCount": 220110,
+   "bounds": [
+    [
+     -298.10113525390625,
+     -270.8282775878906,
+     -25.5533390045166
+    ],
+    [
+     -189.72190856933594,
+     -195.1794891357422,
+     57.20943069458008
+    ]
+   ],
+   "openEdges": 0,
+   "sourceMember": "Human Lower Jaw Dataset/Bones/Cancellous/Alveolar bone lower jaw with boolean.stl",
+   "sourceSha256": "364333624174fd1079f256fce59cb3cd22d02f2a5751e52ca5d9035a3b923001"
+  },
+  {
+   "id": "tooth-31",
+   "name": "Lower left central incisor",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 3775152,
+   "normals": 3791316,
+   "indices": 3807480,
+   "vertexCount": 1347,
+   "indexCount": 8070,
+   "bounds": [
+    [
+     -246.066162109375,
+     -283.2422790527344,
+     -4.451627731323242
+    ],
+    [
+     -241.25836181640625,
+     -269.3922424316406,
+     8.340568542480469
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 31,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D31.stl",
+   "sourceSha256": "cfbcfddc8745a7ae82866031c798b64d5036caff15d634fa9cd172d53f2a6086"
+  },
+  {
+   "id": "pdl-31",
+   "name": "Lower left central incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 3839760,
+   "normals": 3851040,
+   "indices": 3862320,
+   "vertexCount": 940,
+   "indexCount": 5628,
+   "bounds": [
+    [
+     -245.4850311279297,
+     -277.2891540527344,
+     -4.692488193511963
+    ],
+    [
+     -241.74952697753906,
+     -269.1439514160156,
+     4.278324127197266
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 31,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L31.stl",
+   "sourceSha256": "04e4e4285515954a2b8b083d104b1e150412f1090aa299e597e08bc32cfa0337"
+  },
+  {
+   "id": "tooth-32",
+   "name": "Lower left lateral incisor",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 3884832,
+   "normals": 3904884,
+   "indices": 3924936,
+   "vertexCount": 1671,
+   "indexCount": 10014,
+   "bounds": [
+    [
+     -241.8579864501953,
+     -282.0591735839844,
+     -5.797341823577881
+    ],
+    [
+     -235.56060791015625,
+     -266.8030090332031,
+     9.38634967803955
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 32,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D32.stl",
+   "sourceSha256": "e1107e92c5f6750ad59db7ce4fef9f819f67682e9a29b2ce615c172789c17917"
+  },
+  {
+   "id": "pdl-32",
+   "name": "Lower left lateral incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 3964992,
+   "normals": 3979128,
+   "indices": 3993264,
+   "vertexCount": 1178,
+   "indexCount": 7056,
+   "bounds": [
+    [
+     -242.13735961914062,
+     -277.1213684082031,
+     -6.032526969909668
+    ],
+    [
+     -236.76358032226562,
+     -266.5646667480469,
+     4.6381306648254395
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 32,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L32.stl",
+   "sourceSha256": "06435916b212cb307c6ef13fadb019421a89023b92e0f284421decd0124413ea"
+  },
+  {
+   "id": "tooth-33",
+   "name": "Lower left canine",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 4021488,
+   "normals": 4045248,
+   "indices": 4069008,
+   "vertexCount": 1980,
+   "indexCount": 11868,
+   "bounds": [
+    [
+     -237.53025817871094,
+     -279.3572082519531,
+     -6.811254978179932
+    ],
+    [
+     -230.6931915283203,
+     -263.5926818847656,
+     11.148818016052246
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 33,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D33.stl",
+   "sourceSha256": "6b901a844ca82fb36898ff4a7a73c98ea77342221e0103b9c5efdaedc68b2e72"
+  },
+  {
+   "id": "pdl-33",
+   "name": "Lower left canine, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 4116480,
+   "normals": 4135584,
+   "indices": 4154688,
+   "vertexCount": 1592,
+   "indexCount": 9540,
+   "bounds": [
+    [
+     -237.769775390625,
+     -276.1756896972656,
+     -7.0392608642578125
+    ],
+    [
+     -231.23507690429688,
+     -263.3645935058594,
+     5.197506427764893
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 33,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L33.stl",
+   "sourceSha256": "e8dca267a0d2a2e5a199059b3841a16f118182e2e5ef3709ac75bf209203cc71"
+  },
+  {
+   "id": "tooth-34",
+   "name": "Lower left first premolar",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 4192848,
+   "normals": 4215720,
+   "indices": 4238592,
+   "vertexCount": 1906,
+   "indexCount": 11424,
+   "bounds": [
+    [
+     -234.0530548095703,
+     -273.6432189941406,
+     -5.392111301422119
+    ],
+    [
+     -226.8128204345703,
+     -261.5225830078125,
+     12.680004119873047
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 34,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D34.stl",
+   "sourceSha256": "288630f75711b2f5edd5dd79dd992e5392f03b30cb7ccd40c72aebdaa7722a8e"
+  },
+  {
+   "id": "pdl-34",
+   "name": "Lower left first premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 4284288,
+   "normals": 4301784,
+   "indices": 4319280,
+   "vertexCount": 1458,
+   "indexCount": 8736,
+   "bounds": [
+    [
+     -233.13287353515625,
+     -270.62750244140625,
+     -5.628068447113037
+    ],
+    [
+     -226.968017578125,
+     -261.3232116699219,
+     6.49350118637085
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 34,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L34.stl",
+   "sourceSha256": "66906ac1c9f22873f797862834313459b69d3f6b6f35ec1b29757fb308d15e5f"
+  },
+  {
+   "id": "tooth-35",
+   "name": "Lower left second premolar",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 4354224,
+   "normals": 4374672,
+   "indices": 4395120,
+   "vertexCount": 1704,
+   "indexCount": 10212,
+   "bounds": [
+    [
+     -231.42947387695312,
+     -267.4067077636719,
+     -5.578177452087402
+    ],
+    [
+     -223.43431091308594,
+     -256.6009521484375,
+     13.57423210144043
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 35,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D35.stl",
+   "sourceSha256": "b3097cd9ce60860adfbb5e9abb13f4b6fde7a948f9686d51a48d9830ea5c26f1"
+  },
+  {
+   "id": "pdl-35",
+   "name": "Lower left second premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 4435968,
+   "normals": 4447500,
+   "indices": 4459032,
+   "vertexCount": 961,
+   "indexCount": 5754,
+   "bounds": [
+    [
+     -230.60633850097656,
+     -265.5852966308594,
+     -5.829981803894043
+    ],
+    [
+     -223.74630737304688,
+     -256.3572998046875,
+     7.462796211242676
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 35,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L35.stl",
+   "sourceSha256": "e5b75ac4225011881c6b511d0b99a1b2a8fc7923c6d2d4b3877e0221d57492cf"
+  },
+  {
+   "id": "tooth-36",
+   "name": "Lower left first molar",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 4482048,
+   "normals": 4527372,
+   "indices": 4572696,
+   "vertexCount": 3777,
+   "indexCount": 22650,
+   "bounds": [
+    [
+     -230.47784423828125,
+     -260.52783203125,
+     -2.116643190383911
+    ],
+    [
+     -219.7887725830078,
+     -244.99560546875,
+     16.51812171936035
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 36,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D36.stl",
+   "sourceSha256": "2890fded32b03aaca71b00a0eb8c9fd04af0d6d0d1854ec11e4e10348f4ba7b4"
+  },
+  {
+   "id": "pdl-36",
+   "name": "Lower left first molar, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 4663296,
+   "normals": 4718844,
+   "indices": 4774392,
+   "vertexCount": 4629,
+   "indexCount": 27762,
+   "bounds": [
+    [
+     -229.9411163330078,
+     -258.80926513671875,
+     -3.2998459339141846
+    ],
+    [
+     -219.5771942138672,
+     -244.5654296875,
+     8.754555702209473
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 36,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L36.stl",
+   "sourceSha256": "094d3945cbd67b62449ba4fc3c4c4dc5156c98e8ef578862b06ea5e122ffaafd"
+  },
+  {
+   "id": "tooth-37",
+   "name": "Lower left second molar",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 4885440,
+   "normals": 4927020,
+   "indices": 4968600,
+   "vertexCount": 3465,
+   "indexCount": 20778,
+   "bounds": [
+    [
+     -226.9407958984375,
+     -248.9313201904297,
+     -1.7053390741348267
+    ],
+    [
+     -216.73193359375,
+     -234.50840759277344,
+     17.522489547729492
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 37,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D37.stl",
+   "sourceSha256": "a5f5488b4c300d02b51661def99df33b8a0397d55090810b2043a7decf3b0b36"
+  },
+  {
+   "id": "pdl-37",
+   "name": "Lower left second molar, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 5051712,
+   "normals": 5109456,
+   "indices": 5167200,
+   "vertexCount": 4812,
+   "indexCount": 28860,
+   "bounds": [
+    [
+     -225.73036193847656,
+     -247.0884552001953,
+     -1.9560118913650513
+    ],
+    [
+     -216.4833984375,
+     -234.26268005371094,
+     12.396062850952148
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 37,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L37.stl",
+   "sourceSha256": "69ee0ab365755ff6bc6af2ae1ea0edd299c8f2973f62def31e941578699bdc13"
+  },
+  {
+   "id": "tooth-41",
+   "name": "Lower right central incisor",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 5282640,
+   "normals": 5304492,
+   "indices": 5326344,
+   "vertexCount": 1821,
+   "indexCount": 10914,
+   "bounds": [
+    [
+     -251.4244384765625,
+     -283.35174560546875,
+     -5.110334873199463
+    ],
+    [
+     -246.10130310058594,
+     -269.1763000488281,
+     8.62922191619873
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 41,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D41.stl",
+   "sourceSha256": "dd8f7dd6f505f85bcc83326f5c7d818ab12fa8d3d35fa821432307b4c8860339"
+  },
+  {
+   "id": "pdl-41",
+   "name": "Lower right central incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 5370000,
+   "normals": 5386056,
+   "indices": 5402112,
+   "vertexCount": 1338,
+   "indexCount": 8016,
+   "bounds": [
+    [
+     -250.4092559814453,
+     -277.2454833984375,
+     -5.346949100494385
+    ],
+    [
+     -245.85604858398438,
+     -268.9454345703125,
+     4.028098106384277
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 41,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L41.stl",
+   "sourceSha256": "df76a6db4f64bfa92a5a26aec9b520b6882d9ae5ceee37aabb467338783a4364"
+  },
+  {
+   "id": "tooth-42",
+   "name": "Lower right lateral incisor",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 5434176,
+   "normals": 5464116,
+   "indices": 5494056,
+   "vertexCount": 2495,
+   "indexCount": 14958,
+   "bounds": [
+    [
+     -256.8863220214844,
+     -281.5762939453125,
+     -5.905489921569824
+    ],
+    [
+     -250.31015014648438,
+     -265.8201904296875,
+     9.69227123260498
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 42,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D42.stl",
+   "sourceSha256": "9197c6a8c3bd3e914d2e3086c69b9b130cdc2fb89a3a1ad44cfc50e64c041151"
+  },
+  {
+   "id": "pdl-42",
+   "name": "Lower right lateral incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 5553888,
+   "normals": 5570580,
+   "indices": 5587272,
+   "vertexCount": 1391,
+   "indexCount": 8334,
+   "bounds": [
+    [
+     -255.4503173828125,
+     -276.8559875488281,
+     -6.143110275268555
+    ],
+    [
+     -250.05252075195312,
+     -265.5726318359375,
+     4.37241792678833
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 42,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L42.stl",
+   "sourceSha256": "13d189ec1dd9fe95f01d24d103cb86e16c46770ac62fcdd5bb66a91a20e7102c"
+  },
+  {
+   "id": "tooth-43",
+   "name": "Lower right canine",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 5620608,
+   "normals": 5650452,
+   "indices": 5680296,
+   "vertexCount": 2487,
+   "indexCount": 14910,
+   "bounds": [
+    [
+     -261.6584777832031,
+     -277.9131774902344,
+     -8.013102531433105
+    ],
+    [
+     -253.94288635253906,
+     -263.1098937988281,
+     10.726290702819824
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 43,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D43.stl",
+   "sourceSha256": "27a49b13e5dd80977f7c11d092df64b0f177f36d4cfc68dddc790e5f16779040"
+  },
+  {
+   "id": "pdl-43",
+   "name": "Lower right canine, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 5739936,
+   "normals": 5756376,
+   "indices": 5772816,
+   "vertexCount": 1370,
+   "indexCount": 8208,
+   "bounds": [
+    [
+     -260.5957336425781,
+     -275.1064758300781,
+     -7.844814777374268
+    ],
+    [
+     -253.69906616210938,
+     -262.3991394042969,
+     4.479610443115234
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 43,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L43.stl",
+   "sourceSha256": "2f7550aa72f41f713da5cd0bfc7092a4a14196830b8896a0178137fbb9be4c7d"
+  },
+  {
+   "id": "tooth-44",
+   "name": "Lower right first premolar",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 5805648,
+   "normals": 5849328,
+   "indices": 5893008,
+   "vertexCount": 3640,
+   "indexCount": 21828,
+   "bounds": [
+    [
+     -266.5063781738281,
+     -273.1883544921875,
+     -6.997235298156738
+    ],
+    [
+     -257.57659912109375,
+     -259.9635009765625,
+     11.357647895812988
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 44,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D44.stl",
+   "sourceSha256": "7e80ee7ddd86120cb4ea29a165fbf8c07e882aaface485ab6062592f0b48e628"
+  },
+  {
+   "id": "pdl-44",
+   "name": "Lower right first premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 5980320,
+   "normals": 5997108,
+   "indices": 6013896,
+   "vertexCount": 1399,
+   "indexCount": 8382,
+   "bounds": [
+    [
+     -265.1135559082031,
+     -269.9515380859375,
+     -7.241925239562988
+    ],
+    [
+     -257.3338928222656,
+     -259.721923828125,
+     6.179855823516846
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 44,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L44.stl",
+   "sourceSha256": "43078b899e98e88e225754ec97d1a9a12047825bab8e0b9f105d2ab1b99f1310"
+  },
+  {
+   "id": "tooth-45",
+   "name": "Lower right second premolar",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 6047424,
+   "normals": 6081360,
+   "indices": 6115296,
+   "vertexCount": 2828,
+   "indexCount": 16956,
+   "bounds": [
+    [
+     -268.47003173828125,
+     -267.2920227050781,
+     -5.482545375823975
+    ],
+    [
+     -260.31793212890625,
+     -255.75091552734375,
+     13.273558616638184
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 45,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D45.stl",
+   "sourceSha256": "715011b6396ffa5064abdbbd6191f1564a709e1885c3d774ca860a528c55d5ba"
+  },
+  {
+   "id": "pdl-45",
+   "name": "Lower right second premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 6183120,
+   "normals": 6199404,
+   "indices": 6215688,
+   "vertexCount": 1357,
+   "indexCount": 8130,
+   "bounds": [
+    [
+     -267.8254089355469,
+     -264.608642578125,
+     -5.7314133644104
+    ],
+    [
+     -260.0234375,
+     -255.50181579589844,
+     7.545516014099121
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 45,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L45.stl",
+   "sourceSha256": "7d9f6c23c120bf3ba209d780a4d471f8727a45fed16c96deaddf49955f310c12"
+  },
+  {
+   "id": "tooth-46",
+   "name": "Lower right first molar",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 6248208,
+   "normals": 6316968,
+   "indices": 6385728,
+   "vertexCount": 5730,
+   "indexCount": 34368,
+   "bounds": [
+    [
+     -271.38848876953125,
+     -260.59332275390625,
+     -3.362959623336792
+    ],
+    [
+     -260.5097961425781,
+     -244.44068908691406,
+     15.835165977478027
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D46.stl",
+   "sourceSha256": "652e2b364a3b17334d1f1bfd5769600768cee99322ae52febab257a72a2ae809"
+  },
+  {
+   "id": "pdl-46",
+   "name": "Lower right first molar, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 6523200,
+   "normals": 6583596,
+   "indices": 6643992,
+   "vertexCount": 5033,
+   "indexCount": 30186,
+   "bounds": [
+    [
+     -271.6021728515625,
+     -258.3497009277344,
+     -3.6069905757904053
+    ],
+    [
+     -260.9806213378906,
+     -244.1898956298828,
+     8.775046348571777
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L46.stl",
+   "sourceSha256": "c443fdf8f8c6cf92469e7b43278f9076d59be0eab5aa8d4402af786758628ff7"
+  },
+  {
+   "id": "tooth-47",
+   "name": "Lower right second molar",
+   "group": "tooth",
+   "source": "diaz",
+   "positions": 6764736,
+   "normals": 6796800,
+   "indices": 6828864,
+   "vertexCount": 2672,
+   "indexCount": 16020,
+   "bounds": [
+    [
+     -272.4563903808594,
+     -248.9266815185547,
+     -1.7058250904083252
+    ],
+    [
+     -262.22955322265625,
+     -234.51171875,
+     17.526073455810547
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 47,
+   "sourceMember": "Human Lower Jaw Dataset/Teeth/STL/D47.stl",
+   "sourceSha256": "ed77512d7b4dde5695d6b3a936931a952ad15f566c9803a943f47c43d902c21b"
+  },
+  {
+   "id": "pdl-47",
+   "name": "Lower right second molar, periodontal ligament",
+   "group": "pdl",
+   "source": "diaz",
+   "positions": 6892944,
+   "normals": 6934116,
+   "indices": 6975288,
+   "vertexCount": 3431,
+   "indexCount": 20574,
+   "bounds": [
+    [
+     -273.30169677734375,
+     -246.82583618164062,
+     -2.348485231399536
+    ],
+    [
+     -264.20587158203125,
+     -234.0023956298828,
+     10.628765106201172
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 47,
+   "sourceMember": "Human Lower Jaw Dataset/PDL/STL/L47.stl",
+   "sourceSha256": "fcd9ab09d4ab667391738abd61b98fca3782410e9c30fe6ca221b0fc1bf91eae"
+  },
+  {
+   "id": "fang-tooth",
+   "name": "Tooth 46, outer surface",
+   "group": "tooth",
+   "source": "fang",
+   "positions": 7057584,
+   "normals": 7261608,
+   "indices": 7465632,
+   "vertexCount": 17002,
+   "indexCount": 102000,
+   "bounds": [
+    [
+     -27.724180221557617,
+     -23.46048927307129,
+     -21.6355037689209
+    ],
+    [
+     -14.871469497680664,
+     -9.940108299255371,
+     -4.101783752441406
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "sourceSha256": "78b52ecb16c1c6173d5b9bfe7fe1a567ea1d207e40a43a9bbf5cc687e39cf5e1",
+   "cadTriangles": 314170,
+   "simplifiedError": 0.00027
+  },
+  {
+   "id": "fang-pulp",
+   "name": "Pulp cavity",
+   "group": "pulp",
+   "source": "fang",
+   "positions": 7873632,
+   "normals": 8077656,
+   "indices": 8281680,
+   "vertexCount": 17002,
+   "indexCount": 102000,
+   "bounds": [
+    [
+     -26.533742904663086,
+     -19.959556579589844,
+     -19.322973251342773
+    ],
+    [
+     -18.71902084350586,
+     -10.790459632873535,
+     -9.498210906982422
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "sourceSha256": "992436f4c86a0ab773e6e6029284be171f05c82210724e677fb34bbd6ef541fe",
+   "cadTriangles": 388230,
+   "simplifiedError": 0.00027
+  },
+  {
+   "id": "fang-pdl",
+   "name": "Periodontal ligament",
+   "group": "pdl",
+   "source": "fang",
+   "positions": 8689680,
+   "normals": 8893704,
+   "indices": 9097728,
+   "vertexCount": 17002,
+   "indexCount": 102000,
+   "bounds": [
+    [
+     -27.9714298248291,
+     -21.90526580810547,
+     -21.873544692993164
+    ],
+    [
+     -16.096506118774414,
+     -9.698655128479004,
+     -9.89552116394043
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "sourceSha256": "34233ba8c4e455443377aeb1a1f4e9aba1f6712fcbc1a06e0f6153466d064f49",
+   "cadTriangles": 378330,
+   "simplifiedError": 0.00033
+  },
+  {
+   "id": "fang-maintainer",
+   "name": "Band and loop space maintainer",
+   "group": "appliance",
+   "source": "fang",
+   "positions": 9505728,
+   "normals": 9709704,
+   "indices": 9913680,
+   "vertexCount": 16998,
+   "indexCount": 102000,
+   "bounds": [
+    [
+     -26.03607177734375,
+     -33.17446517944336,
+     -14.560444831848145
+    ],
+    [
+     -12.057809829711914,
+     -10.27668571472168,
+     -3.812547206878662
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": null,
+   "sourceSha256": "85a272f7fabd5217ae61e53b86d9d94b8c6ca960a39fcc4059c6be0cd0305741",
+   "cadTriangles": 276612,
+   "simplifiedError": 0.00019
+  }
+ ]
+}
