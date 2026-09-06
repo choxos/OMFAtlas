@@ -67,20 +67,24 @@ const escape = (value) =>
         c
       ],
   );
+// An oral and maxillofacial atlas should open on the jaws, not on a wall of
+// muscle that hides them, so muscles, brain, eyes and skin start off. Reset
+// returns here rather than turning everything on.
+const DEFAULT_LAYERS = [
+  "bones",
+  "teeth",
+  "gingiva",
+  "neck",
+  "arteries",
+  "veins",
+  "nerves",
+  "glands",
+  "soft",
+  "airway",
+];
 const state = {
   selected: "FJ3289",
-  layers: new Set([
-    "bones",
-    "teeth",
-    "gingiva",
-    "neck",
-    "arteries",
-    "veins",
-    "nerves",
-    "glands",
-    "soft",
-    "airway",
-  ]),
+  layers: new Set(DEFAULT_LAYERS),
   age: "adult",
   arches: false,
   toothDetail: false,
@@ -1075,18 +1079,8 @@ document.querySelector("#isolate").onclick = () => {
 };
 document.querySelector("#reset").onclick = () => {
   if (!atlas) return;
-  state.layers = new Set([
-    "bones",
-    "teeth",
-    "neck",
-    "muscles",
-    "arteries",
-    "veins",
-    "nerves",
-    "glands",
-    "soft",
-    "eyes",
-  ]);
+  state.layers = new Set(DEFAULT_LAYERS);
+  state.schematic = true;
   state.age = "adult";
   state.arches = false;
   state.toothDetail = false;
