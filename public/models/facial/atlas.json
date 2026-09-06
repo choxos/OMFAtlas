@@ -1,0 +1,1313 @@
+{
+  "source": "BodyParts3D 3.0, official 95% polygon-reduction archive",
+  "sourceUrl": "https://dbarchive.biosciencedbc.jp/data/bodyparts3d/20110915/BodyParts3D_3.0_obj_95.zip",
+  "license": "CC-BY-SA-2.1-JP",
+  "attribution": "BodyParts3D, Copyright© The Database Center for Life Science licensed by CC Attribution-Share Alike 2.1 Japan",
+  "adaptation": "Similarity-registered to 4.0 using shared bones, meter/Y-up conversion, Int16 normals, binary packing; topology unchanged",
+  "registration": {
+    "scale": 1.059369874098004,
+    "rotation": [
+      [
+        0.9999999697814653,
+        -0.00022542358070208187,
+        0.00009808811509434028
+      ],
+      [
+        0.00022540964137606034,
+        0.9999999644993117,
+        0.00014209810025212806
+      ],
+      [
+        -0.00009812014387505785,
+        -0.000142075985950868,
+        0.9999999850934261
+      ]
+    ],
+    "translationMm": [
+      -0.15057996010419217,
+      15.397670982185474,
+      -99.29859059211003
+    ],
+    "trainingBones": [
+      "FMA52748",
+      "FMA52734",
+      "FMA53649"
+    ],
+    "heldOutBone": "FMA53650",
+    "heldOutSourceToTargetSurfaceRmsMm": 0.2583466353828061,
+    "heldOutTargetToSourceSurfaceRmsMm": 0.08919988835896876,
+    "report": "documentation/qa/FACIAL-SOURCE.md"
+  },
+  "bytes": 16390216,
+  "parts": [
+    {
+      "id": "BP3-FMA46841",
+      "conceptId": "FMA46841",
+      "name": "Orbicularis oris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 22893,
+      "indexCount": 112842,
+      "bounds": [
+        [
+          -0.03355924040079117,
+          1.5125632286071777,
+          0.05738405883312225
+        ],
+        [
+          0.03226493299007416,
+          1.5591448545455933,
+          0.08570299297571182
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "2c82d47ce2d8f43a210f6d32cd0604c06d1454b4d896031a0d9bf00a80be2ae5",
+      "positions": 0,
+      "normals": 274716,
+      "indices": 412076
+    },
+    {
+      "id": "BP3-FMA46759",
+      "conceptId": "FMA46759",
+      "name": "Right frontalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 32358,
+      "indexCount": 176688,
+      "bounds": [
+        [
+          -0.0605565570294857,
+          1.6098566055297852,
+          0.031730763614177704
+        ],
+        [
+          -0.0006259073270484805,
+          1.6818188428878784,
+          0.07984304428100586
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "ba1f3802da915a7a2f3b46cfc3bccbbcc29c88c37c4b37d3e6039861aebe6b6f",
+      "positions": 863444,
+      "normals": 1251740,
+      "indices": 1445888
+    },
+    {
+      "id": "BP3-FMA46760",
+      "conceptId": "FMA46760",
+      "name": "Left frontalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 31247,
+      "indexCount": 175776,
+      "bounds": [
+        [
+          -0.0006385042215697467,
+          1.609918236732483,
+          0.031712938100099564
+        ],
+        [
+          0.059265587478876114,
+          1.6818128824234009,
+          0.0798310860991478
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "1641d5dca6155a8b684c20638f637dfbe3269c307ee08dc63ef412f22a5f0b8b",
+      "positions": 2152640,
+      "normals": 2527604,
+      "indices": 2715088
+    },
+    {
+      "id": "BP3-FMA46761",
+      "conceptId": "FMA46761",
+      "name": "Right occipitalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 18664,
+      "indexCount": 81072,
+      "bounds": [
+        [
+          -0.06364376842975616,
+          1.5908055305480957,
+          -0.11935149133205414
+        ],
+        [
+          -0.015879109501838684,
+          1.6247389316558838,
+          -0.0714968740940094
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "b4f096c22bbf51e5fd2855ffed274fad85db11d81a78dcb21df70d96e3466a85",
+      "positions": 3418192,
+      "normals": 3642160,
+      "indices": 3754144
+    },
+    {
+      "id": "BP3-FMA46762",
+      "conceptId": "FMA46762",
+      "name": "Left occipitalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 17197,
+      "indexCount": 80268,
+      "bounds": [
+        [
+          0.01452683750540018,
+          1.5908340215682983,
+          -0.11933711171150208
+        ],
+        [
+          0.062295056879520416,
+          1.6247416734695435,
+          -0.07166102528572083
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "d4fe23b9c111e64945d1184dd76632a15ff135bb6de3313b566a8c83704f6574",
+      "positions": 4078432,
+      "normals": 4284796,
+      "indices": 4387980
+    },
+    {
+      "id": "BP3-FMA46782",
+      "conceptId": "FMA46782",
+      "name": "Orbital part of right orbicularis oculi",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 5274,
+      "indexCount": 24990,
+      "bounds": [
+        [
+          -0.048316843807697296,
+          1.584803581237793,
+          0.05336006358265877
+        ],
+        [
+          -0.013686321675777435,
+          1.6095929145812988,
+          0.07123249024152756
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "bc961d68f3803cac2af3c42abe5b8472155622f117658c6df7625ecf18c402a9",
+      "positions": 4709052,
+      "normals": 4772340,
+      "indices": 4803984
+    },
+    {
+      "id": "BP3-FMA46783",
+      "conceptId": "FMA46783",
+      "name": "Orbital part of left orbicularis oculi",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 4934,
+      "indexCount": 24840,
+      "bounds": [
+        [
+          0.012348154559731483,
+          1.5848078727722168,
+          0.05335506051778793
+        ],
+        [
+          0.047006405889987946,
+          1.6095761060714722,
+          0.07121297717094421
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "52e4534497ef53b841227ca53529c2263303e23069a5256c4dfd13f1f07c7e5a",
+      "positions": 4903944,
+      "normals": 4963152,
+      "indices": 4992756
+    },
+    {
+      "id": "BP3-FMA46785",
+      "conceptId": "FMA46785",
+      "name": "Palpebral part of right orbicularis oculi",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 13101,
+      "indexCount": 71718,
+      "bounds": [
+        [
+          -0.055328499525785446,
+          1.5728435516357422,
+          0.0448414571583271
+        ],
+        [
+          -0.009840508922934532,
+          1.6238428354263306,
+          0.07723136991262436
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "ab46b87f0babdf92e7cf5b3a3097623089bfce67331ca4201d300785aaefdcb2",
+      "positions": 5092116,
+      "normals": 5249328,
+      "indices": 5327936
+    },
+    {
+      "id": "BP3-FMA46786",
+      "conceptId": "FMA46786",
+      "name": "Palpebral part of left orbicularis oculi",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 12004,
+      "indexCount": 69126,
+      "bounds": [
+        [
+          0.008540739305317402,
+          1.5728368759155273,
+          0.04497721791267395
+        ],
+        [
+          0.05402408167719841,
+          1.6238362789154053,
+          0.07721614092588425
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "426dd2416d995b20242760a2a053e682267deabd2e76dc9fed5377154d85d5d0",
+      "positions": 5614808,
+      "normals": 5758856,
+      "indices": 5830880
+    },
+    {
+      "id": "BP3-FMA46796",
+      "conceptId": "FMA46796",
+      "name": "Right corrugator supercilii",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 2909,
+      "indexCount": 8352,
+      "bounds": [
+        [
+          -0.03295889124274254,
+          1.6083203554153442,
+          0.06701750308275223
+        ],
+        [
+          -0.009766538627445698,
+          1.6279528141021729,
+          0.07426795363426208
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "11e014da689d7d40292054dbbcad3ae1a80e8320ada215703e78b8707796cada",
+      "positions": 6107384,
+      "normals": 6142292,
+      "indices": 6159748
+    },
+    {
+      "id": "BP3-FMA46797",
+      "conceptId": "FMA46797",
+      "name": "Left corrugator supercilii",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 2770,
+      "indexCount": 8304,
+      "bounds": [
+        [
+          0.008489634841680527,
+          1.608318567276001,
+          0.06701469421386719
+        ],
+        [
+          0.031658414751291275,
+          1.6279361248016357,
+          0.0742608979344368
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "3ba4f05230909e3b0b8bb359324c1b2591925336c1ded913f8ffb8fdd35a30c1",
+      "positions": 6193156,
+      "normals": 6226396,
+      "indices": 6243016
+    },
+    {
+      "id": "BP3-FMA46803",
+      "conceptId": "FMA46803",
+      "name": "Right levator labii superioris alaeque nasi",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 1410,
+      "indexCount": 5064,
+      "bounds": [
+        [
+          -0.0171021930873394,
+          1.5627045631408691,
+          0.06716884672641754
+        ],
+        [
+          -0.011510131880640984,
+          1.5926204919815063,
+          0.07463879883289337
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "a22e2fe5f5d0422bb036e8b4a2bd53bcf376e02bd41e3f2b3c2fcc2cde792cc6",
+      "positions": 6276232,
+      "normals": 6293152,
+      "indices": 6301612
+    },
+    {
+      "id": "BP3-FMA46804",
+      "conceptId": "FMA46804",
+      "name": "Left levator labii superioris alaeque nasi",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 1227,
+      "indexCount": 4938,
+      "bounds": [
+        [
+          0.010238048620522022,
+          1.5627124309539795,
+          0.06716407090425491
+        ],
+        [
+          0.015757856890559196,
+          1.5925865173339844,
+          0.07463444024324417
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "6b19b75c521381004156d1d3286ffd28e3539e881d96a893bf4a15b76ea8d8b2",
+      "positions": 6321868,
+      "normals": 6336592,
+      "indices": 6343956
+    },
+    {
+      "id": "BP3-FMA46806",
+      "conceptId": "FMA46806",
+      "name": "Right levator labii superioris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 3554,
+      "indexCount": 16314,
+      "bounds": [
+        [
+          -0.04043440520763397,
+          1.5521219968795776,
+          0.05879368633031845
+        ],
+        [
+          -0.01267012394964695,
+          1.5817939043045044,
+          0.07413932681083679
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "5a119149d52b0190e3d10693f9ebfcca43e89faecd36003f624bb14543ae4555",
+      "positions": 6363708,
+      "normals": 6406356,
+      "indices": 6427680
+    },
+    {
+      "id": "BP3-FMA46807",
+      "conceptId": "FMA46807",
+      "name": "Left levator labii superioris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 3170,
+      "indexCount": 16122,
+      "bounds": [
+        [
+          0.011370464228093624,
+          1.5521186590194702,
+          0.058775875717401505
+        ],
+        [
+          0.039143022149801254,
+          1.5817803144454956,
+          0.07411280274391174
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "fda219041d1d73a3260b579a8f7fbf86d72f7e003a4435ea1e3fb733ec54a1a1",
+      "positions": 6492936,
+      "normals": 6530976,
+      "indices": 6549996
+    },
+    {
+      "id": "BP3-FMA46812",
+      "conceptId": "FMA46812",
+      "name": "Right zygomaticus major",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 8876,
+      "indexCount": 30654,
+      "bounds": [
+        [
+          -0.057619161903858185,
+          1.5285818576812744,
+          0.039570316672325134
+        ],
+        [
+          -0.02732733078300953,
+          1.584538459777832,
+          0.0660882517695427
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "6547a1658d8cb9da3007ab5104caba1b85c6eda50b04392d75672a6cca812166",
+      "positions": 6614484,
+      "normals": 6720996,
+      "indices": 6774252
+    },
+    {
+      "id": "BP3-FMA46813",
+      "conceptId": "FMA46813",
+      "name": "Left zygomaticus major",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 8035,
+      "indexCount": 30360,
+      "bounds": [
+        [
+          0.026027724146842957,
+          1.5285863876342773,
+          0.03970363736152649
+        ],
+        [
+          0.05622415989637375,
+          1.5845069885253906,
+          0.06607143580913544
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "0bc1fe514fcd3aafabac41f9f4ae9d5d16525ffe611ef7fb5f0d5b7d4fee8d43",
+      "positions": 6896868,
+      "normals": 6993288,
+      "indices": 7041500
+    },
+    {
+      "id": "BP3-FMA46814",
+      "conceptId": "FMA46814",
+      "name": "Right zygomaticus minor",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 2831,
+      "indexCount": 13704,
+      "bounds": [
+        [
+          -0.052223823964595795,
+          1.5514335632324219,
+          0.04942036420106888
+        ],
+        [
+          -0.013642588630318642,
+          1.5834052562713623,
+          0.07498786598443985
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "a804c15387cfb6a5f33738e7e9f32279128de6641657d95bef6b1843a4aa6a49",
+      "positions": 7162940,
+      "normals": 7196912,
+      "indices": 7213900
+    },
+    {
+      "id": "BP3-FMA46815",
+      "conceptId": "FMA46815",
+      "name": "Left zygomaticus minor",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 2731,
+      "indexCount": 13650,
+      "bounds": [
+        [
+          0.01234830915927887,
+          1.5514299869537354,
+          0.049714937806129456
+        ],
+        [
+          0.050932351499795914,
+          1.583363652229309,
+          0.07498160004615784
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "0faf29ba9e4ef3907584570932469975debbb977fe064d06f7f43ff13eb78ff4",
+      "positions": 7268716,
+      "normals": 7301488,
+      "indices": 7317876
+    },
+    {
+      "id": "BP3-FMA46817",
+      "conceptId": "FMA46817",
+      "name": "Right depressor labii inferioris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 7523,
+      "indexCount": 29880,
+      "bounds": [
+        [
+          -0.03257399797439575,
+          1.5039931535720825,
+          0.047936953604221344
+        ],
+        [
+          -0.0011057625524699688,
+          1.5342496633529663,
+          0.07594486325979233
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "32c075d9cdff05511c8f08b9e3b5ac5a72e429879bce8e0f83f07279f52599ca",
+      "positions": 7372476,
+      "normals": 7462752,
+      "indices": 7507892
+    },
+    {
+      "id": "BP3-FMA46818",
+      "conceptId": "FMA46818",
+      "name": "Left depressor labii inferioris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 6193,
+      "indexCount": 29496,
+      "bounds": [
+        [
+          -0.0002044403227046132,
+          1.5040327310562134,
+          0.04794599115848541
+        ],
+        [
+          0.03126373142004013,
+          1.5342227220535278,
+          0.07593744993209839
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "dfef97487006b57fbb8a7f59fe6ae828ad25102b5a27749ab48e648123dc96fd",
+      "positions": 7627412,
+      "normals": 7701728,
+      "indices": 7738888
+    },
+    {
+      "id": "BP3-FMA46823",
+      "conceptId": "FMA46823",
+      "name": "Right levator anguli oris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 4708,
+      "indexCount": 12120,
+      "bounds": [
+        [
+          -0.030408931896090508,
+          1.5471208095550537,
+          0.057649802416563034
+        ],
+        [
+          -0.01291812863200903,
+          1.5685200691223145,
+          0.07370034605264664
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "33be80991ca00ca5d9c51af48cfc50ef6f31374b75f58b90e7a6c970fd4deb5b",
+      "positions": 7856872,
+      "normals": 7913368,
+      "indices": 7941616
+    },
+    {
+      "id": "BP3-FMA46824",
+      "conceptId": "FMA46824",
+      "name": "Left levator anguli oris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 4050,
+      "indexCount": 11970,
+      "bounds": [
+        [
+          0.01164032518863678,
+          1.5471150875091553,
+          0.057638783007860184
+        ],
+        [
+          0.029106149449944496,
+          1.5679537057876587,
+          0.0736912190914154
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "a7677fcad2bdb8a202a91609d0923ae45e5f346075b6c704501f88afacd78468",
+      "positions": 7990096,
+      "normals": 8038696,
+      "indices": 8062996
+    },
+    {
+      "id": "BP3-FMA46826",
+      "conceptId": "FMA46826",
+      "name": "Right mentalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 1691,
+      "indexCount": 5676,
+      "bounds": [
+        [
+          -0.015455372631549835,
+          1.5016518831253052,
+          0.06536733359098434
+        ],
+        [
+          -0.0014041248941794038,
+          1.516779899597168,
+          0.0726243406534195
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "0944af216b84375ed8310670f69b3d3aa8678cb9b3b76a4d2f193b62afacab5c",
+      "positions": 8110876,
+      "normals": 8131168,
+      "indices": 8141316
+    },
+    {
+      "id": "BP3-FMA46827",
+      "conceptId": "FMA46827",
+      "name": "Left mentalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 1429,
+      "indexCount": 5556,
+      "bounds": [
+        [
+          0.00010707577894208953,
+          1.5016508102416992,
+          0.06538091599941254
+        ],
+        [
+          0.014150730334222317,
+          1.5167675018310547,
+          0.07262326776981354
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "a395ffb837ab108770921c16a1e60e3e80ceb493d5b0fec0ecace0e1ccfd8877",
+      "positions": 8164020,
+      "normals": 8181168,
+      "indices": 8189744
+    },
+    {
+      "id": "BP3-FMA46829",
+      "conceptId": "FMA46829",
+      "name": "Right depressor anguli oris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 5167,
+      "indexCount": 16386,
+      "bounds": [
+        [
+          -0.037598107010126114,
+          1.501312494277954,
+          0.03989811986684799
+        ],
+        [
+          -0.01232992671430111,
+          1.5442079305648804,
+          0.06475070118904114
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "0805bacea017c4e4f2e6755516c05f0f3246caab5c7ef089fa820f789dd954da",
+      "positions": 8211968,
+      "normals": 8273972,
+      "indices": 8304976
+    },
+    {
+      "id": "BP3-FMA46830",
+      "conceptId": "FMA46830",
+      "name": "Left depressor anguli oris",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 4438,
+      "indexCount": 16116,
+      "bounds": [
+        [
+          0.011626191437244415,
+          1.501330852508545,
+          0.040172822773456573
+        ],
+        [
+          0.03630692511796951,
+          1.5441702604293823,
+          0.06473664194345474
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "d8ee648a9310d0399031d456515072c9d6798f7c870baaae93eb10e67c6b610c",
+      "positions": 8370520,
+      "normals": 8423776,
+      "indices": 8450404
+    },
+    {
+      "id": "BP3-FMA46835",
+      "conceptId": "FMA46835",
+      "name": "Right buccinator",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 5015,
+      "indexCount": 26574,
+      "bounds": [
+        [
+          -0.037391163408756256,
+          1.518760323524475,
+          0.031232791021466255
+        ],
+        [
+          -0.022041605785489082,
+          1.555995225906372,
+          0.06092420592904091
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "0b1e429ee3d0cd553dd90adf4f9220cfe43325d38983187a6f367bdfbe985acf",
+      "positions": 8514868,
+      "normals": 8575048,
+      "indices": 8605140
+    },
+    {
+      "id": "BP3-FMA46836",
+      "conceptId": "FMA46836",
+      "name": "Left buccinator",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 4927,
+      "indexCount": 26508,
+      "bounds": [
+        [
+          0.020748445764183998,
+          1.5187768936157227,
+          0.031225604936480522
+        ],
+        [
+          0.036095187067985535,
+          1.5559890270233154,
+          0.060895372182130814
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "9dbd4a871524d9ecce52edbf6ab37fc0db03b0da30eecd83aa1043c35e569d54",
+      "positions": 8711436,
+      "normals": 8770560,
+      "indices": 8800124
+    },
+    {
+      "id": "BP3-FMA46839",
+      "conceptId": "FMA46839",
+      "name": "Right risorius",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 5755,
+      "indexCount": 20208,
+      "bounds": [
+        [
+          -0.0503053180873394,
+          1.5190452337265015,
+          0.03287932649254799
+        ],
+        [
+          -0.030041636899113655,
+          1.5468658208847046,
+          0.06134462356567383
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "445393d9015d7d207578f957327e1f0a59cf2c8f4cc91d91c86a800da86c787d",
+      "positions": 8906156,
+      "normals": 8975216,
+      "indices": 9009748
+    },
+    {
+      "id": "BP3-FMA46840",
+      "conceptId": "FMA46840",
+      "name": "Left risorius",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 5375,
+      "indexCount": 20052,
+      "bounds": [
+        [
+          0.02875337190926075,
+          1.5190478563308716,
+          0.03307278826832771
+        ],
+        [
+          0.04899068921804428,
+          1.5468989610671997,
+          0.06130646914243698
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "14eccccb12ae5df5299ea4797284972e5e77b752aae21b83fcd17fa3030c52d8",
+      "positions": 9090580,
+      "normals": 9155080,
+      "indices": 9187332
+    },
+    {
+      "id": "BP3-FMA49001",
+      "conceptId": "FMA49001",
+      "name": "Superficial part of right masseter",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 6953,
+      "indexCount": 30264,
+      "bounds": [
+        [
+          -0.06405600905418396,
+          1.5173814296722412,
+          -0.0022679681424051523
+        ],
+        [
+          -0.03631919249892235,
+          1.5845431089401245,
+          0.03337445855140686
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "0548003276232c506740d5ed3baf386707cfd37313bff83f254d63dac0eb6262",
+      "positions": 9267540,
+      "normals": 9350976,
+      "indices": 9392696
+    },
+    {
+      "id": "BP3-FMA49002",
+      "conceptId": "FMA49002",
+      "name": "Superficial part of left masseter",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 6410,
+      "indexCount": 30096,
+      "bounds": [
+        [
+          0.03497977554798126,
+          1.5173953771591187,
+          -0.0022526346147060394
+        ],
+        [
+          0.06264803558588028,
+          1.5844993591308594,
+          0.03335779160261154
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "06c8e6f478247df53da23396ae7c2f6e0c4e4a3a31ead72ca11c5e3c4bbac522",
+      "positions": 9513752,
+      "normals": 9590672,
+      "indices": 9629132
+    },
+    {
+      "id": "BP3-FMA49004",
+      "conceptId": "FMA49004",
+      "name": "Deep part of right masseter",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 8491,
+      "indexCount": 42456,
+      "bounds": [
+        [
+          -0.06496682018041611,
+          1.5161315202713013,
+          0.005710556171834469
+        ],
+        [
+          -0.03763572871685028,
+          1.5800234079360962,
+          0.04620828479528427
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "b590bf5b498e6d10f5b2b3b753f920f0bd9abe4f396c88fb74419bd427cbc39f",
+      "positions": 9749516,
+      "normals": 9851408,
+      "indices": 9902356
+    },
+    {
+      "id": "BP3-FMA49005",
+      "conceptId": "FMA49005",
+      "name": "Deep part of left masseter",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 8297,
+      "indexCount": 42342,
+      "bounds": [
+        [
+          0.036314960569143295,
+          1.5162938833236694,
+          0.005705800838768482
+        ],
+        [
+          0.06364072114229202,
+          1.5799262523651123,
+          0.04618469998240471
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "a0d783fb221b2adff0f94d4c6345094d1608280d338938a8b69c401431cb414d",
+      "positions": 10072180,
+      "normals": 10171744,
+      "indices": 10221528
+    },
+    {
+      "id": "BP3-FMA49007",
+      "conceptId": "FMA49007",
+      "name": "Right temporalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 62210,
+      "indexCount": 318756,
+      "bounds": [
+        [
+          -0.0794355571269989,
+          1.5506144762039185,
+          -0.063749760389328
+        ],
+        [
+          -0.039358485490083694,
+          1.6697063446044922,
+          0.053088556975126266
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "66c8234570a01e2268f3d83b9d7bc151f46d78b2bf413f9f502107e9c93a482e",
+      "positions": 10390896,
+      "normals": 11137416,
+      "indices": 11510676
+    },
+    {
+      "id": "BP3-FMA49008",
+      "conceptId": "FMA49008",
+      "name": "Left temporalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 61244,
+      "indexCount": 319068,
+      "bounds": [
+        [
+          0.0380483977496624,
+          1.5507760047912598,
+          -0.06378135830163956
+        ],
+        [
+          0.07811422646045685,
+          1.6696938276290894,
+          0.053392309695482254
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "9827d3141418c1eb635e4f5d08cf7c6cd4377c8df5b74146268a403268126738",
+      "positions": 12785700,
+      "normals": 13520628,
+      "indices": 13888092
+    },
+    {
+      "id": "BP3-FMA49012",
+      "conceptId": "FMA49012",
+      "name": "Right medial pterygoid",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 5673,
+      "indexCount": 22332,
+      "bounds": [
+        [
+          -0.038504306226968765,
+          1.531085729598999,
+          -0.00047694239765405655
+        ],
+        [
+          0.03387797996401787,
+          1.581648826599121,
+          0.03109799325466156
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "d8939ec976b48afad52d5c0adcd5e5b6b0225f467bb073a16dffb2a7cbe97546",
+      "positions": 15164364,
+      "normals": 15232440,
+      "indices": 15266480
+    },
+    {
+      "id": "BP3-FMA49013",
+      "conceptId": "FMA49013",
+      "name": "Left medial pterygoid",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 4850,
+      "indexCount": 22104,
+      "bounds": [
+        [
+          0.01421902421861887,
+          1.5311952829360962,
+          -0.00025944176013581455
+        ],
+        [
+          0.03720231354236603,
+          1.5816450119018555,
+          0.031055089086294174
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "99d766a3c6ec526b2e688ce9ec83779343911665774d417ed56c0ee3e49f9da2",
+      "positions": 15355808,
+      "normals": 15414008,
+      "indices": 15443108
+    },
+    {
+      "id": "BP3-FMA49022",
+      "conceptId": "FMA49022",
+      "name": "Lower head of right lateral pterygoid",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 2054,
+      "indexCount": 7260,
+      "bounds": [
+        [
+          -0.04483221098780632,
+          1.5601557493209839,
+          -0.0039449469186365604
+        ],
+        [
+          -0.026680031791329384,
+          1.5832483768463135,
+          0.01955207996070385
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "6ea2efc92c5339d2f1bf35c9379c94042f46109f6e0431559699230b4c9526de",
+      "positions": 15531524,
+      "normals": 15556172,
+      "indices": 15568496
+    },
+    {
+      "id": "BP3-FMA49023",
+      "conceptId": "FMA49023",
+      "name": "Lower head of left lateral pterygoid",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 1919,
+      "indexCount": 7170,
+      "bounds": [
+        [
+          0.025370413437485695,
+          1.5601396560668945,
+          -0.003953712061047554
+        ],
+        [
+          0.04353057220578194,
+          1.583229660987854,
+          0.019416483119130135
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "ab5efbcf6e01bcc8a3abd615ae81d8caf4b46eb8529d64d41d1e94a5b977d8aa",
+      "positions": 15597536,
+      "normals": 15620564,
+      "indices": 15632080
+    },
+    {
+      "id": "BP3-FMA49024",
+      "conceptId": "FMA49024",
+      "name": "Upper head of right lateral pterygoid",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 1471,
+      "indexCount": 6984,
+      "bounds": [
+        [
+          -0.04466140270233154,
+          1.5747531652450562,
+          -0.0016604538541287184
+        ],
+        [
+          -0.022902462631464005,
+          1.5898178815841675,
+          0.021336102858185768
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "f1afa956ca6084f98d9b14e8d8f14caa4882b8ef5b9b2834b7c8ec96b439d249",
+      "positions": 15660760,
+      "normals": 15678412,
+      "indices": 15687240
+    },
+    {
+      "id": "BP3-FMA49025",
+      "conceptId": "FMA49025",
+      "name": "Upper head of left lateral pterygoid",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 1419,
+      "indexCount": 6930,
+      "bounds": [
+        [
+          0.02160971611738205,
+          1.574745774269104,
+          -0.00167973677162081
+        ],
+        [
+          0.04336373135447502,
+          1.5897705554962158,
+          0.02129887044429779
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "d726e95caf1a175e23a2fe63d946eaf4fb482f6954510b6abcaea4b7f800d85d",
+      "positions": 15715176,
+      "normals": 15732204,
+      "indices": 15740720
+    },
+    {
+      "id": "BP3-FMA55606",
+      "conceptId": "FMA55606",
+      "name": "Right nasalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 5336,
+      "indexCount": 22146,
+      "bounds": [
+        [
+          -0.015834150835871696,
+          1.5684146881103516,
+          0.06835097819566727
+        ],
+        [
+          -0.0022103767842054367,
+          1.609782338142395,
+          0.09076441079378128
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "b6601c06c9adb9914624aefdf25249351fb4f0e680f40dd2aeba6b23f411dd70",
+      "positions": 15768440,
+      "normals": 15832472,
+      "indices": 15864488
+    },
+    {
+      "id": "BP3-FMA55607",
+      "conceptId": "FMA55607",
+      "name": "Left nasalis",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 4935,
+      "indexCount": 21978,
+      "bounds": [
+        [
+          0.00094787054695189,
+          1.568433165550232,
+          0.06837524473667145
+        ],
+        [
+          0.014566447585821152,
+          1.609707236289978,
+          0.09075118601322174
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "bc9609a2593cc88b28fd3e915d65a1571794f60d277471a3693d484af1653dc9",
+      "positions": 15953072,
+      "normals": 16012292,
+      "indices": 16041904
+    },
+    {
+      "id": "BP3-FMA55610",
+      "conceptId": "FMA55610",
+      "name": "Right procerus",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 3602,
+      "indexCount": 16470,
+      "bounds": [
+        [
+          -0.024442700669169426,
+          1.5999202728271484,
+          0.07358793169260025
+        ],
+        [
+          -0.0006384551525115967,
+          1.6374109983444214,
+          0.07986610382795334
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "279ab33daff4cff9ac439568b38e6178d6e40c6d544bdc10f9efb5ca3dc798e9",
+      "positions": 16129816,
+      "normals": 16173040,
+      "indices": 16194652
+    },
+    {
+      "id": "BP3-FMA55611",
+      "conceptId": "FMA55611",
+      "name": "Left procerus",
+      "system": "muscular",
+      "group": "muscles",
+      "bufferUrl": "/models/facial/facial.bin",
+      "vertexCount": 3550,
+      "indexCount": 16446,
+      "bounds": [
+        [
+          -0.0006391010247170925,
+          1.5999619960784912,
+          0.07358705997467041
+        ],
+        [
+          0.023127350956201553,
+          1.6374316215515137,
+          0.0798657014966011
+        ]
+      ],
+      "sourceVersion": "BodyParts3D 3.0",
+      "sourceSha256": "4dc504fd73ef1ff7a4cdc5d4296d30d3a5e83418edf472f1c2a8d1d25525b071",
+      "positions": 16260532,
+      "normals": 16303132,
+      "indices": 16324432
+    }
+  ]
+}

@@ -1,0 +1,970 @@
+import "./style.css";
+import { createViewer } from "./viewer.js";
+import {
+  groups,
+  topics,
+  questions,
+  sources,
+  toothNumber,
+  displayName,
+} from "./content.js";
+import {
+  dentalProfile,
+  partForTooth,
+  dentalSections,
+  dentalSources,
+  specialtyNotes,
+} from "./dental.js";
+import {
+  endoProfile,
+  endoSources,
+  canalPatterns,
+  canalGlossary,
+} from "./endodontics.js";
+import {
+  tissues,
+  toothSection,
+  periodontalDetails,
+  perioStudy,
+  perioSources,
+} from "./periodontium.js";
+import { clinicalLibrary } from "./clinical-library.js";
+import { getDentitionFDIs } from "./dental-geometry.js";
+import { TISSUE_ORDER, tissueGroup } from "./explosion-layout.js";
+
+const icon = (name) => {
+  const paths = {
+    search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/>',
+    layers:
+      '<path d="m12 3 10 6-10 6L2 9Z"/><path d="m2 13 10 6 10-6M2 17l10 6 10-6"/>',
+    book: '<path d="M12 6c-3-3-7-3-10-2v15c4-1 7 0 10 2 3-2 6-3 10-2V4c-3-1-7-1-10 2v15"/>',
+    tooth:
+      '<path d="M12 5C6-1 1 5 4 12c1 3 1 9 4 9 2 0 1-8 4-8s2 8 4 8c3 0 3-6 4-9 3-7-2-13-8-7Z"/>',
+    quiz: '<path d="M9 3H5v19h14V3h-4M9 2h6v4H9Z"/><path d="m8 13 3 3 5-6"/>',
+    reset: '<path d="M3 10a9 9 0 1 1 1 8M3 3v7h7"/>',
+    expand: '<path d="M3 9V3h6m6 0h6v6M3 15v6h6m6 0h6v-6"/>',
+    arrow: '<path d="m9 5 7 7-7 7"/>',
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/>',
+    eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+  };
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.tooth}</svg>`;
+};
+const escape = (value) =>
+  String(value).replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
+const state = {
+  selected: "FJ3289",
+  layers: new Set([
+    "bones",
+    "teeth",
+    "neck",
+    "muscles",
+    "arteries",
+    "veins",
+    "nerves",
+    "glands",
+    "soft",
+    "eyes",
+  ]),
+  age: "adult",
+  arches: false,
+  toothDetail: false,
+  cutaway: true,
+  sectionDepth: 0,
+  autoDetail: true,
+  hiddenTissues: new Set(),
+  isolated: false,
+  opacity: 1,
+  explode: 0,
+  role: "student",
+  tab: "anatomy",
+  query: "",
+  fdi: 36,
+  dentalTab: "morphology",
+  topic: "mandible",
+  quiz: 0,
+  answers: [],
+  saved: new Set(),
+  mode: "3d",
+  tissue: "pulp",
+  tissueLayers: new Set(tissues.map((t) => t.id)),
+  pattern: 0,
+};
+try {
+  state.saved = new Set(JSON.parse(localStorage.getItem("omf-saved") || "[]"));
+} catch {}
+let atlas, viewer;
+
+document.querySelector("#app").innerHTML = `
+  <header><a class="brand" href="/" aria-label="OMF Atlas home"><span class="brand-mark">${icon("tooth")}</span><span>OMF<span class="brand-light"> Atlas</span><small>Oral & maxillofacial anatomy</small></span></a>
+  <nav aria-label="Main navigation">${[
+    ["anatomy", "layers", "Explore anatomy"],
+    ["dental", "tooth", "Dental atlas"],
+    ["study", "book", "Study guide"],
+    ["quiz", "quiz", "Self-test"],
+  ]
+    .map(
+      ([id, i, label]) =>
+        `<button data-tab="${id}" class="nav-button ${id === "anatomy" ? "active" : ""}">${icon(i)}<span>${label}</span></button>`,
+    )
+    .join("")}</nav>
+  <label class="age-choice">Dentition<select id="age"><option value="adult">Adult · permanent</option><option value="child">Child · primary</option><option value="mixed">Child · mixed</option></select></label><label class="audience">Learning level<select id="role"><option value="student">Dental student</option><option value="dentist">Dentist</option><option value="specialist">Dental specialist</option></select></label><button id="toggle-details" aria-expanded="false">Details</button></header>
+  <div class="workspace"><aside class="sidebar"><div class="sidebar-heading"><h2>Head & neck</h2><span class="small-tag">3D atlas</span></div><p class="muted sidebar-intro">Explore the anatomy behind your practice.</p>
+  <label class="search">${icon("search")}<input id="search" type="search" placeholder="Find a structure or FDI number…" aria-label="Search structures or FDI number"><kbd>/</kbd></label>
+  <button id="mobile-library" aria-expanded="false">Layers & structure library</button><div id="browser"></div><div class="sidebar-bottom"><button id="coverage">${icon("info")} Model coverage & sources</button><span id="source-caption">BodyParts3D 4.0 · Adult reference</span></div></aside>
+  <main class="stage"><div class="stage-top"><div><span class="breadcrumb">Anatomy / Head & neck</span><h1 id="stage-title">Head & neck</h1><small id="resolution-status" role="status">Preparing surface detail</small></div><button class="icon-button" id="reset" title="Reset view and layers" aria-label="Reset view and layers">${icon("reset")}</button></div>
+  <div id="viewer"></div><div id="teaching-view" hidden></div><div id="mode-bar" hidden><button data-mode="3d" class="active">3D anatomy</button><button data-mode="section">Tooth & periodontium</button><button data-mode="canals">Root canal explorer</button></div><div id="load-status" role="status">Loading head & neck anatomy…</div>
+  <div class="view-pills" aria-label="Camera views">${["oblique", "anterior", "lateral", "inferior"].map((v, i) => `<button data-view="${v}" class="${i === 0 ? "active" : ""}">${v[0].toUpperCase() + v.slice(1)}</button>`).join("")}</div>
+  <div class="zoom-controls"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="fit" aria-label="Fit visible anatomy" title="Fit visible anatomy">${icon("expand")}</button></div>
+  <p class="age-notice" id="age-notice"></p><section id="dental-3d-controls" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><label>Section depth <input id="section-depth" type="range" min="0" max="100" value="50"></label><div class="tissue-3d-buttons">${[
+    ["enamel", "Enamel"],
+    ["dentin", "Dentin"],
+    ["pulp", "Pulp & canals"],
+    ["cementum", "Cementum"],
+    ["pdl", "Ligament"],
+    ["bone", "Bone"],
+    ["gingiva", "Gingiva"],
+  ]
+    .map(
+      ([id, name]) =>
+        `<button data-tissue3d="${id}" aria-pressed="true">${name}</button>`,
+    )
+    .join(
+      "",
+    )}</div><span id="tissue-3d-status" role="status">Rotate to inspect the section. Teaching geometry, not a scan.</span></section>
+  <div class="stage-caption"><span class="live-dot"></span><span id="visible-count">Preparing anatomy</span><span class="drag-hint">Drag to rotate · Scroll to zoom</span></div>
+  <div class="stage-bottom"><div><strong id="selection-name">Mandible</strong><span id="selection-caption">Selected structure</span></div><button id="isolate">${icon("eye")} Isolate structure</button><button data-clear-selection aria-label="Clear selection" title="Clear selection">×</button></div></main>
+  <aside class="inspector" id="inspector" aria-label="Anatomy details"></aside><button class="close-inspector" id="close-inspector" aria-label="Close anatomy details">×</button></div>
+  <footer><span>Built for dental learning.</span><span>Educational reference. Not for diagnosis or treatment planning.</span><button id="credits">Credits & references</button></footer>
+  <dialog id="modal"><button id="close-modal" class="close" aria-label="Close dialog">×</button><div id="modal-content"></div></dialog>`;
+
+function updateScene() {
+  document.body.classList.toggle(
+    "tooth-inspection",
+    state.toothDetail && state.mode === "3d",
+  );
+  viewer?.update(state);
+  const exploded = state.explode > 0 && !state.arches && !state.toothDetail && state.age === "adult";
+  document.querySelector(".drag-hint").textContent = exploded
+    ? state.explode >= 95 ? "Parts inventory · Drag to pan · Zoom in to reassemble" : "Separating structures · Keep zooming out for inventory"
+    : "Drag to rotate · Scroll to zoom";
+  document.querySelector("#viewer").dataset.explode = String(state.explode);
+  const part = atlas.parts.find((p) => p.id === state.selected);
+  document.querySelector("#selection-name").textContent =
+    !state.selected && !state.toothDetail ? "No structure selected" : state.toothDetail || state.arches || state.age !== "adult"
+      ? `FDI ${state.fdi} · ${dentalProfile(state.fdi).fullName}`
+      : part
+        ? displayName(part)
+        : "Head & neck";
+  document.querySelector("#selection-caption").textContent = state.toothDetail
+    ? "Schematic 3D internal anatomy"
+    : state.isolated
+      ? "Isolated view"
+      : state.selected ? "Selected structure" : "Click a structure to inspect it";
+  document.querySelector("#isolate").disabled = !state.selected && !state.toothDetail;
+  document.querySelector("#isolate").innerHTML =
+    `${icon("eye")} ${state.toothDetail ? "Back to assembly" : state.arches || state.age !== "adult" ? "Inspect selected tooth" : state.isolated ? "Restore assembly" : "Isolate structure"}`;
+  document.querySelector("#visible-count").textContent = state.toothDetail
+    ? "3D tooth & periodontium"
+    : state.arches || state.age !== "adult"
+      ? `${getDentitionFDIs(state.age).length} schematic teeth`
+      : `${state.isolated ? 1 : atlas.parts.filter((p) => state.layers.has(p.group)).length} structures visible`;
+  document.querySelector("#dental-3d-controls").hidden =
+    !state.toothDetail || state.mode !== "3d";
+  document.querySelector("#exit-tooth").textContent =
+    state.age === "adult" && !state.arches
+      ? "Back to head & neck"
+      : "Back to dental arches";
+  document.querySelector("#age-notice").textContent = state.toothDetail
+    ? "Schematic tooth anatomy · Tissue thickness exaggerated for visibility"
+    : state.age === "adult"
+      ? state.arches
+        ? "Permanent dentition · 32 teeth including third molars · Schematic arches"
+        : "Adult male reference · Select a tooth, then zoom to reveal internal anatomy"
+      : state.age === "child"
+        ? "Primary dentition · 20 teeth · Schematic arches, not a pediatric head scan"
+        : "Mixed dentition · 24-tooth example · Eruption and tooth count vary";
+}
+
+function showDetails(open = true) {
+  open = open || matchMedia("(min-width: 761px)").matches;
+  document.body.classList.toggle("details-open", open);
+  document
+    .querySelector("#toggle-details")
+    .setAttribute("aria-expanded", String(open));
+  document.querySelector("#inspector").inert = !open;
+}
+matchMedia("(min-width: 761px)").addEventListener("change", (event) => showDetails(event.matches));
+
+function inspectTooth(fdi = state.fdi) {
+  state.explode = 0;
+  state.fdi = fdi;
+  state.selected = partForTooth(atlas.parts,fdi)?.id || `tooth:${fdi}`;
+  state.toothDetail = true;
+  state.isolated = false;
+  state.hiddenTissues.clear();
+  setTab("dental");
+  setMode("3d");
+  document.querySelector("#inspector").scrollTop = 0;
+  if (matchMedia("(max-width: 767px)").matches) showDetails(false);
+  updateScene();
+  document
+    .querySelectorAll("[data-tissue3d]")
+    .forEach((b) => b.setAttribute("aria-pressed", "true"));
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => viewer?.view("oblique", true)),
+  );
+}
+
+function setAge(age) {
+  state.explode = 0;
+  state.age = age;
+  state.arches = true;
+  state.fdi = age === "child" ? 75 : 36;
+  state.selected = `tooth:${state.fdi}`;
+  state.toothDetail = false;
+  state.isolated = false;
+  state.query = "";
+  document.querySelector("#search").value = "";
+  document.querySelector("#age").value = age;
+  document.querySelector("#source-caption").textContent =
+    "Schematic dental development model";
+  setMode("3d");
+  setTab("dental");
+  renderBrowser();
+  updateScene();
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => viewer?.view("oblique", true)),
+  );
+}
+
+function clearSelection() {
+  const wasDetail = state.toothDetail;
+  state.selected = null;
+  state.topic = "";
+  state.isolated = false;
+  state.toothDetail = false;
+  if (!state.arches && state.tab === "dental") setTab("anatomy");
+  setMode("3d");
+  showDetails(false);
+  renderBrowser();
+  renderInspector();
+  updateScene();
+  if (wasDetail) requestAnimationFrame(()=>viewer?.view("oblique",state.arches));
+}
+
+function selectPart(id) {
+  if (!id || (state.selected === id && !state.arches && !state.toothDetail)) {clearSelection();return;}
+  const part = atlas.parts.find((p) => p.id === id);
+  if (!part) return;
+  if (state.age !== "adult") setAge("adult");
+  state.arches = false;
+  state.toothDetail = false;
+  state.selected = id;
+  state.layers.add(part.group);
+  const fdi = toothNumber(part.name);
+  if (fdi) {
+    state.fdi = fdi;
+    setTab("dental");
+  } else {
+    state.topic = topics.find((t) => t.match.test(part.name))?.id || "";
+    if (state.tab === "dental") setTab("anatomy");
+  }
+  updateScene();
+  renderBrowser();
+  renderInspector();
+  renderTeaching();
+  showDetails();
+  if (state.isolated) viewer?.view("oblique", true);
+}
+
+function renderBrowser() {
+  if (state.arches || state.age !== "adult") {
+    const primary = state.age === "child";
+    document.querySelector("#browser").innerHTML =
+      `<div class="section-label"><h3>${state.age === "adult" ? "Permanent" : primary ? "Primary" : "Mixed"} dentition</h3><span>${getDentitionFDIs(state.age).length}</span></div><p class="fine-print">${state.age === "adult" ? "A complete permanent dentition has 32 teeth including third molars. All teeth here are schematic; the separate adult head model contains 28 source tooth surfaces." : primary ? "A complete primary dentition has 20 teeth, with no premolars. This teaching model represents erupted teeth before shedding." : "This example combines permanent incisors and first molars with primary canines and molars. It is one stage, not a universal tooth count or age prediction."}</p><p class="fine-print">Primary teeth have relatively larger pulp chambers, thinner enamel and dentin, and more divergent molar roots. Jaw growth, developing tooth buds, root resorption, and pediatric muscles/vessels are not simulated.</p><button id="adult-anatomy" class="full-width">Explore adult head & neck</button><div class="structure-list">${getDentitionFDIs(
+        state.age,
+      )
+        .filter((fdi) =>
+          `${fdi} ${dentalProfile(fdi).fullName}`
+            .toLowerCase()
+            .includes(state.query.toLowerCase()),
+        )
+        .map(
+          (fdi) =>
+            `<button data-child-tooth="${fdi}" class="structure"><span>FDI ${fdi} · ${dentalProfile(fdi).name}</span>${icon("arrow")}</button>`,
+        )
+        .join(
+          "",
+        )}</div>${sourceLink(["AAPD: developing dentition", "https://www.aapd.org/globalassets/media/policies_guidelines/bp_developdentition.pdf"])}${sourceLink(["Primary tooth anatomy", "https://www.ncbi.nlm.nih.gov/books/NBK573074/"])}`;
+    document.querySelector("#adult-anatomy").onclick = () => {
+      setAge("adult");
+      setTab("anatomy");
+      viewer?.view();
+    };
+    document
+      .querySelectorAll("[data-child-tooth]")
+      .forEach(
+        (b) => (b.onclick = () => inspectTooth(Number(b.dataset.childTooth))),
+      );
+    return;
+  }
+  const query = state.query.toLowerCase().trim();
+  const inventory = state.explode >= 95;
+  const matching = atlas.parts.filter((p) =>
+    (!inventory || (state.isolated ? p.id === state.selected : state.layers.has(p.group))) && `${displayName(p)} ${p.id} ${p.conceptId} ${toothNumber(p.name) || ""}`
+      .toLowerCase()
+      .includes(query),
+  );
+  if (inventory) matching.sort((a,b) => TISSUE_ORDER.indexOf(tissueGroup(a)) - TISSUE_ORDER.indexOf(tissueGroup(b)) || displayName(a).localeCompare(displayName(b)));
+  const structureRows = matching.map((p,index) => {
+    const type = tissueGroup(p);
+    const heading = inventory && (index === 0 || tissueGroup(matching[index-1]) !== type)
+      ? `<h4 class="inventory-type" data-inventory-type="${type}">${escape(groups[type].name)}</h4>` : "";
+    return `${heading}<button data-part="${p.id}" class="structure ${p.id === state.selected ? "selected" : ""}"><span class="tiny-dot" style="background:${groups[p.group].color}"></span><span>${escape(displayName(p))}</span>${toothNumber(p.name) ? `<small>${toothNumber(p.name)}</small>` : ""}${icon("arrow")}</button>`;
+  }).join("");
+  const browser = document.querySelector("#browser");
+  browser.innerHTML = `<div class="section-label"><h3>${query ? "Search results" : "Systems"}</h3><span>${matching.length}</span></div>${!query ? '<div class="layer-presets"><button data-preset="all">All</button><button data-preset="skeleton">Skeleton</button><button data-preset="vascular">Vessels</button><button data-preset="none">Hide all</button></div>' : ""}
+    ${
+      query
+        ? ""
+        : Object.entries(groups)
+            .filter(([key]) => atlas.parts.some((p) => p.group === key))
+            .map(
+              ([key, g]) =>
+                `<label class="layer"><span class="layer-dot" style="background:${g.color}"></span><span>${g.name}</span><span class="layer-count">${atlas.parts.filter((p) => p.group === key).length}</span><input type="checkbox" data-layer="${key}" ${state.layers.has(key) ? "checked" : ""} aria-label="Show ${g.name}"></label>`,
+            )
+            .join("")
+    }
+    ${!query ? `<details class="display-controls"><summary>Display controls</summary><div class="sliders"><label>Bone opacity <output>${Math.round(state.opacity * 100)}%</output><input id="opacity" type="range" min="10" max="100" value="${state.opacity * 100}"></label><label>Separate structures <output>${state.explode}%</output><input id="explode" type="range" min="0" max="100" value="${state.explode}"></label></div></details><div class="section-label"><h3>Structure library</h3><span>${atlas.parts.length}</span></div>` : ""}
+    ${inventory ? `<div class="inventory-heading"><strong>Parts inventory · ${matching.length}</strong><p>Every visible structure is separated in the 3D view. Select a name below; zoom in to reassemble. Use All to include hidden systems.</p><button id="reassemble">Reassemble head & neck</button></div>` : ""}
+    <details id="structure-library" ${query || inventory ? "open" : ""}><summary>${inventory ? "Names of displayed parts" : "Browse named structures"}</summary><div class="structure-list">${matching.length ? structureRows : '<p class="empty">No matching structure. Try “mandible”, “tongue”, or “36”.</p>'}</div></details>`;
+  browser.querySelector("#reassemble")?.addEventListener("click", () => setExplosion(0));
+  if (inventory) {
+    browser.prepend(browser.querySelector("#structure-library"));
+    browser.prepend(browser.querySelector(".inventory-heading"));
+  }
+  browser.querySelectorAll("[data-preset]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        state.layers = new Set(
+          b.dataset.preset === "all"
+            ? Object.keys(groups)
+            : b.dataset.preset === "skeleton"
+              ? ["bones", "neck", "teeth"]
+              : b.dataset.preset === "vascular"
+                ? ["arteries", "veins"]
+                : [],
+        );
+        state.toothDetail = false;
+        state.isolated = false;
+        updateScene();
+        renderBrowser();
+      }),
+  );
+  browser.querySelectorAll("[data-layer]").forEach(
+    (input) =>
+      (input.onchange = () => {
+        state.isolated = false;
+        state.toothDetail = false;
+        input.checked
+          ? state.layers.add(input.dataset.layer)
+          : state.layers.delete(input.dataset.layer);
+        updateScene();
+        if (inventory) renderBrowser();
+      }),
+  );
+  browser
+    .querySelectorAll("[data-part]")
+    .forEach(
+      (button) => (button.onclick = () => selectPart(button.dataset.part)),
+    );
+  for (const key of ["opacity", "explode"]) {
+    const input = browser.querySelector(`#${key}`);
+    if (input)
+      input.oninput = () => {
+        if (key === "explode") { setExplosion(Number(input.value)); return; }
+        state[key] = Number(input.value) / (key === "opacity" ? 100 : 1);
+        input.previousElementSibling.value = `${input.value}%`;
+        updateScene();
+      };
+  }
+}
+
+function setExplosion(progress) {
+  const wasInventory = state.explode >= 95;
+  state.explode = Math.round(Math.max(0, Math.min(100, progress)));
+  const input = document.querySelector("#explode");
+  if (input) {
+    input.value = String(state.explode);
+    input.previousElementSibling.value = `${state.explode}%`;
+  }
+  updateScene();
+  if (wasInventory !== (state.explode >= 95)) {
+    renderBrowser();
+    document.querySelector("#browser").scrollTop = 0;
+    document.querySelector("#mobile-library").textContent = state.explode >= 95 ? "Parts inventory" : "Layers & structure library";
+    if (matchMedia("(max-width: 760px)").matches) {
+      document.querySelector(".sidebar").classList.toggle("expanded", state.explode >= 95);
+      document.querySelector("#mobile-library").setAttribute("aria-expanded", String(state.explode >= 95));
+    }
+  }
+}
+
+function sourceLink(source) {
+  return `<a class="source-link" target="_blank" rel="noreferrer" href="${source[1]}">${source[0]} ↗</a>`;
+}
+function heading(title, subtitle, tag = "Anatomy notes") {
+  return `<div class="detail-heading"><span class="detail-tag">${tag}</span><h2>${title}</h2><p>${subtitle}</p></div>`;
+}
+
+function renderInspector() {
+  const panel = document.querySelector("#inspector");
+  if (state.tab === "dental") return renderDental(panel);
+  if (state.tab === "quiz") return renderQuiz(panel);
+  if (state.tab === "study") {
+    panel.innerHTML =
+      heading(
+        "Learn by region.",
+        "Short explorations to connect structure with practice.",
+        "Study guide",
+      ) +
+      `<div class="study-list">${topics.map((t) => `<button data-topic="${t.id}"><span>${icon(t.id === "dentition" ? "tooth" : "book")}</span><div><strong>${t.title}</strong><small>${t.subtitle}</small></div>${icon("arrow")}</button>`).join("")}</div><div class="detail-body clinical-library"><h3>Clinical anatomy reference</h3>${clinicalLibrary.map((item) => `<details><summary>${item.title}</summary>${item.sections.map(([title, text]) => `<h3>${title}</h3><p>${text}</p>`).join("")}${sourceLink(item.source)}</details>`).join("")}</div><div class="note"><h3>Your saved structures</h3>${
+        state.saved.size
+          ? atlas.parts
+              .filter((p) => state.saved.has(p.id))
+              .map(
+                (p) =>
+                  `<button class="text-button" data-part="${p.id}">${escape(displayName(p))}</button>`,
+              )
+              .join("")
+          : "<p>Save a structure from its anatomy notes to revisit it here.</p>"
+      }</div>`;
+    panel.querySelectorAll("[data-topic]").forEach(
+      (b) =>
+        (b.onclick = () => {
+          const t = topics.find((t) => t.id === b.dataset.topic);
+          state.topic = t.id;
+          state.isolated = false;
+          state.layers = new Set(
+            t.id === "floor" ? ["soft", "glands"] : ["bones", "teeth"],
+          );
+          selectPart(atlas.parts.find((p) => t.match.test(p.name)).id);
+          if (t.id !== "dentition") {
+            setTab("anatomy");
+            state.topic = t.id;
+            renderInspector();
+          }
+          viewer?.view("oblique", true);
+        }),
+    );
+    panel.querySelectorAll("[data-part]").forEach(
+      (b) =>
+        (b.onclick = () => {
+          setTab("anatomy");
+          selectPart(b.dataset.part);
+        }),
+    );
+    return;
+  }
+  const part = atlas.parts.find((p) => p.id === state.selected);
+  if (!part) {
+    panel.innerHTML = heading("Select a structure", "Click the model or choose a named structure from the library.");
+    return;
+  }
+  const topic = topics.find((t) => t.id === state.topic);
+  panel.innerHTML =
+    heading(
+      escape(displayName(part)),
+      `${groups[part.group].name} · ${part.conceptId}`,
+    ) +
+    `<div class="detail-body">
+    <div class="detail-actions"><button class="primary" id="detail-isolate">${icon("expand")} ${state.isolated ? "Restore" : "Inspect in 3D"}</button><button id="save">${state.saved.has(part.id) ? "✓ Saved" : "+ Save"}</button><button data-clear-selection>Clear selection</button></div>
+    ${topic ? `<h3>Overview</h3><p>${topic.overview}</p><div class="learning-note"><span>${state.role === "student" ? "Study focus" : state.role === "dentist" ? "Practice connection" : "Specialist perspective"}</span><p>${topic[state.role]}</p></div><h3>Explore the relationships</h3><p>Rotate the assembly, adjust bone opacity, or isolate a structure to examine its surfaces.</p>${sourceLink(sources[topic.source])}` : `<h3>Explore this structure</h3><p>This named surface mesh is part of the ${groups[part.group].name.toLowerCase()} layer. Compare its position with adjacent structures or isolate it for inspection.</p><div class="learning-note"><span>Reference identity</span><p>BodyParts3D mesh ${part.id}, mapped to ${part.conceptId}. Detailed clinical notes for this structure have not yet been authored.</p></div>`}
+    <div class="related"><h3>Continue exploring</h3>${atlas.parts
+      .filter((p) => p.group === part.group && p.id !== part.id)
+      .slice(0, 3)
+      .map(
+        (p) =>
+          `<button data-part="${p.id}">${escape(displayName(p))}${icon("arrow")}</button>`,
+      )
+      .join(
+        "",
+      )}</div><p class="fine-print">Adult reference anatomy. Individual form and relationships vary.</p></div>`;
+  panel.querySelector("#detail-isolate").onclick = toggleIsolate;
+  panel.querySelector("#save").onclick = () => {
+    state.saved.has(part.id)
+      ? state.saved.delete(part.id)
+      : state.saved.add(part.id);
+    try {
+      localStorage.setItem("omf-saved", JSON.stringify([...state.saved]));
+    } catch {}
+    renderInspector();
+  };
+  panel
+    .querySelectorAll("[data-part]")
+    .forEach((b) => (b.onclick = () => selectPart(b.dataset.part)));
+}
+
+function renderDental(panel) {
+  const tooth = dentalProfile(state.fdi),
+    part = partForTooth(atlas.parts, state.fdi);
+  const rows =
+    state.age === "mixed"
+      ? [
+          [16, 55, 54, 53, 12, 11, 21, 22, 63, 64, 65, 26],
+          [46, 85, 84, 83, 42, 41, 31, 32, 73, 74, 75, 36],
+        ]
+      : tooth.primary
+        ? [
+            [55, 54, 53, 52, 51, 61, 62, 63, 64, 65],
+            [85, 84, 83, 82, 81, 71, 72, 73, 74, 75],
+          ]
+        : [
+            [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28],
+            [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38],
+          ];
+  panel.innerHTML =
+    heading(
+      "Dental anatomy",
+      "Select a tooth, then zoom in or open its 3D cutaway.",
+      "Dental atlas",
+    ) +
+    `<div class="dentition-switch">${[
+      ["adult", "Adult · 32"],
+      ["child", "Child · 20"],
+      ["mixed", "Mixed · example"],
+    ]
+      .map(
+        ([id, label]) =>
+          `<button data-dentition="${id}" class="${state.age === id ? "active" : ""}">${label}</button>`,
+      )
+      .join(
+        "",
+      )}</div><div class="dental-chart"><div class="chart-orientation"><span>Patient’s right</span><span>Patient’s left</span></div>${rows.map((row, i) => `<div class="tooth-row ${tooth.primary ? "primary-row" : ""}">${row.map((n) => `<button data-tooth="${n}" aria-label="FDI ${n}, ${dentalProfile(n).fullName}" aria-pressed="${n === state.fdi}" class="${n === state.fdi ? "active" : ""}" title="${dentalProfile(n).fullName}">${icon("tooth")}<span>${n}</span></button>`).join("")}</div>${i === 0 ? '<div class="arch-divider"><span>Upper</span><span>Lower</span></div>' : ""}`).join("")}<small>FDI notation · ${state.age === "adult" ? "28 source surfaces; 32 schematic tooth models" : "Schematic developmental dentition"}</small></div>
+    <div class="tooth-heading"><span class="fdi-badge">${tooth.fdi}</span><div><h2>${tooth.name}</h2><p>${tooth.upper ? "Maxillary" : "Mandibular"} ${tooth.right ? "right" : "left"} · Universal #${tooth.universal}</p></div></div>
+    <div class="dental-tabs">${[
+      ["morphology", "Tooth"],
+      ["canals", "Root canals"],
+      ["tissues", "Tissues"],
+      ["perio", "Gums"],
+      ["clinical", "Clinical"],
+    ]
+      .map(
+        ([id, title]) =>
+          `<button data-dental-tab="${id}" class="${state.dentalTab === id ? "active" : ""}">${title}</button>`,
+      )
+      .join("")}</div>
+    <div class="detail-body"><button id="tooth-isolate" class="primary full-width">Open 3D tooth cutaway</button><button id="show-arches" class="full-width">Show complete ${state.age === "adult" ? "32-tooth" : state.age === "child" ? "20-tooth" : "mixed"} arches</button><label class="fine-print"><input id="auto-detail" type="checkbox" ${state.autoDetail ? "checked" : ""}> Reveal internal anatomy when zooming into a tooth</label><p class="fine-print">3D tissues and root canals are schematic teaching models, not reconstructed from the external surface. ${tooth.primary ? "Primary proportions and root divergence differ from permanent teeth." : "Representative root and canal forms vary between patients."}</p>
+    ${dentalContent(tooth)}
+    <details class="references"><summary>References for this tooth</summary>${dentalSources.map(sourceLink).join("")}</details></div>`;
+  if (!state.selected) panel.querySelectorAll("[data-tooth]").forEach((button) => {
+    button.classList.remove("active");
+    button.setAttribute("aria-pressed", "false");
+  });
+  panel.querySelectorAll("[data-tooth]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        if (state.selected && state.fdi === Number(b.dataset.tooth)) { clearSelection(); return; }
+        state.fdi = Number(b.dataset.tooth);
+        const p = partForTooth(atlas.parts, state.fdi);
+        if (state.toothDetail || state.arches || state.age !== "adult" || !p) {
+          inspectTooth(state.fdi);
+        } else if (p) {
+          state.selected = p.id;
+          state.layers.add("teeth");
+          updateScene();
+          renderBrowser();
+          if (state.isolated) viewer?.view("oblique", true);
+        }
+        renderDental(panel);
+        renderTeaching();
+      }),
+  );
+  panel.querySelectorAll("[data-dentition]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        setAge(b.dataset.dentition);
+      }),
+  );
+  panel.querySelectorAll("[data-dental-tab]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        state.dentalTab = b.dataset.dentalTab;
+        renderDental(panel);
+        if (["canals", "tissues", "perio"].includes(state.dentalTab))
+          inspectTooth();
+      }),
+  );
+  panel.querySelector("#tooth-isolate").onclick = () => inspectTooth();
+  panel.querySelector("#show-arches").onclick = () => setAge(state.age);
+  panel.querySelector("#auto-detail").onchange = (e) => {
+    state.autoDetail = e.target.checked;
+    updateScene();
+  };
+  panel
+    .querySelectorAll("[data-open-mode]")
+    .forEach((b) => (b.onclick = () => setMode(b.dataset.openMode)));
+}
+
+function dentalContent(tooth) {
+  const entries = (list) =>
+    list.map(([a, b]) => `<h3>${a}</h3><p>${b}</p>`).join("");
+  if (state.dentalTab === "morphology")
+    return `<div class="tooth-facts"><div><small>Typical eruption</small><strong>${tooth.eruption} ${tooth.unit}</strong></div><div><small>Root pattern</small><strong>${tooth.roots}</strong></div></div>${tooth.primary ? `<p class="fine-print">Typical shedding: ${tooth.shed} years.</p>` : ""}<p class="fine-print">Eruption varies between individuals. These are typical patterns, not measurements of this mesh.</p><h3>Crown & root study</h3><p>${tooth.morphology}</p><h3>Orient the tooth</h3><dl>${dentalSections.surfaces.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join("")}</dl><h3>Identification check</h3><p>FDI ${tooth.fdi}: quadrant ${tooth.quadrant}, position ${tooth.position} from the midline. Universal notation: ${tooth.universal}.</p>`;
+  if (state.dentalTab === "canals") {
+    const endo = endoProfile(tooth);
+    return `<div class="tooth-facts"><div><small>Typical canals</small><strong>${endo.canals}</strong></div><div><small>Root arrangement</small><strong>${endo.roots.join(", ")}</strong></div></div><h3>Pulp chamber & pathways</h3><p>${endo.chamber}</p><div class="learning-note"><span>Variation to recognize</span><p>${endo.variant}</p></div>${sourceLink(endoSources[endo.source])}<button data-open-mode="canals" class="full-width">Open the canal explorer</button><h3>Internal anatomy vocabulary</h3>${entries(canalGlossary)}${sourceLink(endoSources.standards)}${sourceLink(endoSources.cShape)}`;
+  }
+  if (state.dentalTab === "tissues")
+    return `<button data-open-mode="section" class="full-width">Explore the labeled tooth section</button><p class="fine-print">The interactive diagram shows tissue relationships in a generic single-rooted tooth. It is separate from the external 3D meshes.</p>${entries(dentalSections.tissues)}`;
+  if (state.dentalTab === "perio")
+    return `<button data-open-mode="section" class="full-width">Explore the periodontium</button>${entries(periodontalDetails)}<h3>Connect anatomy to examination</h3>${entries(perioStudy)}${perioSources.map(sourceLink).join("")}`;
+  return `<p class="fine-print">Study connections for ${state.role === "student" ? "dental students" : state.role === "dentist" ? "general practice" : "specialist learning"}.</p>${entries(specialtyNotes(tooth))}`;
+}
+
+function setMode(mode) {
+  state.mode = mode;
+  document.querySelector(".stage").classList.toggle("teaching", mode !== "3d");
+  document.querySelector("#viewer").hidden = mode !== "3d";
+  document.querySelector("#teaching-view").hidden = mode === "3d";
+  document
+    .querySelectorAll("[data-mode]")
+    .forEach((b) => b.classList.toggle("active", b.dataset.mode === mode));
+  renderTeaching();
+  if (atlas) updateScene();
+}
+
+function renderTeaching() {
+  if (state.mode === "3d") return;
+  const host = document.querySelector("#teaching-view");
+  if (state.mode === "section") {
+    const tissue = tissues.find((t) => t.id === state.tissue);
+    host.innerHTML = `<div class="teaching-intro"><strong>The tooth and its supporting tissues</strong><span>Teaching diagram · Select a tissue to explore</span></div>${toothSection(state.tissue, state.tissueLayers)}<div class="tissue-controls">${tissues.map((t) => `<button data-select-tissue="${t.id}" class="${t.id === state.tissue ? "active" : ""}"><span style="background:${t.color}"></span>${t.name}</button>`).join("")}</div><div class="tissue-explanation" role="status"><strong>${tissue.name}</strong><p>${tissue.text}</p><label><input id="tissue-visible" type="checkbox" ${state.tissueLayers.has(tissue.id) ? "checked" : ""}> Show this tissue in the section</label></div>`;
+    host.querySelectorAll("[data-select-tissue], [data-tissue]").forEach(
+      (b) =>
+        (b.onclick = () => {
+          state.tissue = b.dataset.selectTissue || b.dataset.tissue;
+          renderTeaching();
+        }),
+    );
+    host.querySelector("#tissue-visible").onchange = (e) => {
+      e.target.checked
+        ? state.tissueLayers.add(tissue.id)
+        : state.tissueLayers.delete(tissue.id);
+      renderTeaching();
+    };
+    return;
+  }
+  const tooth = dentalProfile(state.fdi),
+    endo = endoProfile(tooth),
+    pattern = canalPatterns[state.pattern];
+  const locations =
+    endo.map.length === 1
+      ? [[150, 110]]
+      : endo.map.length === 2
+        ? [
+            [150, 65],
+            [150, 160],
+          ]
+        : endo.map.length === 3
+          ? [
+              [92, 70],
+              [92, 150],
+              [210, 110],
+            ]
+          : [
+              [80, 65],
+              [110, 110],
+              [210, 70],
+              [165, 175],
+            ];
+  const molar = tooth.position >= 6;
+  host.innerHTML = `<div class="teaching-intro"><strong>FDI ${tooth.fdi} · ${tooth.fullName}</strong><span>Conceptual canal map · Not an access preparation guide</span></div><div class="canal-workbench"><div class="canal-map"><h3>Example canal arrangement</h3>${endo.map.length ? `<svg viewBox="0 0 300 240" role="img" aria-label="Conceptual canal arrangement: ${endo.map.join(", ")}"><path d="M50 45Q150 5 250 45Q285 110 250 185Q150 225 50 185Q15 110 50 45Z" fill="#e6cc98" stroke="#bcab86" stroke-width="2"/><path d="M80 67Q150 35 220 67Q250 110 220 163Q150 195 80 163Q50 110 80 67Z" fill="#b77f76" opacity=".2"/>${endo.map.map((name, i) => `<circle cx="${locations[i][0]}" cy="${locations[i][1]}" r="10" fill="#a34454"/><text x="${locations[i][0] + 15}" y="${locations[i][1] + 5}" font-size="13" fill="#4c5663">${name}</text>`).join("")}<text x="150" y="20" text-anchor="middle" font-size="10" fill="#708897">Buccal</text><text x="150" y="233" text-anchor="middle" font-size="10" fill="#708897">${tooth.upper ? "Palatal" : "Lingual"}</text>${molar ? '<text x="13" y="115" font-size="9" fill="#708897">M</text><text x="278" y="115" font-size="9" fill="#708897">D</text>' : ""}</svg>` : '<p class="empty">No fixed canal map is provided for this tooth. Study the anatomy notes below.</p>'}<p>${endo.chamber}</p><small>B: buccal · L: lingual · M: mesial · D: distal · P: palatal</small></div><div class="pattern-map"><h3>${pattern.name} <span>${pattern.sequence}</span></h3><svg viewBox="0 0 180 210" role="img" aria-label="${pattern.name}: ${pattern.description}"><path d="M35 12Q90 0 145 12L133 168Q120 205 90 207Q60 205 47 168Z" fill="#e6cc98" stroke="#bcab86" stroke-width="1"/><g fill="none" stroke="#ad4b5c" stroke-width="7" stroke-linecap="round">${pattern.paths.map((d) => `<path d="${d}"/>`).join("")}</g></svg><p>${pattern.description}</p></div></div><div class="pattern-controls" aria-label="Explore Vertucci canal configurations">${canalPatterns.map((p, i) => `<button data-pattern="${i}" class="${state.pattern === i ? "active" : ""}">${p.name}<small>${p.sequence}</small></button>`).join("")}</div><div class="tissue-explanation"><strong>Trace from the chamber to the canal exits.</strong><p>Vertucci types describe pathways within a root. They do not predict the selected tooth’s anatomy, and they do not capture every isthmus, branch, or complex configuration.</p>${sourceLink(["Vertucci (1984): root canal anatomy", "https://pubmed.ncbi.nlm.nih.gov/6595621/"])}${sourceLink(endoSources[endo.source])}</div>`;
+  host.querySelectorAll("[data-pattern]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        state.pattern = Number(b.dataset.pattern);
+        renderTeaching();
+      }),
+  );
+}
+
+function renderQuiz(panel) {
+  if (state.quiz >= questions.length) {
+    const score = state.answers.filter(
+      (a, i) => a === questions[i].answer,
+    ).length;
+    panel.innerHTML =
+      heading(
+        "Session complete.",
+        "Review what you learned, then explore the anatomy again.",
+        "Self-test",
+      ) +
+      `<div class="detail-body"><div class="score">${score}<span> / ${questions.length}</span></div>${questions.map((q, i) => `<div class="quiz-review"><strong>${state.answers[i] === q.answer ? "✓" : "×"} ${q.prompt}</strong><p>${q.why}</p></div>`).join("")}<button class="primary" id="restart">Try again</button></div>`;
+    panel.querySelector("#restart").onclick = () => {
+      state.quiz = 0;
+      state.answers = [];
+      renderQuiz(panel);
+    };
+    return;
+  }
+  const q = questions[state.quiz],
+    answered = state.answers[state.quiz] !== undefined;
+  panel.innerHTML =
+    heading(
+      "Put anatomy into practice.",
+      "Six questions. Immediate explanations.",
+      "Self-test",
+    ) +
+    `<div class="detail-body"><div class="quiz-progress"><span>Question ${state.quiz + 1} of ${questions.length}</span><progress value="${state.quiz}" max="${questions.length}"></progress></div><h2 class="question">${q.prompt}</h2><div class="answers">${q.choices.map((c, i) => `<button data-answer="${i}" ${answered ? "disabled" : ""} class="${answered && i === q.answer ? "correct" : answered && i === state.answers[state.quiz] ? "incorrect" : ""}"><span>${String.fromCharCode(65 + i)}</span>${c}</button>`).join("")}</div>${answered ? `<div role="status" class="learning-note"><strong>${state.answers[state.quiz] === q.answer ? "Correct." : "Not quite."}</strong><p>${q.why}</p>${sourceLink(sources[topics.find((t) => t.id === q.topic).source])}</div><button class="primary full-width" id="next">${state.quiz === questions.length - 1 ? "See results" : "Next question"}</button>` : '<p class="fine-print">Choose one answer to reveal the explanation.</p>'}</div>`;
+  panel.querySelectorAll("[data-answer]").forEach(
+    (b) =>
+      (b.onclick = () => {
+        state.answers[state.quiz] = Number(b.dataset.answer);
+        renderQuiz(panel);
+      }),
+  );
+  if (answered)
+    panel.querySelector("#next").onclick = () => {
+      state.quiz++;
+      renderQuiz(panel);
+    };
+}
+
+function setTab(tab) {
+  state.tab = tab;
+  if (tab !== "dental") state.toothDetail = false;
+  if (tab === "anatomy") {
+    state.arches = false;
+    document.querySelector("#source-caption").textContent =
+      "BodyParts3D 4.0 · Adult reference";
+    if (atlas) renderBrowser();
+  }
+  showDetails(tab !== "anatomy");
+  document.querySelector("#mode-bar").hidden = tab !== "dental";
+  document
+    .querySelector(".stage")
+    .classList.toggle("dental-stage", tab === "dental");
+  if (tab !== "dental") setMode("3d");
+  document.querySelectorAll("[data-tab]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.tab === tab);
+    b.setAttribute("aria-current", b.dataset.tab === tab ? "page" : "false");
+  });
+  document.querySelector("#stage-title").textContent =
+    tab === "dental"
+      ? "Tooth anatomy"
+      : tab === "quiz"
+        ? "Learn. Explore. Recall."
+        : "Head & neck";
+  if (tab === "dental" && atlas) {
+    const part = partForTooth(atlas.parts, state.fdi);
+    if (part) {
+      state.selected = part.id;
+      state.layers.add("teeth");
+      updateScene();
+    }
+  }
+  if (atlas) renderInspector();
+  if (atlas) renderTeaching();
+}
+function toggleIsolate() {
+  if (state.toothDetail) {
+    exitTooth();
+    return;
+  }
+  if (state.arches || state.age !== "adult") {
+    inspectTooth();
+    return;
+  }
+  state.isolated = !state.isolated;
+  updateScene();
+  viewer?.view("oblique", state.isolated);
+  renderInspector();
+}
+function exitTooth() {
+  state.toothDetail = false;
+  state.isolated = false;
+  updateScene();
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() =>
+      viewer?.view("oblique", state.arches || state.age !== "adult"),
+    ),
+  );
+}
+function coverage() {
+  document.querySelector("#modal-content").innerHTML =
+    `<h2>Source anatomy and teaching models</h2>
+  <p>The adult explorer contains ${atlas.parts.length} BodyParts3D meshes cropped to the head and neck. Colors identify systems, not natural tissue colors. Cut ends at the lower neck remain open.</p>
+  <h3>Available systems</h3><p>${Object.entries(groups)
+    .filter(([id]) => atlas.parts.some((p) => p.group === id))
+    .map(([, g]) => g.name)
+    .join(", ")}.</p>
+  <h3>Facial muscles</h3><p>Forty-seven authentic facial and masticatory muscle meshes from BodyParts3D 3.0 supplement the 4.0 head, including masseter, temporalis, pterygoids, orbicularis oris and orbicularis oculi. A shared bone-based registration aligns the releases; held-out bone surface RMS mismatch is 0.26 mm. This is an educational cross-version assembly, not a clinically validated model. The supplemental meshes retain CC BY-SA 2.1 Japan licensing.</p>
+  <h3>What the source does not contain</h3><p>This is not every anatomical structure. Parotid glands, facial and external jugular veins, and segmented dental internals remain absent. The vein layer contains the two internal jugular vein segments. See the model coverage report for counts and exclusions.</p>
+  <h3>Child and adult dentition</h3><p>The adult source has 28 permanent external tooth surfaces. Separate procedural teaching models provide all 32 permanent teeth, 20 primary teeth, and a representative 24-tooth mixed dentition. Child mode does not reuse a scaled adult skull. Pediatric craniofacial growth, developing tooth buds and root resorption are not modeled.</p>
+  <h3>Zoom-to-inspect tooth anatomy</h3><p>Zooming into a selected tooth opens rotatable 3D teaching geometry with enamel, dentin, pulp and root canals, cementum, periodontal ligament, alveolar bone and gingiva. Internal structures are not derived from the source surface. Roots are spread in the section plane for inspection; proportions are illustrative and tissue thickness is exaggerated. Canal variations are explained separately, not all built into one representative tooth.</p>
+  <h3>Resolution</h3><p>Assembly geometry is optimized for the browser. Where available, original archive meshes load on selection to provide increased surface detail. Original archive resolution is still a reduced educational dataset, not patient imaging.</p>
+  <h3>Clinical sources</h3>${[...Object.values(sources), ...dentalSources, ...Object.values(endoSources), ...perioSources, ["AAPD: developing dentition", "https://www.aapd.org/globalassets/media/policies_guidelines/bp_developdentition.pdf"], ["Primary tooth anatomy", "https://www.ncbi.nlm.nih.gov/books/NBK573074/"]].map(sourceLink).join("")}
+  <h3>Attribution</h3><p>BodyParts3D © The Database Center for Life Science, CC BY 4.0. Geometry adapted from <a href="https://github.com/ashemag/human-atlas" target="_blank" rel="noreferrer">Human Atlas by ashemag</a> and the official OBJ archive. <a href="/ATTRIBUTION.md" target="_blank">Full attribution</a>.</p><p>Educational use only. Independent specialist editorial review remains necessary.</p>`;
+  document.querySelector("#modal").showModal();
+}
+document.querySelectorAll("[data-tab]").forEach(
+  (b) =>
+    (b.onclick = () => {
+      if (b.dataset.tab === "anatomy") {
+        state.age = "adult";
+        document.querySelector("#age").value = "adult";
+        setTab("anatomy");
+        viewer?.view();
+      } else setTab(b.dataset.tab);
+    }),
+);
+document.querySelector("#age").onchange = (e) => {
+  if (atlas) setAge(e.target.value);
+};
+document.querySelector("#toggle-details").onclick = () =>
+  showDetails(!document.body.classList.contains("details-open"));
+document.querySelector("#close-inspector").onclick = () => showDetails(false);
+document.querySelector("#exit-tooth").onclick = exitTooth;
+document.querySelector("#cutaway").onchange = (e) => {
+  state.cutaway = e.target.checked;
+  updateScene();
+};
+document.querySelector("#section-depth").oninput = (e) => {
+  state.sectionDepth = (Number(e.target.value) - 50) * 0.00008;
+  updateScene();
+};
+document.querySelectorAll("[data-tissue3d]").forEach(
+  (b) =>
+    (b.onclick = () => {
+      const id = b.dataset.tissue3d;
+      state.hiddenTissues.has(id)
+        ? state.hiddenTissues.delete(id)
+        : state.hiddenTissues.add(id);
+      b.setAttribute("aria-pressed", String(!state.hiddenTissues.has(id)));
+      document.querySelector("#tissue-3d-status").textContent =
+        `${b.textContent} ${state.hiddenTissues.has(id) ? "hidden" : "visible"}. Teaching geometry; root spread is flattened for inspection.`;
+      updateScene();
+    }),
+);
+document
+  .querySelectorAll("[data-mode]")
+  .forEach((b) => (b.onclick = () => setMode(b.dataset.mode)));
+document.querySelector("#mobile-library").onclick = (e) => {
+  const open = document.querySelector(".sidebar").classList.toggle("expanded");
+  e.currentTarget.setAttribute("aria-expanded", String(open));
+};
+document.querySelector("#role").onchange = (e) => {
+  state.role = e.target.value;
+  if (atlas) renderInspector();
+};
+document.querySelector("#search").oninput = (e) => {
+  state.query = e.target.value;
+  if (atlas) renderBrowser();
+};
+document.querySelectorAll("[data-view]").forEach(
+  (b) =>
+    (b.onclick = () => {
+      viewer?.view(
+        b.dataset.view,
+        state.isolated ||
+          state.toothDetail ||
+          state.arches ||
+          state.age !== "adult",
+      );
+      document
+        .querySelectorAll("[data-view]")
+        .forEach((v) => v.classList.toggle("active", v === b));
+    }),
+);
+document.querySelector("#zoom-in").onclick = () => viewer?.zoom(0.8);
+document.querySelector("#zoom-out").onclick = () => viewer?.zoom(1.25);
+document.querySelector("#fit").onclick = () => viewer?.view("oblique", true);
+document.querySelector("#isolate").onclick = () => {
+  if (atlas) toggleIsolate();
+};
+document.querySelector("#reset").onclick = () => {
+  if (!atlas) return;
+  state.layers = new Set([
+    "bones",
+    "teeth",
+    "neck",
+    "muscles",
+    "arteries",
+    "veins",
+    "nerves",
+    "glands",
+    "soft",
+    "eyes",
+  ]);
+  state.age = "adult";
+  state.arches = false;
+  state.toothDetail = false;
+  document.querySelector("#age").value = "adult";
+  document.querySelector("#source-caption").textContent =
+    "BodyParts3D 4.0 · Adult reference";
+  state.isolated = false;
+  state.explode = 0;
+  state.opacity = 1;
+  state.selected = "FJ3289";
+  state.topic = "mandible";
+  state.query = "";
+  document.querySelector("#search").value = "";
+  setTab("anatomy");
+  updateScene();
+  renderBrowser();
+  viewer?.view();
+};
+document.querySelector("#coverage").onclick = document.querySelector(
+  "#credits",
+).onclick = () => {
+  if (atlas) coverage();
+};
+document.querySelector("#close-modal").onclick = () =>
+  document.querySelector("#modal").close();
+document.addEventListener("click",e=>{if(e.target.closest("[data-clear-selection]") && atlas)clearSelection();});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && atlas && !document.querySelector("#modal").open) clearSelection();
+  if (
+    e.key === "/" &&
+    !["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement.tagName)
+  ) {
+    e.preventDefault();
+    document.querySelector("#search").focus();
+  }
+});
+
+try {
+  const response = await fetch("/models/atlas.json");
+  if (!response.ok) throw new Error("The anatomy index could not be loaded.");
+  atlas = await response.json();
+  const facialResponse = await fetch("/models/facial/atlas.json");
+  if (!facialResponse.ok) throw new Error("The facial muscle index could not be loaded.");
+  const facial = await facialResponse.json();
+  atlas.parts.push(...facial.parts);
+  renderBrowser();
+  renderInspector();
+  showDetails(false);
+  viewer = await createViewer(
+    document.querySelector("#viewer"),
+    atlas,
+    selectPart,
+    () => {
+      document.querySelector("#load-status").hidden = true;
+    },
+    inspectTooth,
+    (fdi) => inspectTooth(fdi),
+    exitTooth,
+    setExplosion,
+  );
+  updateScene();
+} catch (error) {
+  document.querySelector("#load-status").textContent =
+    `3D viewer unavailable. ${error.message} Try reloading or a browser with WebGL enabled. The reference panels remain available.`;
+}

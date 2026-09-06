@@ -1,0 +1,3026 @@
+:root {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: #20242b;
+  background: #f3f4f4;
+  font-synthesis: none;
+  --navy: #263b48;
+  --teal: #426570;
+  --line: #18253618;
+  --muted: #68727d;
+  --stage: #f3f4f4;
+  --white: #fff;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+  color: inherit;
+}
+button {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 7px;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 550;
+}
+button:hover {
+  background: #eaf1f5;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #348aab;
+  outline-offset: 3px;
+}
+button:disabled {
+  cursor: default;
+}
+a {
+  color: var(--teal);
+}
+svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1,
+h2,
+h3,
+.brand {
+  font-family: inherit;
+}
+header {
+  height: 91px;
+  padding: 0 27px;
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--navy);
+  text-decoration: none;
+  font-size: 23px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.brand-light {
+  font-weight: 450;
+}
+.brand small {
+  display: block;
+  font:
+    10px "DM Sans",
+    sans-serif;
+  letter-spacing: 0.2px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.brand-mark {
+  width: 41px;
+  height: 45px;
+  border-radius: 12px;
+  background: var(--navy);
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.brand-mark svg {
+  width: 27px;
+  height: 27px;
+}
+nav {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  justify-content: center;
+}
+.nav-button {
+  border: 0;
+  padding: 12px 15px;
+  color: #76848e;
+  background: none;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.nav-button.active {
+  background: #edf4f7;
+  color: var(--navy);
+}
+.nav-button svg {
+  width: 17px;
+}
+.audience {
+  font-size: 9px;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.audience select {
+  border: 0;
+  color: #354b5b;
+  background: transparent;
+  font-size: 12px;
+  max-width: 160px;
+  padding: 3px 0;
+}
+.workspace {
+  display: grid;
+  grid-template-columns: 264px minmax(320px, 1fr) 352px;
+  height: calc(100dvh - 127px);
+  min-height: 640px;
+}
+.sidebar {
+  background: #fff;
+  padding: 25px 19px 0;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.sidebar-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sidebar-heading h2 {
+  font-size: 18px;
+  font-weight: 750;
+}
+.small-tag {
+  font-size: 9px;
+  padding: 5px 7px;
+  background: #f0f4f6;
+  border-radius: 4px;
+  color: #6b808c;
+}
+.muted {
+  color: var(--muted);
+}
+.sidebar-intro {
+  font-size: 11px;
+  line-height: 1.6;
+  margin-top: 8px;
+  margin-bottom: 22px;
+}
+.search {
+  display: flex;
+  align-items: center;
+  background: #f7f9fa;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 9px;
+  gap: 7px;
+}
+.search svg {
+  width: 15px;
+  color: #7a8996;
+}
+.search input {
+  background: none;
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: none;
+  font-size: 10px;
+  color: #3e5362;
+}
+.search kbd {
+  font-size: 10px;
+  color: #8996a0;
+  border: 1px solid #dfe6ea;
+  padding: 0 4px;
+  border-radius: 3px;
+}
+#browser {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+.section-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 23px 0 11px;
+}
+.section-label h3 {
+  font-family: "DM Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+}
+.section-label > span {
+  font-size: 9px;
+  color: var(--muted);
+}
+.layer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  padding: 9px 0;
+}
+.layer-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px #0001;
+}
+.layer-count {
+  margin-left: auto;
+  color: #8c9ba6;
+  font-size: 10px;
+}
+.layer input {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--teal);
+  cursor: pointer;
+}
+.sliders {
+  margin-top: 17px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 13px;
+}
+.sliders label {
+  font-size: 10px;
+  color: #74838e;
+}
+.sliders output {
+  float: right;
+  color: #3c5567;
+}
+.sliders input {
+  display: block;
+  width: 100%;
+  height: 3px;
+  accent-color: var(--teal);
+  margin: 11px 0 0;
+}
+.structure-list {
+  min-height: 70px;
+  overflow-y: auto;
+  flex: 1;
+  margin: 0 -8px;
+  padding: 0 3px;
+  scrollbar-width: thin;
+}
+.structure {
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  align-items: center;
+  font-size: 10px;
+  padding: 10px 7px;
+  border-radius: 5px;
+  margin: 1px 0;
+}
+.structure > span:nth-child(2) {
+  flex: 1;
+  line-height: 1.5;
+}
+.structure > svg {
+  width: 12px;
+  height: 12px;
+  color: #9aa7b0;
+}
+.structure.selected {
+  background: #eaf4f5;
+  color: #246e7c;
+}
+.structure small {
+  font-size: 9px;
+}
+.tiny-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.sidebar-bottom {
+  padding: 18px 0 16px;
+  border-top: 1px solid var(--line);
+  margin-top: 10px;
+}
+.sidebar-bottom button {
+  border: 0;
+  padding: 0;
+  background: none;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.sidebar-bottom svg {
+  width: 14px;
+}
+.sidebar-bottom > span {
+  display: block;
+  font-size: 9px;
+  color: #94a0a9;
+  margin-top: 9px;
+}
+.stage {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    #f8fafc 0%,
+    #edf2f6 70%,
+    #e8eef3 100%
+  );
+  isolation: isolate;
+}
+.stage-top {
+  position: absolute;
+  z-index: 2;
+  top: 27px;
+  left: 29px;
+  right: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+.stage-top button {
+  pointer-events: auto;
+}
+.breadcrumb {
+  font-size: 10px;
+  color: #899aa7;
+}
+h1 {
+  font-size: 23px;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  margin-top: 8px;
+  color: #355267;
+}
+.icon-button {
+  padding: 8px;
+  background: #ffffffc0;
+  display: grid;
+  place-items: center;
+}
+.icon-button svg {
+  width: 17px;
+  height: 17px;
+}
+#viewer {
+  position: absolute;
+  inset: 90px 0 110px;
+}
+#viewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.view-pills {
+  position: absolute;
+  top: 105px;
+  left: 29px;
+  z-index: 2;
+  display: flex;
+  gap: 2px;
+  background: #ffffff9c;
+  padding: 3px;
+  border: 1px solid #e3e9ed;
+  border-radius: 7px;
+}
+.view-pills button {
+  font-size: 9px;
+  background: transparent;
+  border: 0;
+  padding: 6px 9px;
+  color: #7d8e9b;
+}
+.view-pills .active {
+  background: #fff;
+  color: #36566b;
+  box-shadow: 0 1px 4px #2343;
+}
+.zoom-controls {
+  position: absolute;
+  right: 21px;
+  bottom: 155px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 3px 14px #3344550a;
+}
+.zoom-controls button {
+  width: 34px;
+  height: 34px;
+  border-radius: 0;
+  padding: 5px;
+  font-size: 18px;
+  border-bottom: 0;
+  background: #fff9;
+}
+.zoom-controls button:first-child {
+  border-radius: 6px 6px 0 0;
+}
+.zoom-controls button:last-child {
+  border-radius: 0 0 6px 6px;
+  border-bottom: 1px solid var(--line);
+}
+.zoom-controls svg {
+  width: 15px;
+}
+.stage-caption {
+  position: absolute;
+  bottom: 101px;
+  left: 29px;
+  right: 29px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  color: #7d909e;
+}
+.live-dot {
+  width: 5px;
+  height: 5px;
+  background: #4b999d;
+  border-radius: 50%;
+}
+.drag-hint {
+  margin-left: auto;
+  font-size: 9px;
+}
+.stage-bottom {
+  position: absolute;
+  bottom: 22px;
+  left: 24px;
+  right: 24px;
+  border: 1px solid #fff;
+  background: #ffffffbd;
+  backdrop-filter: blur(12px);
+  padding: 14px 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 9px;
+  gap: 12px;
+}
+.stage-bottom strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+.stage-bottom span {
+  display: block;
+  font-size: 9px;
+  color: #8595a1;
+  margin-top: 3px;
+}
+.stage-bottom button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.stage-bottom svg {
+  width: 14px;
+}
+#load-status {
+  position: absolute;
+  top: 45%;
+  left: 15%;
+  right: 15%;
+  font-size: 13px;
+  text-align: center;
+  background: #fff;
+  padding: 20px;
+  border-radius: 9px;
+  line-height: 1.6;
+}
+.inspector {
+  background: #fff;
+  border-left: 1px solid var(--line);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.detail-heading {
+  padding: 28px 24px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.detail-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  color: #4d8993;
+  background: #eef6f6;
+  padding: 5px 8px;
+  border-radius: 4px;
+}
+.detail-heading h2 {
+  font-size: 24px;
+  letter-spacing: -0.8px;
+  font-weight: 650;
+  margin-top: 16px;
+  line-height: 1.35;
+}
+.detail-heading p {
+  font-size: 11px;
+  color: #84929c;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+.detail-body {
+  padding: 20px 24px;
+}
+.detail-body h3 {
+  font-size: 12px;
+  font-weight: 750;
+  margin: 22px 0 9px;
+}
+.detail-body p {
+  font-size: 12px;
+  line-height: 1.85;
+  color: #657987;
+}
+.detail-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 25px;
+}
+.primary {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.primary:hover {
+  background: #28536d;
+  color: #fff;
+}
+.primary svg {
+  width: 15px;
+}
+.full-width {
+  width: 100%;
+}
+.learning-note {
+  padding: 16px;
+  background: #eef5f7;
+  border-left: 2px solid #64a1ac;
+  border-radius: 0 5px 5px 0;
+  margin: 22px 0;
+}
+.learning-note > span {
+  font-size: 10px;
+  font-weight: 700;
+  color: #357887;
+}
+.learning-note p {
+  font-size: 11px;
+  margin-top: 7px;
+  line-height: 1.8;
+  color: #506d7c;
+}
+.source-link {
+  font-size: 10px;
+  display: block;
+  line-height: 1.7;
+  margin: 9px 0;
+  text-decoration: none;
+}
+.source-link:hover {
+  text-decoration: underline;
+}
+.related {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 4px;
+}
+.related button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  width: 100%;
+  padding: 11px 0;
+  border: 0;
+  border-bottom: 1px solid #edf1f3;
+  border-radius: 0;
+  font-size: 11px;
+  background: none;
+}
+.related svg {
+  width: 12px;
+}
+.detail-body .fine-print,
+.fine-print {
+  font-size: 10px;
+  line-height: 1.7;
+  color: #8a99a2;
+  margin-top: 17px;
+}
+.study-list {
+  padding: 10px 18px;
+}
+.study-list button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  width: 100%;
+  padding: 18px 3px;
+  background: none;
+  text-align: left;
+}
+.study-list button > span {
+  background: #edf4f6;
+  padding: 10px;
+  border-radius: 6px;
+  color: #4f8090;
+}
+.study-list strong {
+  display: block;
+  font-size: 12px;
+}
+.study-list small {
+  display: block;
+  color: #8998a1;
+  font-size: 10px;
+  line-height: 1.6;
+  margin-top: 4px;
+}
+.study-list button > svg {
+  width: 12px;
+  margin-left: auto;
+}
+.note {
+  margin: 16px 20px;
+  padding: 15px;
+  background: #f4f7f9;
+  font-size: 11px;
+  line-height: 1.8;
+  color: #677d8c;
+  border-radius: 6px;
+}
+.note h3 {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.text-button {
+  display: block;
+  border: 0;
+  background: none;
+  text-align: left;
+  font-size: 11px;
+  padding-left: 0;
+}
+.dental-chart {
+  padding: 20px 15px 16px;
+  background: #f8fafb;
+  border-bottom: 1px solid var(--line);
+}
+.chart-orientation {
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+  color: #8999a5;
+  margin-bottom: 13px;
+}
+.tooth-row {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 1px;
+}
+.tooth-row button {
+  padding: 4px 0;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  border-radius: 4px;
+}
+.tooth-row svg {
+  width: 15px;
+  height: 21px;
+  color: #8d9faa;
+}
+.tooth-row button.active {
+  background: #dbedf0;
+  border-color: #78aeb9;
+  color: #1d6476;
+}
+.tooth-row button.active svg {
+  color: #237c8c;
+}
+.tooth-row button.unmodeled {
+  opacity: 0.55;
+  border: 1px dashed #c5d0d8;
+}
+.arch-divider {
+  height: 26px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  color: #9aa8b3;
+  line-height: 1.3;
+}
+.arch-divider:before,
+.arch-divider:after {
+  content: "";
+  width: 43%;
+  height: 1px;
+  position: absolute;
+  top: 50%;
+  background: #dce5ea;
+}
+.arch-divider:before {
+  left: 0;
+}
+.arch-divider:after {
+  right: 0;
+}
+.dental-chart > small {
+  display: block;
+  margin-top: 13px;
+  font-size: 8px;
+  color: #8c9aa4;
+}
+.tooth-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 24px;
+}
+.fdi-badge {
+  width: 41px;
+  height: 44px;
+  background: #e8f2f4;
+  border: 1px solid #d3e6e9;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  color: #317e8d;
+  font-size: 21px;
+  font-family: Manrope, sans-serif;
+}
+.tooth-heading h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+.tooth-heading p {
+  font-size: 10px;
+  color: #8295a1;
+  margin-top: 4px;
+}
+.dental-tabs {
+  display: flex;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--line);
+  gap: 18px;
+}
+.dental-tabs button {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  padding: 10px 0;
+  color: #899aa5;
+  font-size: 11px;
+  border-bottom: 2px solid transparent;
+}
+.dental-tabs .active {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.tooth-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 22px;
+}
+.tooth-facts small {
+  font-size: 9px;
+  color: #81949f;
+  display: block;
+  margin-bottom: 5px;
+}
+.tooth-facts strong {
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.6;
+  display: block;
+}
+dl {
+  font-size: 11px;
+  line-height: 1.7;
+}
+dt {
+  font-weight: 650;
+  margin-top: 10px;
+}
+dd {
+  margin: 2px 0 0;
+  color: #778b97;
+}
+.references {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 15px;
+  font-size: 11px;
+}
+.references summary {
+  cursor: pointer;
+}
+.quiz-progress {
+  font-size: 11px;
+  color: #7a909c;
+}
+progress {
+  display: block;
+  width: 100%;
+  height: 5px;
+  margin-top: 12px;
+  accent-color: var(--teal);
+}
+.question {
+  font-size: 20px;
+  line-height: 1.55;
+  margin: 25px 0;
+}
+.answers {
+  display: grid;
+  gap: 10px;
+}
+.answers button {
+  padding: 14px 11px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.answers button span {
+  background: #edf2f5;
+  border-radius: 4px;
+  padding: 4px 7px;
+  font-size: 10px;
+}
+.answers .correct {
+  background: #edf7f2;
+  border-color: #78b79e;
+}
+.answers .incorrect {
+  background: #fff0ee;
+  border-color: #d79a91;
+}
+.score {
+  font-size: 64px;
+  color: var(--teal);
+}
+.score span {
+  font-size: 22px;
+  color: #9aabb6;
+}
+.quiz-review {
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+  font-size: 12px;
+}
+.quiz-review p {
+  margin-top: 6px;
+}
+#restart {
+  margin-top: 22px;
+}
+footer {
+  height: 36px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  background: white;
+  color: #8b9aa6;
+  font-size: 9px;
+}
+footer button {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 9px;
+  color: #5e7d8f;
+}
+dialog {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 35px;
+  max-width: 620px;
+  width: calc(100% - 32px);
+  max-height: 85dvh;
+  color: #355365;
+  box-shadow: 0 20px 100px #183c5630;
+}
+dialog::backdrop {
+  background: #102e4566;
+  backdrop-filter: blur(4px);
+}
+dialog h2 {
+  font-size: 25px;
+  margin: 10px 20px 20px 0;
+}
+dialog h3 {
+  font-size: 14px;
+  margin: 22px 0 8px;
+}
+dialog p {
+  font-size: 12px;
+  line-height: 1.85;
+}
+dialog .close {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  border: 0;
+  font-size: 22px;
+}
+.empty {
+  font-size: 12px;
+  line-height: 1.8;
+  padding: 16px;
+  color: #7a8e9c;
+}
+@media (min-width: 1600px) {
+  .workspace {
+    grid-template-columns: 290px minmax(400px, 1fr) 390px;
+  }
+  .detail-body,
+  .detail-heading {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  h1 {
+    font-size: 29px;
+  }
+  .structure {
+    font-size: 11px;
+  }
+  .layer {
+    font-size: 12px;
+  }
+  .tooth-row svg {
+    width: 18px;
+  }
+  .tooth-row button {
+    font-size: 8px;
+  }
+}
+@media (max-width: 1150px) {
+  header {
+    gap: 15px;
+    padding: 0 18px;
+  }
+  .brand {
+    font-size: 20px;
+  }
+  .brand small {
+    font-size: 8px;
+  }
+  .nav-button {
+    padding: 10px;
+    font-size: 10px;
+    gap: 5px;
+  }
+  .workspace {
+    grid-template-columns: 220px minmax(280px, 1fr) 310px;
+  }
+  .sidebar {
+    padding-left: 13px;
+    padding-right: 13px;
+  }
+  .detail-heading,
+  .detail-body {
+    padding-left: 19px;
+    padding-right: 19px;
+  }
+  .stage-top {
+    left: 20px;
+  }
+  h1 {
+    font-size: 20px;
+  }
+  .view-pills {
+    left: 20px;
+  }
+  .drag-hint {
+    display: none;
+  }
+  .stage-bottom {
+    left: 14px;
+    right: 14px;
+    padding: 12px;
+  }
+  .stage-bottom button {
+    font-size: 9px;
+  }
+  .audience select {
+    font-size: 10px;
+  }
+  .tooth-row svg {
+    width: 13px;
+  }
+}
+@media (max-width: 900px) {
+  header {
+    height: 116px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-top: 12px;
+    gap: 0;
+  }
+  .brand {
+    font-size: 20px;
+  }
+  .brand-mark {
+    width: 33px;
+    height: 37px;
+  }
+  .brand small {
+    font-size: 9px;
+  }
+  nav {
+    order: 3;
+    width: 100%;
+    flex-basis: 100%;
+    justify-content: space-around;
+  }
+  .nav-button {
+    padding: 9px 12px;
+    font-size: 11px;
+  }
+  .workspace {
+    height: auto;
+    min-height: 0;
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+  .sidebar {
+    grid-row: 1 / 3;
+    max-height: calc(100dvh - 116px);
+    position: sticky;
+    top: 0;
+  }
+  .stage {
+    height: 600px;
+  }
+  .inspector {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+    max-height: none;
+  }
+  .detail-heading h2 {
+    font-size: 24px;
+  }
+  .dental-chart {
+    max-width: 500px;
+    margin: auto;
+  }
+  .tooth-row svg {
+    width: 20px;
+  }
+  .tooth-row button {
+    font-size: 9px;
+  }
+  .tooth-heading,
+  .detail-body,
+  .detail-heading {
+    padding-left: 26px;
+    padding-right: 26px;
+  }
+  .detail-body {
+    max-width: 650px;
+  }
+  .drag-hint {
+    display: block;
+  }
+  .audience {
+    font-size: 8px;
+  }
+  footer {
+    font-size: 8px;
+    gap: 10px;
+  }
+  .study-list {
+    padding: 10px 25px;
+  }
+  .stage-top {
+    top: 22px;
+  }
+}
+@media (max-width: 600px) {
+  header {
+    height: 113px;
+    padding: 12px 14px 0;
+  }
+  .brand small {
+    font-size: 8px;
+  }
+  .brand {
+    font-size: 19px;
+  }
+  .audience select {
+    max-width: 122px;
+  }
+  .nav-button {
+    font-size: 10px;
+    padding: 10px 8px;
+    gap: 5px;
+  }
+  .nav-button svg {
+    width: 14px;
+  }
+  .workspace {
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar {
+    position: static;
+    max-height: none;
+    padding: 14px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    order: 1;
+  }
+  .sidebar-heading,
+  .sidebar-intro,
+  .sidebar-bottom,
+  .sliders,
+  .layer,
+  .section-label {
+    display: none;
+  }
+  .search input {
+    font-size: 12px;
+  }
+  .search kbd {
+    display: none;
+  }
+  #browser {
+    max-height: 150px;
+  }
+  .structure-list {
+    display: none;
+  }
+  .sidebar:focus-within .structure-list {
+    display: block;
+    overflow: auto;
+  }
+  .sidebar:focus-within .section-label {
+    display: flex;
+    margin: 12px 0 4px;
+  }
+  .stage {
+    height: 490px;
+    order: 2;
+    flex-shrink: 0;
+  }
+  .inspector {
+    order: 3;
+  }
+  .stage-top {
+    top: 20px;
+    left: 20px;
+    right: 20px;
+  }
+  .breadcrumb {
+    font-size: 9px;
+  }
+  h1 {
+    font-size: 22px;
+  }
+  .view-pills {
+    top: 93px;
+    left: 20px;
+  }
+  #viewer {
+    inset: 100px 0 100px;
+  }
+  .stage-bottom {
+    bottom: 15px;
+    left: 15px;
+    right: 15px;
+  }
+  .stage-caption {
+    left: 20px;
+    bottom: 88px;
+  }
+  .drag-hint {
+    font-size: 8px;
+  }
+  .zoom-controls {
+    bottom: 134px;
+  }
+  .detail-heading {
+    padding-top: 23px;
+  }
+  .detail-heading h2 {
+    font-size: 25px;
+  }
+  .tooth-row svg {
+    width: 18px;
+  }
+  .tooth-row button {
+    font-size: 8px;
+  }
+  .dental-chart {
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  footer {
+    height: auto;
+    min-height: 50px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 12px 20px;
+    font-size: 8px;
+  }
+  footer > span:first-child {
+    display: none;
+  }
+  .stage-bottom strong {
+    font-size: 11px;
+  }
+  .detail-body p {
+    font-size: 13px;
+  }
+  .detail-body h3 {
+    font-size: 13px;
+  }
+  .structure {
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+[hidden] {
+  display: none !important;
+}
+#mobile-library {
+  display: none;
+}
+#mode-bar {
+  position: absolute;
+  z-index: 3;
+  top: 96px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid #dce5eb;
+  background: #ffffffc9;
+  border-radius: 8px;
+}
+#mode-bar button {
+  border: 0;
+  background: transparent;
+  padding: 8px 11px;
+  font-size: 10px;
+  color: #718895;
+}
+#mode-bar button.active {
+  background: #e8f2f5;
+  color: #24677e;
+}
+.dental-stage .view-pills {
+  top: 151px;
+}
+.dental-stage #viewer {
+  top: 145px;
+}
+.teaching .view-pills,
+.teaching .zoom-controls,
+.teaching .stage-caption,
+.teaching .stage-bottom {
+  display: none;
+}
+#teaching-view {
+  position: absolute;
+  inset: 150px 0 0;
+  overflow: auto;
+  padding: 10px 26px 30px;
+  scrollbar-width: thin;
+}
+.teaching-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+  padding: 8px 5px 0;
+}
+.teaching-intro strong {
+  font-size: 14px;
+  font-weight: 550;
+}
+.teaching-intro span {
+  font-size: 9px;
+  color: #8194a1;
+}
+.tooth-section {
+  width: 100%;
+  height: auto;
+  max-height: 460px;
+  display: block;
+  margin: 8px auto;
+}
+.tooth-section .tissue {
+  cursor: pointer;
+}
+.tooth-section .highlighted {
+  filter: drop-shadow(0 0 3px #548ca5);
+}
+.tissue-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+.tissue-controls button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  padding: 6px 8px;
+}
+.tissue-controls button span {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  border: 1px solid #0001;
+}
+.tissue-controls .active {
+  background: #e3eff3;
+  border-color: #7dabb8;
+}
+.tissue-explanation {
+  margin: 17px auto 0;
+  max-width: 570px;
+  padding: 16px 18px;
+  background: #ffffffa8;
+  border: 1px solid #dce7ec;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.tissue-explanation p {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #718693;
+  margin: 7px 0;
+}
+.tissue-explanation label {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+.tissue-explanation input {
+  accent-color: var(--teal);
+}
+.canal-workbench {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 14px;
+  margin-top: 22px;
+}
+.canal-workbench > div {
+  padding: 17px;
+  background: #ffffffa8;
+  border: 1px solid #dce7ec;
+  border-radius: 8px;
+}
+.canal-workbench h3 {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+}
+.canal-workbench h3 span {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 400;
+  color: #8a9daa;
+}
+.canal-workbench svg {
+  width: 100%;
+  height: 220px;
+  margin-top: 10px;
+}
+.canal-workbench p {
+  font-size: 11px;
+  line-height: 1.8;
+  color: #728693;
+  margin-top: 10px;
+}
+.canal-workbench small {
+  font-size: 9px;
+  line-height: 1.6;
+  color: #8399a6;
+  display: block;
+  margin-top: 10px;
+}
+.pattern-controls {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin-top: 15px;
+}
+.pattern-controls button {
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+}
+.pattern-controls small {
+  font-size: 9px;
+  color: #899aa3;
+}
+.pattern-controls .active {
+  background: #deedf1;
+  border-color: #7aabb8;
+}
+.dental-tabs {
+  gap: 14px;
+}
+.dental-tabs button {
+  font-size: 10px;
+}
+@media (max-width: 600px) {
+  #mobile-library {
+    display: block;
+    margin-top: 9px;
+    font-size: 11px;
+    padding: 8px;
+  }
+  .sidebar.expanded #browser {
+    max-height: 420px;
+  }
+  .sidebar.expanded .structure-list {
+    display: block;
+    min-height: 90px;
+  }
+  .sidebar.expanded .section-label {
+    display: flex;
+    margin-top: 17px;
+  }
+  .sidebar.expanded .layer {
+    display: flex;
+    font-size: 12px;
+  }
+  .sidebar.expanded .sliders {
+    display: grid;
+  }
+  .sidebar.expanded .sidebar-bottom {
+    display: block;
+  }
+  .stage.teaching {
+    height: 900px;
+  }
+  .dental-stage #viewer {
+    top: 174px;
+  }
+  .dental-stage .view-pills {
+    top: 151px;
+  }
+  #mode-bar {
+    left: 14px;
+    right: 14px;
+    top: 100px;
+  }
+  #mode-bar button {
+    font-size: 9px;
+    padding: 8px 5px;
+  }
+  #teaching-view {
+    top: 152px;
+    padding: 9px 14px 25px;
+  }
+  .canal-workbench {
+    gap: 8px;
+  }
+  .canal-workbench > div {
+    padding: 10px;
+  }
+  .canal-workbench svg {
+    height: 170px;
+  }
+  .canal-workbench h3 {
+    font-size: 10px;
+  }
+  .canal-workbench p {
+    font-size: 10px;
+  }
+  .tooth-section {
+    margin-top: 20px;
+    max-height: none;
+  }
+  .pattern-controls button {
+    font-size: 9px;
+    padding: 8px 5px;
+  }
+  .pattern-controls small {
+    font-size: 8px;
+  }
+}
+.dentition-switch {
+  display: flex;
+  gap: 5px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+}
+.dentition-switch button {
+  flex: 1;
+  font-size: 10px;
+}
+.dentition-switch .active {
+  background: #eaf3f5;
+  color: #226e80;
+  border-color: #bdd9e0;
+}
+.tooth-row.primary-row {
+  grid-template-columns: repeat(10, 1fr);
+}
+.tooth-row.primary-row svg {
+  width: 19px;
+}
+.display-controls {
+  padding: 10px 0 0;
+  font-size: 11px;
+  color: #6d8291;
+}
+.display-controls summary {
+  cursor: pointer;
+}
+.display-controls .sliders {
+  margin-top: 10px;
+  padding: 5px 0 10px;
+  border: 0;
+}
+.clinical-library details {
+  border-bottom: 1px solid var(--line);
+  padding: 13px 0;
+}
+.clinical-library summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.6;
+}
+#browser {
+  overflow: hidden;
+}
+.structure-list {
+  min-height: 0;
+}
+.layer,
+.section-label,
+.display-controls {
+  flex-shrink: 0;
+}
+@media (max-width: 600px) {
+  .sidebar:not(.expanded) .display-controls {
+    display: none;
+  }
+  .sidebar.expanded .structure-list {
+    min-height: 70px;
+  }
+  header {
+    height: 130px;
+  }
+  nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    min-width: 0;
+  }
+  .nav-button {
+    flex-direction: column;
+    padding: 7px 0;
+    gap: 4px;
+    min-width: 0;
+    white-space: normal;
+  }
+  .nav-button span {
+    font-size: 9px;
+    text-align: center;
+  }
+}
+
+:root {
+  --panel: #fffffff2;
+  --shadow: 0 2px 5px #24334403, 0 16px 48px #24334408;
+  -webkit-font-smoothing: antialiased;
+  color-scheme: light;
+}
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+button {
+  font-weight: 500;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+button:hover {
+  background: #edf0f2;
+}
+button:disabled {
+  opacity: 0.4;
+}
+button,
+input,
+select,
+summary {
+  touch-action: manipulation;
+}
+header {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 88px;
+  padding: 0 28px;
+  gap: 20px;
+  background: transparent;
+  border: 0;
+  z-index: 10;
+  flex-wrap: nowrap;
+}
+.brand {
+  font-size: 25px;
+  letter-spacing: -0.9px;
+  gap: 10px;
+  font-weight: 600;
+}
+.brand small {
+  font:
+    10px "Helvetica Neue",
+    Arial,
+    sans-serif;
+  letter-spacing: 0;
+  margin-top: 5px;
+}
+.brand-mark {
+  width: 34px;
+  height: 39px;
+  background: none;
+  color: var(--navy);
+  border: 1px solid #263b4825;
+  border-radius: 10px;
+}
+.brand-mark svg {
+  width: 23px;
+  height: 23px;
+}
+nav {
+  justify-content: flex-end;
+  gap: 3px;
+  order: 0;
+  width: auto;
+  flex-basis: auto;
+}
+.nav-button {
+  font-size: 11px;
+  padding: 10px 12px;
+  gap: 7px;
+  color: var(--muted);
+  border-radius: 9px;
+  min-height: 40px;
+}
+.nav-button.active {
+  background: white;
+  color: var(--navy);
+  box-shadow: 0 1px 4px #1825360a;
+}
+.age-choice,
+.audience {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 9px;
+  flex-shrink: 0;
+}
+.age-choice select,
+.audience select {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #ffffffb8;
+  color: var(--navy);
+  font-size: 11px;
+  max-width: 156px;
+  padding: 7px 8px;
+  min-height: 33px;
+}
+.workspace {
+  position: absolute;
+  inset: 88px 0 32px;
+  display: block;
+  height: auto;
+  min-height: 0;
+}
+.stage {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  background: var(--stage);
+}
+.sidebar,
+.inspector,
+.stage-bottom,
+#dental-3d-controls {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+.sidebar {
+  position: absolute;
+  left: 28px;
+  top: 24px;
+  bottom: 92px;
+  width: 244px;
+  padding: 17px 14px 0;
+  z-index: 5;
+  max-height: 740px;
+}
+.sidebar-heading h2 {
+  font-size: 13px;
+  font-weight: 600;
+}
+.small-tag {
+  font-size: 9px;
+  padding: 4px 6px;
+  background: #edf0f2;
+}
+.sidebar-intro {
+  font-size: 10px;
+  margin: 6px 0 14px;
+  color: var(--muted);
+}
+.search {
+  background: #f6f7f8;
+  padding: 9px;
+  border-radius: 8px;
+}
+.search input {
+  font-size: 11px;
+}
+#browser {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #bbc3c9 transparent;
+  overscroll-behavior: contain;
+  padding-right: 3px;
+}
+.section-label {
+  margin: 17px 0 7px;
+}
+.section-label h3 {
+  font-family: inherit;
+  font-size: 11px;
+}
+.layer-presets {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 3px;
+  background: #edf0f2;
+  border-radius: 8px;
+  margin: 14px 0 8px;
+}
+.layer-presets button {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 3px;
+  font-size: 10px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+}
+.layer-presets button.active,
+.layer-presets button[aria-pressed="true"] {
+  background: white;
+  color: var(--navy);
+  box-shadow: 0 1px 3px #18253612;
+}
+.layer {
+  min-height: 35px;
+  gap: 7px;
+  font-size: 11px;
+  padding: 3px 0;
+  color: #44515c;
+}
+.layer-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.layer-count {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 9px;
+}
+.layer-only {
+  padding: 5px;
+  font-size: 9px;
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+}
+.layer input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: #536875;
+}
+#structure-library {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+#structure-library > summary {
+  font-size: 11px;
+  cursor: pointer;
+  padding-bottom: 9px;
+}
+.structure-list {
+  display: block;
+  flex: none;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
+.structure {
+  font-size: 11px;
+  padding: 9px 4px;
+}
+.structure.selected {
+  color: var(--navy);
+  background: #edf1f3;
+}
+.sidebar-bottom {
+  padding: 13px 0;
+  margin-top: 9px;
+  flex-shrink: 0;
+}
+.sidebar-bottom > span {
+  color: var(--muted);
+  font-size: 9px;
+}
+.display-controls {
+  font-size: 11px;
+}
+.sliders label {
+  color: var(--muted);
+}
+.stage-top {
+  top: 14px;
+  left: 300px;
+  right: 28px;
+  align-items: center;
+}
+.breadcrumb {
+  color: var(--muted);
+  font-size: 10px;
+}
+#stage-title {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.25px;
+  margin-top: 5px;
+  max-width: 350px;
+}
+.stage-top > div:last-child {
+  display: flex;
+  gap: 7px;
+}
+#toggle-details {
+  pointer-events: auto;
+  min-height: 38px;
+  background: white;
+}
+.icon-button {
+  min-width: 38px;
+  min-height: 38px;
+  background: white;
+}
+#viewer,
+.dental-stage #viewer {
+  inset: 56px 0 90px 266px;
+}
+.details-open #viewer {
+  right: 370px;
+}
+#viewer canvas {
+  cursor: grab;
+}
+#viewer canvas:active {
+  cursor: grabbing;
+}
+.view-pills,
+.dental-stage .view-pills {
+  top: 77px;
+  left: 300px;
+  padding: 3px;
+  border-color: var(--line);
+  background: #ffffffdf;
+  border-radius: 9px;
+}
+.view-pills button {
+  font-size: 10px;
+  padding: 7px 9px;
+  color: var(--muted);
+}
+.view-pills .active {
+  background: var(--navy);
+  color: white;
+  box-shadow: none;
+}
+.zoom-controls {
+  right: 28px;
+  top: 42%;
+  bottom: auto;
+  z-index: 3;
+  background: white;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.zoom-controls button,
+.zoom-controls button:first-child,
+.zoom-controls button:last-child {
+  width: 36px;
+  height: 39px;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+}
+.zoom-controls button:hover {
+  background: #edf0f2;
+}
+.stage-caption {
+  left: 300px;
+  right: 100px;
+  bottom: 86px;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 10px;
+  pointer-events: none;
+}
+.drag-hint {
+  margin-left: 14px;
+  font-size: 10px;
+}
+.stage-bottom {
+  left: calc(50% + 115px);
+  right: auto;
+  bottom: 12px;
+  transform: translateX(-50%);
+  width: min(500px, calc(100% - 320px));
+  padding: 14px 16px;
+  min-height: 62px;
+  z-index: 3;
+}
+.stage-bottom > div {
+  min-width: 0;
+}
+.stage-bottom strong {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.stage-bottom span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.stage-bottom button {
+  min-height: 36px;
+  flex-shrink: 0;
+  font-size: 10px;
+}
+.age-notice {
+  position: absolute;
+  left: 300px;
+  right: 100px;
+  bottom: 113px;
+  text-align: center;
+  color: #697681;
+  font-size: 10px;
+  line-height: 1.5;
+  pointer-events: none;
+  z-index: 2;
+}
+.inspector {
+  position: absolute;
+  top: 76px;
+  right: 28px;
+  bottom: 92px;
+  width: 340px;
+  display: none;
+  z-index: 6;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.details-open .inspector {
+  display: block;
+}
+.close-inspector,
+#close-inspector {
+  display: none;
+  position: absolute;
+  right: 38px;
+  top: 86px;
+  z-index: 7;
+  min-height: 34px;
+  min-width: 34px;
+  padding: 7px;
+  background: #fff;
+}
+.details-open .close-inspector,
+.details-open #close-inspector {
+  display: grid;
+  place-items: center;
+}
+.details-open .zoom-controls {
+  right: 385px;
+}
+.details-open .stage-caption,
+.details-open .age-notice {
+  right: 390px;
+}
+.details-open .stage-bottom {
+  left: calc(50% - 52px);
+  width: min(460px, calc(100% - 660px));
+}
+.detail-heading {
+  padding: 24px 21px 20px;
+}
+.detail-heading h2 {
+  font-size: 23px;
+  font-weight: 600;
+  margin-top: 13px;
+  letter-spacing: -0.6px;
+  overflow-wrap: anywhere;
+}
+.detail-heading p,
+.detail-body p {
+  color: #66727f;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.detail-heading .detail-tag {
+  margin-right: 30px;
+}
+.detail-body {
+  padding: 18px 21px;
+}
+.detail-body h3 {
+  font-size: 12px;
+}
+.detail-tag,
+.learning-note,
+.fdi-badge {
+  background: #edf1f3;
+  color: #42606e;
+}
+.learning-note {
+  border-left-color: #96aab3;
+}
+.detail-actions {
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.detail-actions button {
+  min-height: 38px;
+}
+.primary:hover {
+  background: #3b5261;
+}
+.detail-body .fine-print,
+.fine-print,
+.source-link {
+  color: var(--muted);
+}
+.tooth-heading {
+  padding: 21px;
+}
+.fdi-badge {
+  font-family: inherit;
+  flex-shrink: 0;
+}
+.dental-chart {
+  background: #f8f9f9;
+  padding: 17px 12px;
+}
+.tooth-row button {
+  min-height: 34px;
+}
+.tooth-row svg {
+  width: 15px;
+}
+.dental-tabs {
+  padding: 0 21px;
+  gap: 12px;
+}
+.dental-tabs button {
+  min-height: 38px;
+}
+.dentition-switch {
+  padding: 15px 40px 15px 16px;
+}
+#mode-bar {
+  top: 123px;
+  left: 300px;
+  right: auto;
+  width: fit-content;
+  max-width: calc(100% - 330px);
+  background: #ffffffeb;
+  border-color: var(--line);
+  border-radius: 9px;
+}
+#mode-bar button {
+  font-size: 10px;
+  padding: 8px;
+}
+#mode-bar button.active {
+  color: var(--navy);
+  background: #edf0f2;
+}
+#teaching-view {
+  inset: 175px 28px 15px 290px;
+  padding: 10px 15px 24px;
+}
+.details-open #teaching-view {
+  right: 390px;
+}
+.teaching-intro strong {
+  font-size: 15px;
+}
+.teaching-intro span,
+.tissue-explanation p,
+.canal-workbench p {
+  color: var(--muted);
+}
+.canal-workbench h3 span {
+  font-family: inherit;
+}
+#dental-3d-controls {
+  position: absolute;
+  z-index: 4;
+  left: 300px;
+  right: 100px;
+  bottom: 130px;
+  max-width: 600px;
+  margin-inline: auto;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+#dental-3d-controls button {
+  padding: 7px 9px;
+  font-size: 10px;
+}
+#dental-3d-controls label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #52616e;
+  font-size: 10px;
+}
+#dental-3d-controls input {
+  accent-color: var(--navy);
+}
+#dental-3d-controls [type="range"] {
+  max-width: 135px;
+  min-width: 60px;
+}
+#dental-3d-controls [data-tissue3d] {
+  color: var(--muted);
+}
+#dental-3d-controls [data-tissue3d].active,
+#dental-3d-controls [data-tissue3d][aria-pressed="true"] {
+  background: #e8eef0;
+  color: var(--navy);
+  border-color: #b7c6cd;
+}
+.tissue-3d-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: 100%;
+}
+.details-open #dental-3d-controls {
+  right: 390px;
+}
+footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: var(--stage);
+  border: 0;
+  color: var(--muted);
+  padding: 0 28px;
+  font-size: 9px;
+}
+footer button {
+  color: var(--muted);
+}
+dialog {
+  color: #34434f;
+}
+@media (max-width: 1150px) and (min-width: 761px) {
+  header {
+    padding-inline: 20px;
+    gap: 12px;
+  }
+  .brand {
+    font-size: 22px;
+  }
+  .brand-mark {
+    display: none;
+  }
+  .nav-button {
+    padding-inline: 8px;
+    font-size: 10px;
+  }
+  .nav-button svg {
+    width: 15px;
+  }
+  .audience {
+    display: none;
+  }
+  .sidebar {
+    left: 20px;
+    width: 218px;
+  }
+  .stage-top,
+  .view-pills,
+  .dental-stage .view-pills,
+  #mode-bar {
+    left: 258px;
+  }
+  #viewer,
+  .dental-stage #viewer {
+    left: 230px;
+  }
+  .inspector {
+    width: 310px;
+    right: 20px;
+  }
+  .details-open #viewer {
+    left: 0;
+    right: 334px;
+  }
+  .details-open .sidebar {
+    display: none;
+  }
+  .details-open .stage-top,
+  .details-open .view-pills,
+  .details-open #mode-bar {
+    left: 20px;
+  }
+  .details-open .zoom-controls {
+    right: 345px;
+  }
+  .close-inspector,
+  #close-inspector {
+    right: 30px;
+  }
+  .details-open .stage-bottom {
+    left: calc(50% - 160px);
+    width: calc(100% - 370px);
+  }
+  .details-open .stage-caption,
+  .details-open .age-notice {
+    left: 20px;
+    right: 350px;
+  }
+  .details-open #dental-3d-controls {
+    left: 20px;
+    right: 350px;
+  }
+  .details-open #teaching-view {
+    left: 10px;
+    right: 344px;
+  }
+  .drag-hint {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  :root {
+    --inspector-height: min(40dvh, max(125px, calc(100dvh - 440px)));
+  }
+  header {
+    height: 122px;
+    padding: 12px 14px 0;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0;
+  }
+  .brand {
+    font-size: 22px;
+    margin-top: 4px;
+  }
+  .brand small {
+    font-size: 9px;
+    margin-top: 3px;
+  }
+  .brand-mark {
+    width: 29px;
+    height: 33px;
+  }
+  .brand-mark svg {
+    width: 19px;
+  }
+  .audience {
+    display: none;
+  }
+  .age-choice {
+    max-width: 132px;
+    font-size: 8px;
+    gap: 3px;
+  }
+  .age-choice select {
+    max-width: 132px;
+    min-height: 36px;
+    font-size: 10px;
+  }
+  nav {
+    order: 3;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    flex-basis: 100%;
+    margin-top: 7px;
+    gap: 3px;
+  }
+  .nav-button {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 3px;
+    min-height: 42px;
+    justify-content: center;
+    gap: 5px;
+    white-space: normal;
+    font-size: 9px;
+  }
+  .nav-button svg {
+    width: 14px;
+    height: 16px;
+  }
+  .nav-button span {
+    font-size: 9px;
+  }
+  .workspace {
+    inset: 122px 0 24px;
+    display: block;
+  }
+  .stage,
+  .stage.teaching {
+    height: auto;
+    position: absolute;
+    inset: 0;
+  }
+  .stage-top {
+    top: 4px;
+    left: 14px;
+    right: 14px;
+  }
+  .breadcrumb {
+    font-size: 8px;
+  }
+  #stage-title {
+    font-size: 13px;
+    margin-top: 4px;
+    max-width: 185px;
+  }
+  .stage-top button {
+    font-size: 9px;
+    padding: 7px;
+    min-height: 36px;
+  }
+  .stage-top svg {
+    width: 15px;
+  }
+  .view-pills,
+  .dental-stage .view-pills {
+    top: 56px;
+    left: 14px;
+    max-width: calc(100% - 72px);
+  }
+  .view-pills button {
+    padding: 8px 7px;
+    font-size: 9px;
+  }
+  #viewer,
+  .dental-stage #viewer,
+  .details-open #viewer {
+    inset: 85px 0 138px;
+  }
+  .zoom-controls,
+  .details-open .zoom-controls {
+    top: 54px;
+    right: 12px;
+    bottom: auto;
+    padding: 2px;
+  }
+  .zoom-controls button,
+  .zoom-controls button:first-child,
+  .zoom-controls button:last-child {
+    width: 34px;
+    height: 36px;
+  }
+  .sidebar {
+    left: 12px;
+    right: 12px;
+    top: auto;
+    bottom: 82px;
+    width: auto;
+    max-height: 60dvh;
+    padding: 7px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 7px;
+    border: 1px solid var(--line);
+  }
+  .sidebar-heading,
+  .sidebar-intro,
+  .sidebar-bottom,
+  .sidebar .section-label,
+  .sidebar .layer,
+  .sidebar .sliders,
+  .sidebar .display-controls {
+    display: none;
+  }
+  .search {
+    min-height: 38px;
+    padding: 6px 8px;
+  }
+  .search input {
+    font-size: 12px;
+  }
+  .search kbd {
+    display: none;
+  }
+  #mobile-library {
+    display: block;
+    margin: 0;
+    padding: 8px;
+    min-height: 38px;
+    font-size: 10px;
+    max-width: 94px;
+  }
+  .sidebar #browser {
+    display: none;
+    max-height: none;
+    grid-column: 1 / -1;
+  }
+  .sidebar.expanded #browser {
+    display: flex;
+    max-height: calc(60dvh - 65px);
+    padding: 0 6px;
+  }
+  .sidebar.expanded .layer {
+    display: flex;
+    font-size: 12px;
+    min-height: 42px;
+  }
+  .sidebar.expanded .section-label {
+    display: flex;
+    margin: 12px 0 5px;
+  }
+  .sidebar.expanded .display-controls {
+    display: block;
+  }
+  .sidebar.expanded .sliders {
+    display: grid;
+  }
+  .sidebar.expanded .sidebar-bottom {
+    display: none;
+  }
+  .sidebar.expanded .structure-list {
+    min-height: 0;
+  }
+  .layer-presets button,
+  .layer-only {
+    min-height: 36px;
+  }
+  .structure {
+    min-height: 38px;
+    font-size: 12px;
+  }
+  .stage-bottom,
+  .details-open .stage-bottom {
+    bottom: 9px;
+    left: 12px;
+    right: 12px;
+    transform: none;
+    width: auto;
+    min-height: 61px;
+    padding: 12px;
+    gap: 8px;
+  }
+  .stage-bottom strong {
+    font-size: 11px;
+  }
+  .stage-bottom span,
+  .stage-bottom button {
+    font-size: 9px;
+  }
+  .stage-bottom button {
+    min-height: 36px;
+    padding: 7px;
+  }
+  .stage-caption,
+  .details-open .stage-caption {
+    bottom: 145px;
+    left: 15px;
+    right: 15px;
+    font-size: 8px;
+  }
+  .drag-hint {
+    display: none;
+  }
+  .age-notice,
+  .details-open .age-notice {
+    bottom: 165px;
+    left: 20px;
+    right: 20px;
+    font-size: 9px;
+  }
+  .inspector {
+    top: auto;
+    bottom: 82px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    height: var(--inspector-height);
+    max-height: var(--inspector-height);
+  }
+  .details-open .sidebar {
+    display: none;
+  }
+  .details-open #viewer {
+    bottom: calc(var(--inspector-height) + 85px);
+    top: 80px;
+  }
+  .details-open .age-notice,
+  .details-open .stage-caption {
+    display: none;
+  }
+  .close-inspector,
+  #close-inspector {
+    position: fixed;
+    top: auto;
+    right: 20px;
+    bottom: calc(var(--inspector-height) + 62px);
+    min-width: 36px;
+    min-height: 36px;
+  }
+  .detail-heading,
+  .tooth-heading {
+    padding: 20px;
+  }
+  .detail-heading h2 {
+    font-size: 21px;
+    margin-top: 11px;
+  }
+  .detail-body {
+    padding: 16px 20px;
+  }
+  .detail-body p {
+    font-size: 12px;
+  }
+  .dental-chart {
+    width: 100%;
+    padding-inline: 12px;
+  }
+  .tooth-row svg {
+    width: 15px;
+  }
+  .tooth-row button {
+    font-size: 8px;
+  }
+  .dental-tabs {
+    gap: 13px;
+    padding-inline: 20px;
+  }
+  #mode-bar {
+    top: 99px;
+    left: 14px;
+    right: 55px;
+    max-width: none;
+    width: auto;
+    padding: 3px;
+  }
+  #mode-bar button {
+    font-size: 8px;
+    padding: 7px 5px;
+    flex: 1;
+  }
+  #teaching-view,
+  .details-open #teaching-view {
+    inset: 141px 0 80px;
+    padding: 8px 14px 20px;
+  }
+  .teaching .age-notice {
+    display: none;
+  }
+  #dental-3d-controls,
+  .details-open #dental-3d-controls {
+    top: 141px;
+    bottom: auto;
+    left: 12px;
+    right: 55px;
+    max-height: 130px;
+    overflow-y: auto;
+    padding: 8px;
+    gap: 6px;
+  }
+  #dental-3d-controls button {
+    padding: 7px;
+    font-size: 9px;
+  }
+  #dental-3d-controls label {
+    font-size: 9px;
+  }
+  #dental-3d-controls [type="range"] {
+    max-width: 100px;
+  }
+  footer {
+    height: 24px;
+    min-height: 0;
+    padding: 0 12px;
+    font-size: 7px;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: nowrap;
+  }
+  footer > span:first-child {
+    display: none;
+  }
+  footer button {
+    font-size: 8px;
+    white-space: nowrap;
+  }
+  .canal-workbench {
+    grid-template-columns: 1fr;
+  }
+  .canal-workbench svg {
+    height: 190px;
+  }
+  .tooth-section {
+    margin-top: 12px;
+    max-height: 420px;
+  }
+  .details-open #dental-3d-controls {
+    max-height: 78px;
+  }
+}
+@media (max-width: 350px) {
+  header {
+    padding-inline: 10px;
+  }
+  .brand {
+    font-size: 19px;
+    gap: 6px;
+  }
+  .brand-mark {
+    display: none;
+  }
+  .brand small {
+    font-size: 8px;
+  }
+  .nav-button {
+    gap: 3px;
+  }
+  .nav-button span {
+    font-size: 8px;
+  }
+  .nav-button svg {
+    width: 12px;
+  }
+  #stage-title {
+    max-width: 150px;
+    font-size: 12px;
+  }
+  .view-pills button {
+    padding-inline: 5px;
+  }
+  .stage-bottom button {
+    max-width: 116px;
+    white-space: normal;
+  }
+  .age-choice select {
+    max-width: 127px;
+  }
+}
+@media (max-height: 600px) and (min-width: 761px) {
+  .sidebar {
+    top: 5px;
+    bottom: 80px;
+  }
+  .sidebar-intro {
+    display: none;
+  }
+  .search {
+    margin-top: 10px;
+  }
+  .inspector {
+    top: 60px;
+    bottom: 80px;
+  }
+  .close-inspector,
+  #close-inspector {
+    top: 70px;
+  }
+  .stage-caption,
+  .age-notice {
+    display: none;
+  }
+  #dental-3d-controls {
+    bottom: 85px;
+    max-height: 100px;
+    overflow-y: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+.tooth-inspection .sidebar,
+.tooth-inspection .stage-caption {
+  display: none;
+}
+.tooth-inspection .stage-top,
+.tooth-inspection .view-pills,
+.tooth-inspection #mode-bar {
+  left: 28px;
+}
+.tooth-inspection #viewer {
+  left: 250px;
+  top: 115px;
+  bottom: 90px;
+  right: 80px;
+}
+.tooth-inspection.details-open #viewer {
+  right: 370px;
+}
+.tooth-inspection #dental-3d-controls {
+  left: 28px;
+  right: auto;
+  top: 180px;
+  bottom: auto;
+  width: 202px;
+  max-height: calc(100% - 270px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 12px;
+  gap: 12px;
+  align-content: flex-start;
+}
+.tooth-inspection #dental-3d-controls > small,
+#tissue-3d-status {
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+#resolution-status {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+.inventory-heading {
+  padding: 12px;
+  margin: 12px 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+}
+.inventory-heading p {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 8px 0;
+}
+.inventory-type {
+  margin: 14px 0 5px;
+  padding: 7px 4px;
+  font-size: 11px;
+  color: var(--teal);
+  border-bottom: 1px solid var(--line);
+}
+@media (min-width: 761px) {
+  #toggle-details,
+  .details-open #close-inspector {
+    display: none;
+  }
+}
+.inventory-heading button,
+[data-clear-selection] {
+  min-height: 44px;
+  min-width: 44px;
+}
+.tooth-inspection #dental-3d-controls .detail-actions {
+  margin-bottom: 0;
+}
+.tooth-inspection #dental-3d-controls .tissue-3d-buttons {
+  gap: 6px;
+}
+.tooth-inspection #dental-3d-controls [data-tissue3d] {
+  min-height: 32px;
+}
+.tooth-inspection .age-notice {
+  left: 250px;
+  bottom: 86px;
+  font-size: 9px;
+}
+.tooth-inspection .stage-bottom {
+  left: 250px;
+  right: 80px;
+  width: auto;
+  max-width: 650px;
+  margin-inline: auto;
+  transform: none;
+}
+.tooth-inspection.details-open .stage-bottom {
+  right: 370px;
+}
+@media (min-width: 761px) and (max-width: 1150px) {
+  .tooth-inspection #dental-3d-controls {
+    left: 20px;
+    width: 180px;
+  }
+  .tooth-inspection #viewer {
+    left: 215px;
+  }
+  .tooth-inspection.details-open #viewer {
+    right: 334px;
+  }
+  .tooth-inspection .stage-bottom {
+    left: 215px;
+  }
+  .tooth-inspection.details-open .stage-bottom {
+    right: 340px;
+  }
+}
+@media (max-width: 760px) {
+  .tooth-inspection {
+    --inspector-height: min(22dvh, 110px);
+  }
+  .tooth-inspection .stage-top,
+  .tooth-inspection .view-pills {
+    left: 14px;
+  }
+  .tooth-inspection #mode-bar,
+  .tooth-inspection .stage-bottom,
+  .tooth-inspection .age-notice {
+    display: none;
+  }
+  .tooth-inspection #viewer,
+  .tooth-inspection.details-open #viewer {
+    left: 0;
+    right: 0;
+    top: 96px;
+    bottom: 122px;
+  }
+  .tooth-inspection #dental-3d-controls,
+  .tooth-inspection.details-open #dental-3d-controls {
+    top: auto;
+    bottom: 8px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    height: 104px;
+    max-height: 104px;
+    padding: 8px;
+    gap: 6px;
+  }
+  .tooth-inspection #dental-3d-controls > small,
+  .tooth-inspection #tissue-3d-status {
+    font-size: 9px;
+  }
+  .tooth-inspection #dental-3d-controls [data-tissue3d] {
+    min-height: 30px;
+  }
+  .tooth-inspection .inspector {
+    bottom: 122px;
+  }
+  .tooth-inspection.details-open #viewer {
+    bottom: calc(var(--inspector-height) + 130px);
+  }
+  .tooth-inspection .close-inspector,
+  .tooth-inspection #close-inspector {
+    bottom: calc(var(--inspector-height) + 102px);
+  }
+}
+@media (max-height: 600px) and (min-width: 761px) {
+  .tooth-inspection #viewer {
+    top: 100px;
+    bottom: 80px;
+  }
+  .tooth-inspection #dental-3d-controls {
+    top: 165px;
+    max-height: calc(100% - 190px);
+  }
+}
+@media (max-width: 760px) and (max-height: 650px) {
+  .tooth-inspection .breadcrumb,
+  .tooth-inspection #stage-title {
+    display: none;
+  }
+  .tooth-inspection #resolution-status {
+    margin-top: 0;
+  }
+  .tooth-inspection .view-pills {
+    top: 30px;
+  }
+  .tooth-inspection #viewer,
+  .tooth-inspection.details-open #viewer {
+    top: 66px;
+  }
+}
