@@ -98,6 +98,7 @@ const state = {
   hiddenTissues: new Set(),
   isolated: false,
   opacity: new Map(),
+  landmark: null,
   explode: 0,
   tab: "anatomy",
   query: "",
@@ -438,6 +439,10 @@ function selectPart(id) {
   state.toothDetail = false;
   state.selected = id;
   state.layers.add(part.group);
+  if (state.landmark) {
+    state.landmark = null;
+    viewer?.showLandmark(null);
+  }
   showSeparation(false);
   if (touchLayout()) collapseLibrary();
   const fdi = toothNumber(part.name);
@@ -710,6 +715,7 @@ function renderInspector() {
     `<div class="detail-body">
     <div class="detail-actions"><button class="primary" id="detail-isolate">${icon("expand")} ${state.isolated ? "Restore" : "Inspect in 3D"}</button><button id="save">${state.saved.has(part.id) ? "✓ Saved" : "+ Save"}</button><button data-clear-selection>Clear selection</button></div>
     ${topic ? `<h3>Overview</h3><p>${topic.overview}</p><div class="learning-note"><span>Study focus</span><p>${[topic.student, topic.dentist, topic.specialist].filter(Boolean).join(" ")}</p></div><h3>Explore the relationships</h3><p>Rotate the assembly, fade a layer with its slider, or isolate a structure to examine its surfaces.</p>${sourceLink(sources[topic.source])}` : `<h3>Explore this structure</h3><p>This named surface mesh is part of the ${groups[part.group].name.toLowerCase()} layer. Compare its position with adjacent structures or isolate it for inspection.</p><div class="learning-note"><span>Reference identity</span><p>BodyParts3D mesh ${part.id}, mapped to ${part.conceptId}. Detailed clinical notes for this structure have not yet been authored.</p></div>`}
+    ${landmarkBlock(part)}
     <div class="related"><h3>Continue exploring</h3>${atlas.parts
       .filter((p) => p.group === part.group && p.id !== part.id)
       .slice(0, 3)
@@ -721,6 +727,13 @@ function renderInspector() {
         "",
       )}</div><p class="fine-print">Adult reference anatomy. Individual form and relationships vary.</p></div>`;
   panel.querySelector("#detail-isolate").onclick = toggleIsolate;
+  const landmark = panel.querySelector("#landmark");
+  if (landmark)
+    landmark.onchange = () => {
+      state.landmark = landmark.value || null;
+      viewer?.showLandmark(state.landmark);
+      renderInspector();
+    };
   panel.querySelector("#save").onclick = () => {
     state.saved.has(part.id)
       ? state.saved.delete(part.id)
@@ -733,6 +746,23 @@ function renderInspector() {
   panel
     .querySelectorAll("[data-part]")
     .forEach((b) => (b.onclick = () => selectPart(b.dataset.part)));
+}
+
+/* The anchors the schematic structures are built from, offered by name on the
+   bone they were measured on. Each option carries the rule that produced it. */
+function landmarkBlock(part) {
+  const found = (viewer?.landmarks() || []).filter((l) => l.bone === part.id);
+  if (!found.length) return "";
+  const active = found.find((l) => l.id === state.landmark);
+  return `<div class="landmark-block"><h3>Landmarks on this bone</h3>
+    <label class="landmark-pick"><span>Pin a named point</span><select id="landmark"><option value="">No landmark</option>${found
+      .map(
+        (l) =>
+          `<option value="${l.id}" ${l.id === state.landmark ? "selected" : ""}>${escape(l.name)}</option>`,
+      )
+      .join("")}</select></label>
+    ${active ? `<p class="landmark-method"><span>How this point was found</span>${escape(active.method)}</p>` : ""}
+    <p class="fine-print">${found.length} points, each located by searching this mandible's own vertices rather than typed in; ${found.filter((l) => l.vertex).length} are a vertex of the mesh and the rest are composed from measured points, which is what each rule above says. Left and right are the patient's. They mark where a named feature falls on this mesh: they are not boundaries, and they are not clinically validated positions. The schematic nerves and vessels are fitted to these same anchors.</p></div>`;
 }
 
 function renderDental(panel) {
@@ -1207,6 +1237,8 @@ document.querySelector("#reset").onclick = () => {
   state.isolated = false;
   state.explode = 0;
   state.opacity.clear();
+  state.landmark = null;
+  viewer?.showLandmark(null);
   state.selected = "FJ3289";
   state.topic = "mandible";
   state.query = "";
@@ -1290,6 +1322,9 @@ try {
     },
   });
   updateScene();
+  // The notes are first drawn before the viewer exists, so the landmark
+  // picker has nothing to list until this second pass.
+  renderInspector();
 } catch (error) {
   const panel = document.querySelector("#load-status");
   panel.hidden = false;

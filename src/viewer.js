@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { groups, toothNumber } from "./content.js";
 import { createExplosionLayout, tissueSeparation } from "./explosion-layout.js";
-import { createSchematicParts } from "./schematic-anatomy.js";
+import { createSchematicParts, deriveLandmarks } from "./schematic-anatomy.js";
 import {
   createToothModel,
   createDentitionModel,
@@ -141,11 +141,86 @@ export async function createViewer(host, atlas, handlers) {
       out.push([values[i], values[i + 1], values[i + 2]]);
     return out;
   };
+  const landmarks = deriveLandmarks(atlas.parts, baseVertices);
   for (const built of createSchematicParts(atlas.parts, baseVertices)) {
     const { geometry, ...part } = built;
     atlas.parts.push(part);
     addMesh(part, geometry);
   }
+  const labelTexture = (text) => {
+    const scale = 3;
+    const pad = 9 * scale;
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    const font = `${12 * scale}px "Inter", system-ui, sans-serif`;
+    context.font = font;
+    canvas.width = Math.ceil(context.measureText(text).width) + pad * 2;
+    canvas.height = 24 * scale + pad;
+    const draw = canvas.getContext("2d");
+    draw.font = font;
+    draw.fillStyle = "rgba(255,255,255,0.94)";
+    draw.strokeStyle = "rgba(23,36,47,0.22)";
+    draw.lineWidth = scale;
+    const radius = 7 * scale;
+    const w = canvas.width - scale,
+      h = canvas.height - scale;
+    draw.beginPath();
+    draw.roundRect(scale / 2, scale / 2, w, h, radius);
+    draw.fill();
+    draw.stroke();
+    draw.fillStyle = "#17242f";
+    draw.textBaseline = "middle";
+    draw.fillText(text, pad, canvas.height / 2);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.anisotropy = 4;
+    return { texture, ratio: canvas.width / canvas.height };
+  };
+
+  const pin = new THREE.Group();
+  pin.visible = false;
+  const beadMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.0016, 20, 14),
+    new THREE.MeshBasicMaterial({ color: 0x1d6d7b }),
+  );
+  const haloMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.0031, 20, 14),
+    new THREE.MeshBasicMaterial({ color: 0x54aab9, transparent: true, opacity: 0.32 }),
+  );
+  const pinLabel = new THREE.Sprite(
+    new THREE.SpriteMaterial({ transparent: true, depthTest: false }),
+  );
+  pinLabel.position.set(0, 0.0072, 0);
+  pin.add(beadMesh, haloMesh, pinLabel);
+  scene.add(pin);
+  let pinnedLandmark = null;
+
+  function sizePin() {
+    if (!pin.visible) return;
+    const distance = camera.position.distanceTo(pin.position);
+    const perPixel =
+      (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * distance) /
+      Math.max(1, renderer.domElement.clientHeight);
+    const labelHeight = perPixel * 21;
+    pinLabel.scale.set(labelHeight * (pinLabel.userData.ratio || 4), labelHeight, 1);
+    pinLabel.position.set(0, labelHeight * 1.5, 0);
+    const bead = perPixel * 3.4;
+    beadMesh.scale.setScalar(bead / 0.0016);
+    haloMesh.scale.setScalar(bead / 0.0016);
+  }
+
+  function showLandmark(id) {
+    const found = landmarks.find((l) => l.id === id) || null;
+    pinnedLandmark = found;
+    pin.visible = Boolean(found);
+    if (!found) return;
+    pin.position.fromArray(found.position);
+    const { texture, ratio } = labelTexture(found.name);
+    pinLabel.material.map?.dispose();
+    pinLabel.material.map = texture;
+    pinLabel.material.needsUpdate = true;
+    pinLabel.userData.ratio = ratio;
+  }
+
   // Look at the jaws, not the middle of the cranium. This is a dental atlas,
   // and it also lifts the mandible clear of the dock along the bottom edge.
   const target = new THREE.Vector3(0, 1.543, 0.005);
@@ -316,6 +391,7 @@ export async function createViewer(host, atlas, handlers) {
     else render();
   }
   function render() {
+    sizePin();
     renderer.render(scene, camera);
     const distance = camera.position.distanceTo(controls.target);
     const zoomingIn =
@@ -581,6 +657,11 @@ export async function createViewer(host, atlas, handlers) {
     } else if(!currentState.toothDetail) onSelect(null);
   });
   const api = {
+    landmarks: () => landmarks.map((l) => ({ ...l })),
+    showLandmark(id) {
+      showLandmark(id);
+      render();
+    },
     update(state) {
       const previousExplosion = explosion;
       currentState = state;
@@ -637,6 +718,9 @@ export async function createViewer(host, atlas, handlers) {
         mesh.material.depthWrite = !mesh.material.transparent;
       }
       applyExplosion();
+      // The pin marks a point on the assembled mandible. Separating the
+      // assembly or opening a tooth model moves that bone out from under it.
+      if (pinnedLandmark && (explosion > 0 || dentalModel)) showLandmark(null);
       if (previousExplosion > 0 && explosion === 0) view(currentDirection);
     },
     view,

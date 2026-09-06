@@ -7026,3 +7026,60 @@ body.tooth-inspection .studio #consent {
 .studio .fade-note {
   margin: 6px 3px 12px;
 }
+
+/* ---- Bone landmarks ------------------------------------------------------
+
+   The schematic structures were already fitted to points measured on this
+   mandible; this is those points, named, with the rule that found each one.
+   The rule is shown with the pin because the rule is the claim. */
+
+.studio .landmark-block {
+  margin-top: 18px;
+}
+
+.studio .landmark-pick {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 8px 0 10px;
+}
+
+.studio .landmark-pick > span {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.studio .landmark-pick select {
+  width: 100%;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  font-size: 12.5px;
+  color: var(--ink);
+}
+
+.studio .landmark-method {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-left: 2px solid var(--teal);
+  border-radius: 0 8px 8px 0;
+  background: #17242f06;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.studio .landmark-method span {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--faint);
+}

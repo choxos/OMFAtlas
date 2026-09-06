@@ -1,7 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { createSchematicParts, deriveAnchors } from "../src/schematic-anatomy.js";
+import {
+  LANDMARKS,
+  createSchematicParts,
+  deriveAnchors,
+  deriveLandmarks,
+} from "../src/schematic-anatomy.js";
 
 const atlas = JSON.parse(
   readFileSync(new URL("../public/models/atlas.json", import.meta.url)),
@@ -236,5 +241,50 @@ test("the inferior alveolar artery accompanies its nerve through the canal", () 
         `the artery and nerve diverge on axis ${axis}`,
       );
     }
+  }
+});
+
+test("every named landmark is a point found on the bone it is offered on", () => {
+  const found = deriveLandmarks(atlas.parts, readVertices);
+  assert.equal(found.length, LANDMARKS.length * 2, "both sides of every landmark");
+  const seen = new Set();
+  for (const landmark of found) {
+    assert.ok(!seen.has(landmark.id), `duplicate landmark ${landmark.id}`);
+    seen.add(landmark.id);
+    // The rule is the claim the pin makes, so a pin without one cannot ship.
+    assert.ok(
+      landmark.method.length > 30,
+      `${landmark.id} needs the rule that found it`,
+    );
+    assert.equal(landmark.bone, "FJ3289", `${landmark.id} is offered on the mandible`);
+    for (const value of landmark.position)
+      assert.ok(Number.isFinite(value), `${landmark.id} has a non-finite coordinate`);
+    // Measured off the mesh, not typed in. Five of the seven are a vertex of
+    // this mandible and have to land on it exactly. The mandibular foramen
+    // steps 1.5 mm medially to the mouth of the canal and the mental foramen
+    // takes its height from the premolar apices, so both stand off the surface
+    // by a stated amount rather than an unbounded one.
+    let nearest = Infinity;
+    for (const vertex of mandibleVertices) {
+      const distance = Math.hypot(
+        vertex[0] - landmark.position[0],
+        vertex[1] - landmark.position[1],
+        vertex[2] - landmark.position[2],
+      );
+      if (distance < nearest) nearest = distance;
+    }
+    const allowed = landmark.vertex ? 0.0002 : 0.006;
+    assert.ok(
+      nearest < allowed,
+      `${landmark.id} sits ${(nearest * 1000).toFixed(1)}mm from the mandible surface, over its ${(allowed * 1000).toFixed(1)}mm allowance`,
+    );
+  }
+  // Bilateral, and on the side the name says: right is negative X.
+  for (const landmark of found) {
+    const right = landmark.id.endsWith("-r");
+    assert.ok(
+      right ? landmark.position[0] < 0 : landmark.position[0] > 0,
+      `${landmark.id} is on the wrong side of the midline`,
+    );
   }
 });

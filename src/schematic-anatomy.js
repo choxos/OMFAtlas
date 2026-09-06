@@ -904,6 +904,104 @@ const STRUCTURES = [
  * filters, the search, and the isolation controls treat them the same way.
  * The only added field is schematic, which the interface uses to label them.
  */
+// ---- Bone landmarks -------------------------------------------------------
+//
+// These are the anchors the schematic structures are already built from, named
+// and offered to the reader. Only points found by searching this mandible's
+// own vertices are listed: the maxillary, palatine and temporal anchors are
+// estimated from bounding boxes rather than measured off a surface, and a pin
+// that says "found on this skull" has to have been. Every entry carries the
+// rule that produced it, because the rule is the claim, not the coordinate.
+//
+// They mark where a named feature falls on this particular mesh. They are not
+// boundaries, and they are not clinically validated positions.
+
+export const LANDMARKS = [
+  {
+    id: "condyle",
+    vertex: true,
+    name: "Condylar head",
+    bone: "FJ3289",
+    method:
+      "Highest vertex of the mandible on this side.",
+    at: (anchors, side) => anchors.condyle(side),
+  },
+  {
+    id: "coronoid",
+    vertex: true,
+    name: "Coronoid process",
+    bone: "FJ3289",
+    method:
+      "Highest vertex on this side that lies at least 10 mm anterior to the condylar head.",
+    at: (anchors, side) => anchors.coronoid(side),
+  },
+  {
+    id: "mandibular-foramen",
+    vertex: false,
+    name: "Mandibular foramen",
+    bone: "FJ3289",
+    method:
+      "Most medial vertex of the ramus within 5 mm of the occlusal height of the lower second molar, stepped 1.5 mm medially to the mouth of the canal.",
+    at: (anchors, side) => anchors.mandibularForamen(side),
+  },
+  {
+    id: "mental-foramen",
+    vertex: false,
+    name: "Mental foramen",
+    bone: "FJ3289",
+    method:
+      "Buccal surface of the body, taking the outermost vertex between the first and second premolar root apices and the height 2.2 mm below the shallower of those apices. The height comes from the teeth, so the point can stand a few millimeters off the curve of the plate.",
+    at: (anchors, side) => anchors.mentalForamen(side),
+  },
+  {
+    id: "gonion",
+    vertex: true,
+    name: "Gonial angle",
+    bone: "FJ3289",
+    method:
+      "Lowest vertex of the mandible on this side behind the level of the molars.",
+    at: (anchors, side) => anchors.gonion(side),
+  },
+  {
+    id: "ramus-posterior",
+    vertex: true,
+    name: "Posterior border of the ramus",
+    bone: "FJ3289",
+    method: "Most posterior vertex of the mandible on this side.",
+    at: (anchors, side) => anchors.ramusPosterior(side),
+  },
+  {
+    id: "antegonial-notch",
+    vertex: true,
+    name: "Antegonial notch",
+    bone: "FJ3289",
+    method:
+      "Lowest vertex of the lower border within 6 mm of the first molar root apex, where the facial artery crosses.",
+    at: (anchors, side) => anchors.facialNotch(side),
+  },
+];
+
+/** Resolve every landmark on both sides against this assembly's meshes. */
+export function deriveLandmarks(parts, readVertices) {
+  const anchors = deriveAnchors(parts, readVertices);
+  const resolved = [];
+  for (const landmark of LANDMARKS)
+    for (const side of [RIGHT, LEFT]) {
+      const position = landmark.at(anchors, side);
+      if (!position) continue;
+      const hand = side === RIGHT ? "Right" : "Left";
+      resolved.push({
+        id: `${landmark.id}-${side === RIGHT ? "r" : "l"}`,
+        name: `${hand} ${landmark.name[0].toLowerCase()}${landmark.name.slice(1)}`,
+        bone: landmark.bone,
+        vertex: landmark.vertex,
+        method: landmark.method,
+        position: [...position],
+      });
+    }
+  return resolved;
+}
+
 export function createSchematicParts(parts, readVertices) {
   const anchors = deriveAnchors(parts, readVertices);
   const built = [];
