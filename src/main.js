@@ -194,7 +194,7 @@ document.querySelector("#app").innerHTML = `
   <footer class="studio-footer"><span>Built for dental learning.</span><span class="footer-note">Educational reference. Not for diagnosis or treatment planning.</span><button id="privacy">Privacy</button><button id="credits">Credits &amp; references</button></footer>
   <div id="consent" class="panel" role="dialog" aria-modal="false" aria-labelledby="consent-title" hidden>
     <strong id="consent-title">Analytics</strong>
-    <p>This atlas would like to count visits with Google Analytics, which sets cookies. Nothing is requested from Google unless you accept, and the atlas works either way.</p>
+    <p>This atlas can count visits with Google Analytics. Until you choose, it is loaded but switched off: it stores nothing and sets no cookies. The atlas works either way.</p>
     <div class="consent-actions"><button id="consent-accept">Accept</button><button id="consent-decline">Decline</button></div>
   </div>
   </div>
@@ -203,11 +203,12 @@ document.querySelector("#app").innerHTML = `
 
 // ---- Analytics consent ---------------------------------------------------
 //
-// Nothing is requested from Google until the reader accepts. The tag is not in
-// the document head: declining means no third-party request is ever made,
-// rather than a request being made and its cookies suppressed afterwards.
+// Google Analytics runs under Consent Mode v2. index.html sets every consent
+// category to denied before the tag loads, so nothing is stored and no cookie
+// is set until the reader accepts; accepting sends the update call below.
+// Advertising categories stay denied either way, since none of this is for
+// advertising.
 
-const ANALYTICS_ID = "G-LCRYBDSQEP";
 const CONSENT_KEY = "omf-consent";
 
 const readConsent = () => {
@@ -218,28 +219,12 @@ const readConsent = () => {
   }
 };
 
-let analyticsStarted = false;
-function startAnalytics() {
-  if (analyticsStarted) return;
-  analyticsStarted = true;
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    window.dataLayer.push(arguments);
-  }
-  window.gtag = gtag;
-  // Only the analytics category is granted. Nothing here is for advertising.
-  gtag("consent", "default", {
-    ad_storage: "denied",
-    ad_user_data: "denied",
-    ad_personalization: "denied",
-    analytics_storage: "granted",
+/** Tell the already loaded tag whether it may store anything. */
+function updateConsent(granted) {
+  if (typeof window.gtag !== "function") return;
+  window.gtag("consent", "update", {
+    analytics_storage: granted ? "granted" : "denied",
   });
-  gtag("js", new Date());
-  gtag("config", ANALYTICS_ID, { anonymize_ip: true });
-  const tag = document.createElement("script");
-  tag.async = true;
-  tag.src = `https://www.googletagmanager.com/gtag/js?id=${ANALYTICS_ID}`;
-  document.head.append(tag);
 }
 
 /** Drop the cookies Google Analytics sets, for a reader who changes their mind. */
@@ -261,8 +246,8 @@ function setConsent(value) {
     localStorage.setItem(CONSENT_KEY, value);
   } catch {}
   showConsent(false);
-  if (value === "granted") startAnalytics();
-  else clearAnalyticsCookies();
+  updateConsent(value === "granted");
+  if (value !== "granted") clearAnalyticsCookies();
 }
 
 // Schematic structures are labeled everywhere they are named, so a reader
@@ -1062,7 +1047,7 @@ function privacy() {
     `<h2>Privacy</h2>
   <p>This atlas is a static site. It has no accounts, no login, and no server that stores anything about you. The anatomy is delivered as files and rendered in your browser.</p>
   <h3>What is stored on your device</h3><p>Your theme, your saved structures, and your answer to the question below are kept in this browser's local storage. They never leave your device, and clearing your browser data removes them.</p>
-  <h3>Analytics</h3><p>If you accept, Google Analytics counts visits and sets cookies to do so. Nothing is requested from Google unless you accept: the tag is not loaded otherwise, so declining means no request is ever made rather than a request being made and ignored. Advertising and personalization signals are switched off, and IP addresses are anonymized. You can change your answer at any time.</p>
+  <h3>Analytics</h3><p>Google Analytics is loaded on every visit, but under Google's consent mode it starts switched off: it stores nothing, sets no cookies, and records no visit until you accept. Accepting turns on visit counting only. Advertising and personalization are refused whether or not you accept, and IP addresses are anonymized. Declining after having accepted switches it back off and deletes the cookies it set. You can change your answer at any time.</p><p class="fine-print">Because the tag itself loads on every visit, your browser does contact Google even before you choose, which is how Google's own consent mode works. If you would rather nothing reached Google at all, a content blocker will stop it and the atlas will still work.</p>
   <p class="consent-state">Your current choice: <strong>${choice === "granted" ? "analytics accepted" : choice === "denied" ? "analytics declined" : "not answered yet"}</strong></p>
   <div class="detail-actions"><button id="privacy-accept" class="primary">Accept analytics</button><button id="privacy-decline">Decline analytics</button></div>
   <h3>Content</h3><p>Anatomy geometry comes from BodyParts3D under the licenses recorded in the credits. The schematic structures and teaching diagrams are original. This is an educational reference and is not for diagnosis or treatment planning.</p>`;
@@ -1198,8 +1183,8 @@ document.querySelector("#coverage").onclick = document.querySelector(
 document.querySelector("#consent-accept").onclick = () => setConsent("granted");
 document.querySelector("#consent-decline").onclick = () => setConsent("denied");
 document.querySelector("#privacy").onclick = () => privacy();
-if (readConsent() === "granted") startAnalytics();
-else if (readConsent() !== "denied") showConsent(true);
+// A previous grant was already restored in index.html, before the tag loaded.
+if (readConsent() === null) showConsent(true);
 
 document.querySelector("#close-modal").onclick = () =>
   document.querySelector("#modal").close();

@@ -10,6 +10,34 @@
       content="Explore oral and maxillofacial anatomy in 3D. An educational atlas for dental students, dentists, and specialists."
     />
     <title>OMF Atlas | Oral & maxillofacial anatomy</title>
+    <!-- Google tag (gtag.js), under Consent Mode v2.
+         The consent defaults are set BEFORE the tag loads, so Google Analytics
+         stores nothing and sets no cookies until the reader accepts. A grant
+         from a previous visit is restored here rather than in the bundle, so
+         it applies before the tag initializes. The banner in src/main.js sends
+         the update call. googletagmanager.com and google-analytics.com must be
+         named in the site's Content-Security-Policy or this is blocked with
+         nothing in the response to say why; see deploy/omfatlas-headers.conf. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("consent", "default", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+        wait_for_update: 500,
+      });
+      try {
+        if (localStorage.getItem("omf-consent") === "granted")
+          gtag("consent", "update", { analytics_storage: "granted" });
+      } catch {}
+      gtag("js", new Date());
+      gtag("config", "G-LCRYBDSQEP", { anonymize_ip: true });
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LCRYBDSQEP"></script>
   </head>
   <body>
     <script>
