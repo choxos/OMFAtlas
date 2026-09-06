@@ -185,12 +185,12 @@ export function publishedToothPlan(manifest, fdi) {
     caption: `FDI ${fdi} · synthetic lower jaw · Diaz and colleagues 2024`,
     note: "The tooth, the ligament shell around its root and the alveolar bone it sits in, from a synthetic lower jaw. Fade the bone to follow the root into its socket.",
     limits:
-      "A synthetic model of one jaw, not a patient and not a scan. The ligament is an even 0.25 mm shell extruded around the root, so its width is a modeling choice and cannot be read as a measurement. This dataset carries no pulp, so this tooth has no canal to show: the first molars do, and they come from a different study.",
+      "A synthetic model of one jaw, not a patient and not a scan. The ligament is an even 0.25 mm shell extruded around the root, so its width is a modeling choice and cannot be read as a measurement. This dataset carries no pulp, so this tooth has no canal to show: the first molars do, and they come from a different study. The alveolar bone is in the arch view rather than around this tooth.",
+    // The jaw this tooth came out of belongs in the arch view, not wrapped
+    // around one tooth that the reader asked to look inside.
     parts: [
       { part: tooth, tissue: "tooth" },
       { part: pdl, tissue: "pdl" },
-      { part: has("jaw-cortical"), tissue: "bone" },
-      { part: has("jaw-cancellous"), tissue: "bone" },
     ].filter((entry) => entry.part),
   };
 }

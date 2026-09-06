@@ -563,7 +563,7 @@ export async function createViewer(host, atlas, handlers) {
       (size *
         (currentState?.toothDetail
           ? dentalModel?.userData.published
-            ? 2.1
+            ? 3.2
             : 1.5
           : 2.2)) /
         Math.max(0.62, Math.min(camera.aspect, 1)),
@@ -790,10 +790,12 @@ export async function createViewer(host, atlas, handlers) {
                     dentalModels?.buffer,
                     state.fdi,
                   )
-                : createPublishedDentitionModel(
-                    dentalModels?.manifest,
-                    dentalModels?.buffer,
-                  );
+                : state.archSource === "drawn"
+                  ? null
+                  : createPublishedDentitionModel(
+                      dentalModels?.manifest,
+                      dentalModels?.buffer,
+                    );
           if (published) dentalModel = published;
           else {
             dentalModel = state.toothDetail

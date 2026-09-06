@@ -104,6 +104,7 @@ const state = {
   masticatory: true,
   hidden: new Set(),
   modelView: "jaw",
+  archSource: "published",
   explode: 0,
   tab: "anatomy",
   query: "",
@@ -457,7 +458,11 @@ function selectPart(id) {
   state.arches = false;
   state.toothDetail = false;
   state.selected = id;
-  state.layers.add(part.group);
+  // A muscle of mastication is already on its own. Turning its layer on would
+  // bring the other 161 muscles with it, which is not what picking one asked
+  // for.
+  if (!(state.masticatory !== false && MASTICATORY.has(part.id)))
+    state.layers.add(part.group);
   if (state.landmark) {
     state.landmark = null;
     viewer?.showLandmark(null);
@@ -974,7 +979,7 @@ function renderDental(panel) {
           `<button data-dental-tab="${id}" class="${state.dentalTab === id ? "active" : ""}">${title}</button>`,
       )
       .join("")}</div>
-    <div class="detail-body"><button id="tooth-isolate" class="primary full-width">Open 3D tooth cutaway</button><button id="show-arches" class="full-width">Show complete ${state.age === "adult" ? "32-tooth" : state.age === "child" ? "20-tooth" : "mixed"} arches</button><label class="fine-print"><input id="auto-detail" type="checkbox" ${state.autoDetail ? "checked" : ""}> Reveal internal anatomy when zooming into a tooth</label><p class="fine-print">3D tissues and root canals are schematic teaching models, not reconstructed from the external surface. ${tooth.primary ? "Primary proportions and root divergence differ from permanent teeth." : "Representative root and canal forms vary between patients."}</p>
+    <div class="detail-body"><button id="tooth-isolate" class="primary full-width">Open 3D tooth cutaway</button><button id="show-arches" class="full-width">Show ${state.age === "adult" ? "the published lower jaw" : `the complete ${state.age === "child" ? "20-tooth" : "mixed"} arches`}</button>${state.age === "adult" ? '<button id="show-drawn-arches" class="full-width">Show the drawn 32-tooth arches</button>' : ""}<label class="fine-print"><input id="auto-detail" type="checkbox" ${state.autoDetail ? "checked" : ""}> Reveal internal anatomy when zooming into a tooth</label><p class="fine-print">3D tissues and root canals are schematic teaching models, not reconstructed from the external surface. ${tooth.primary ? "Primary proportions and root divergence differ from permanent teeth." : "Representative root and canal forms vary between patients."}</p>
     ${dentalContent(tooth)}
     <details class="references"><summary>References for this tooth</summary>${dentalSources.map(sourceLink).join("")}</details></div>`;
   if (!state.selected) panel.querySelectorAll("[data-tooth]").forEach((button) => {
@@ -1016,7 +1021,14 @@ function renderDental(panel) {
       }),
   );
   panel.querySelector("#tooth-isolate").onclick = () => inspectTooth();
-  panel.querySelector("#show-arches").onclick = () => setAge(state.age);
+  panel.querySelector("#show-arches").onclick = () => {
+    state.archSource = "published";
+    setAge(state.age);
+  };
+  panel.querySelector("#show-drawn-arches")?.addEventListener("click", () => {
+    state.archSource = "drawn";
+    setAge(state.age);
+  });
   panel.querySelector("#auto-detail").onchange = (e) => {
     state.autoDetail = e.target.checked;
     updateScene();

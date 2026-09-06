@@ -342,8 +342,10 @@ export function setToothSection(group, enabled, amount = 0) {
   }
 }
 
-export function createDentitionModel(stage) {
-  const fdis = getDentitionFDIs(stage),
+export function createDentitionModel(stage, { only } = {}) {
+  const fdis = getDentitionFDIs(stage).filter((fdi) =>
+      only === "upper" ? fdi < 30 : only === "lower" ? fdi >= 30 : true,
+    ),
     group = new THREE.Group();
   group.name = `${stage} schematic dental arches`;
   group.userData = {
@@ -352,7 +354,10 @@ export function createDentitionModel(stage) {
     toothCount: fdis.length,
     description: DENTITION_STAGES[stage].description,
   };
-  const perSide = fdis.length / 4,
+  // One arch is half a dentition, so the spread has to come from the whole
+  // list rather than from the filtered one, or eight teeth pack into four
+  // slots and the arch collapses.
+  const perSide = getDentitionFDIs(stage).length / 4,
     radius = stage === "child" ? 0.021 : stage === "mixed" ? 0.027 : 0.034;
   fdis.forEach((fdi, index) => {
     const tooth = dentalProfile(fdi),
