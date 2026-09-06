@@ -755,6 +755,10 @@ export async function createViewer(host, atlas, handlers) {
         if (dentalModel) scene.add(dentalModel);
         camera.far = dentalModel ? 1 : 10;
         camera.updateProjectionMatrix();
+        // A published model is metres across in its own frame, so it has to be
+        // framed once it is actually in the scene rather than before.
+        if (dentalModel && state.mode === "models")
+          requestAnimationFrame(() => view("oblique", true));
       }
       if (dentalModel && state.mode !== "models")
         resolutionStatus("Schematic teaching geometry");

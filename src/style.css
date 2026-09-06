@@ -7274,3 +7274,12 @@ body.source-models .studio .caption-stack {
     content: "Source";
   }
 }
+
+/* On a phone the model panel is the notes for this view; two sheets in the
+   same band would sit on top of each other. */
+@media (max-width: 860px) {
+  body.source-models .studio .inspector,
+  body.source-models .studio #close-inspector {
+    display: none;
+  }
+}
