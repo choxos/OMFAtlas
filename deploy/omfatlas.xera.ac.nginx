@@ -29,9 +29,23 @@ server {
         root /var/www/html;
     }
 
+    # This site loads Google Analytics, and the box-wide policy in
+    # /etc/nginx/conf.d/security.conf names neither googletagmanager.com nor
+    # google-analytics.com, so gtag.js would be blocked with nothing in the
+    # response to say why. The policy is restated here with those two hosts
+    # added.
+    #
+    # nginx does not merge add_header directives across levels: a block that
+    # declares one drops every header it would otherwise inherit. So the four
+    # other security headers from that file are repeated here as well, or
+    # setting the policy would quietly remove them.
+    add_header X-Content-Type-Options nosniff always;
+    add_header X-Frame-Options DENY always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'" always;
+
     # Single page app: unknown paths fall back to the shell.
-    # No add_header here, so the global security headers in
-    # /etc/nginx/conf.d/security.conf still apply to the HTML.
     location / {
         try_files $uri $uri/ /index.html;
     }
