@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#183c56" />
+    <meta name="theme-color" content="#f1f2f2" />
+    <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
       content="Explore oral and maxillofacial anatomy in 3D. An educational atlas for dental students, dentists, and specialists."
@@ -11,6 +12,19 @@
     <title>OMF Atlas | Oral & maxillofacial anatomy</title>
   </head>
   <body>
+    <script>
+      // Resolve the theme before the first paint, so a dark mode reader never
+      // sees a white flash. The stored choice wins; otherwise follow the system.
+      (() => {
+        let theme;
+        try {
+          theme = localStorage.getItem("omf-theme");
+        } catch {}
+        if (theme !== "dark" && theme !== "light")
+          theme = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

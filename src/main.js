@@ -54,6 +54,8 @@ const icon = (name) => {
     arrow: '<path d="m9 5 7 7-7 7"/>',
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/>',
     eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+    sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.5 1.5m11.2 11.2 1.5 1.5M19.1 4.9l-1.5 1.5M6.4 17.6l-1.5 1.5"/>',
+    moon: '<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>',
   };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.tooth}</svg>`;
 };
@@ -90,7 +92,6 @@ const state = {
   isolated: false,
   opacity: 1,
   explode: 0,
-  role: "student",
   tab: "anatomy",
   query: "",
   fdi: 36,
@@ -137,6 +138,7 @@ document.querySelector("#app").innerHTML = `
     .join("")}</nav>
 
   <div class="top-actions">
+    <button class="icon-button" id="theme" title="Switch between light and dark" aria-label="Switch between light and dark"></button>
     <button class="icon-button" id="reset" title="Reset view and layers" aria-label="Reset view and layers">${icon("reset")}</button>
     <button id="toggle-details" aria-expanded="false">Details</button>
   </div>
@@ -144,7 +146,6 @@ document.querySelector("#app").innerHTML = `
   <aside class="sidebar panel">
     <div class="choices">
       <label class="age-choice"><span>Dentition</span><select id="age"><option value="adult">Adult · permanent</option><option value="child">Child · primary</option><option value="mixed">Child · mixed</option></select></label>
-      <label class="audience"><span>Level</span><select id="role"><option value="student">Dental student</option><option value="dentist">Dentist</option><option value="specialist">Dental specialist</option></select></label>
     </div>
     <label class="search">${icon("search")}<input id="search" type="search" placeholder="Find a structure or FDI number…" aria-label="Search structures or FDI number"><kbd>/</kbd></label>
     <div id="browser"></div>
@@ -208,6 +209,21 @@ function showHover(part, at) {
   box.style.left = `${Math.min(at.x + 16, innerWidth - width - 12)}px`;
   box.style.top = `${at.y + height + 26 > innerHeight ? at.y - height - 14 : at.y + 18}px`;
 }
+
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  try {
+    localStorage.setItem("omf-theme", theme);
+  } catch {}
+  const button = document.querySelector("#theme");
+  button.innerHTML = icon(theme === "dark" ? "sun" : "moon");
+  button.setAttribute("aria-pressed", String(theme === "dark"));
+  button.title =
+    theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme";
+}
+setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+document.querySelector("#theme").onclick = () =>
+  setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
 
 function updateScene() {
   document.body.classList.toggle(
@@ -613,7 +629,7 @@ function renderInspector() {
     ) +
     `<div class="detail-body">
     <div class="detail-actions"><button class="primary" id="detail-isolate">${icon("expand")} ${state.isolated ? "Restore" : "Inspect in 3D"}</button><button id="save">${state.saved.has(part.id) ? "✓ Saved" : "+ Save"}</button><button data-clear-selection>Clear selection</button></div>
-    ${topic ? `<h3>Overview</h3><p>${topic.overview}</p><div class="learning-note"><span>${state.role === "student" ? "Study focus" : state.role === "dentist" ? "Practice connection" : "Specialist perspective"}</span><p>${topic[state.role]}</p></div><h3>Explore the relationships</h3><p>Rotate the assembly, adjust bone opacity, or isolate a structure to examine its surfaces.</p>${sourceLink(sources[topic.source])}` : `<h3>Explore this structure</h3><p>This named surface mesh is part of the ${groups[part.group].name.toLowerCase()} layer. Compare its position with adjacent structures or isolate it for inspection.</p><div class="learning-note"><span>Reference identity</span><p>BodyParts3D mesh ${part.id}, mapped to ${part.conceptId}. Detailed clinical notes for this structure have not yet been authored.</p></div>`}
+    ${topic ? `<h3>Overview</h3><p>${topic.overview}</p><div class="learning-note"><span>Study focus</span><p>${[topic.student, topic.dentist, topic.specialist].filter(Boolean).join(" ")}</p></div><h3>Explore the relationships</h3><p>Rotate the assembly, adjust bone opacity, or isolate a structure to examine its surfaces.</p>${sourceLink(sources[topic.source])}` : `<h3>Explore this structure</h3><p>This named surface mesh is part of the ${groups[part.group].name.toLowerCase()} layer. Compare its position with adjacent structures or isolate it for inspection.</p><div class="learning-note"><span>Reference identity</span><p>BodyParts3D mesh ${part.id}, mapped to ${part.conceptId}. Detailed clinical notes for this structure have not yet been authored.</p></div>`}
     <div class="related"><h3>Continue exploring</h3>${atlas.parts
       .filter((p) => p.group === part.group && p.id !== part.id)
       .slice(0, 3)
@@ -753,7 +769,7 @@ function dentalContent(tooth) {
     return `<button data-open-mode="section" class="full-width">Explore the labeled tooth section</button><p class="fine-print">The interactive diagram shows tissue relationships in a generic single-rooted tooth. It is separate from the external 3D meshes.</p>${entries(dentalSections.tissues)}`;
   if (state.dentalTab === "perio")
     return `<button data-open-mode="section" class="full-width">Explore the periodontium</button>${entries(periodontalDetails)}<h3>Connect anatomy to examination</h3>${entries(perioStudy)}${perioSources.map(sourceLink).join("")}`;
-  return `<p class="fine-print">Study connections for ${state.role === "student" ? "dental students" : state.role === "dentist" ? "general practice" : "specialist learning"}.</p>${entries(specialtyNotes(tooth))}`;
+  return `<p class="fine-print">How this tooth connects to each part of practice.</p>${entries(specialtyNotes(tooth))}`;
 }
 
 function setMode(mode) {
@@ -1029,10 +1045,6 @@ document
 document.querySelector("#mobile-library").onclick = (e) => {
   const open = document.querySelector(".sidebar").classList.toggle("expanded");
   e.currentTarget.setAttribute("aria-expanded", String(open));
-};
-document.querySelector("#role").onchange = (e) => {
-  state.role = e.target.value;
-  if (atlas) renderInspector();
 };
 document.querySelector("#search").oninput = (e) => {
   state.query = e.target.value;

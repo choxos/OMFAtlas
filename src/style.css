@@ -3161,7 +3161,7 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: #fff;
+  background: var(--surface);
   border: 1px solid var(--line);
   box-shadow: 0 1px 2px #18253608;
   flex-shrink: 0;
@@ -3274,7 +3274,7 @@ body {
 
 .studio .nav-button.active {
   background: var(--navy);
-  color: #fff;
+  color: var(--on-navy);
   box-shadow: 0 1px 3px #18253622;
 }
 
@@ -3309,7 +3309,7 @@ body {
   padding: 0 8px;
   border: 1px solid var(--line);
   border-radius: var(--control-radius);
-  background: #ffffffdd;
+  background: var(--surface-soft);
   font-size: 12px;
   font-weight: 450;
   letter-spacing: 0;
@@ -3332,7 +3332,7 @@ body {
 }
 
 .studio .top-actions > button:hover {
-  background: #fff;
+  background: var(--surface);
 }
 
 .studio .top-actions .icon-button {
@@ -3571,12 +3571,12 @@ body {
 
 .studio .structure.selected {
   background: var(--navy);
-  color: #fff;
+  color: var(--on-navy);
 }
 
 .studio .structure.selected .schematic-badge {
   background: #ffffff2e;
-  color: #fff;
+  color: var(--on-navy);
 }
 
 .studio .structure > svg {
@@ -3687,7 +3687,7 @@ body {
 
 .studio .view-controls .view-pills .active {
   background: var(--navy);
-  color: #fff;
+  color: var(--on-navy);
 }
 
 .studio .view-controls i {
@@ -3798,7 +3798,7 @@ body {
   padding: 0 13px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--surface);
   font-size: 12px;
   font-weight: 500;
   color: var(--ink-soft);
@@ -3818,7 +3818,7 @@ body {
   place-items: center;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--surface);
   font-size: 17px;
   color: var(--muted);
   flex-shrink: 0;
@@ -3902,7 +3902,7 @@ body {
 
 .studio #mode-bar button.active {
   background: var(--navy);
-  color: #fff;
+  color: var(--on-navy);
 }
 
 .studio #dental-3d-controls {
@@ -3939,7 +3939,7 @@ body {
   height: 34px;
   border-radius: 9px;
   border: 1px solid var(--line);
-  background: #fff;
+  background: var(--surface);
   font-size: 11.5px;
   font-weight: 500;
 }
@@ -3967,7 +3967,7 @@ body {
   padding: 0 9px;
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: #fff;
+  background: var(--surface);
   font-size: 11px;
   font-weight: 450;
   color: var(--ink-soft);
@@ -4095,7 +4095,7 @@ body.details-open .studio .inspector {
   border: 1px solid var(--navy);
   border-radius: 10px;
   background: var(--navy);
-  color: #fff;
+  color: var(--on-navy);
   font-size: 12px;
   font-weight: 550;
 }
@@ -4114,7 +4114,7 @@ body.details-open .studio .inspector {
   padding: 0 13px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  background: #fff;
+  background: var(--surface);
   font-size: 12px;
   font-weight: 500;
   color: var(--ink-soft);
@@ -4168,7 +4168,7 @@ body.details-open .studio .inspector {
   place-items: center;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
   font-size: 15px;
   color: var(--muted);
 }
@@ -4190,7 +4190,7 @@ body.details-open .studio .close-inspector {
   padding: 8px 11px;
   border-radius: 9px;
   background: #1d2b36f5;
-  color: #fff;
+  color: var(--on-navy);
   font-size: 12px;
   line-height: 1.4;
   box-shadow: 0 6px 20px #18253626;
@@ -4617,7 +4617,7 @@ dialog#modal::backdrop {
 .studio .caption-stack .stage-caption {
   padding: 5px 12px;
   border-radius: 20px;
-  background: #ffffffd6;
+  background: var(--surface-veil);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 1px 3px #24334410;
@@ -4801,7 +4801,7 @@ body.details-open .studio #close-inspector {
   place-items: center;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--surface);
   font-size: 15px;
   line-height: 1;
   color: var(--muted);
@@ -4881,7 +4881,7 @@ body.details-open .studio #close-inspector {
   padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: #fff;
+  background: var(--surface);
   font-size: 12px;
   font-weight: 500;
   color: var(--ink-soft);
@@ -5199,7 +5199,7 @@ body.tooth-inspection .studio .sidebar {
   padding: 10px 11px;
   border: 1px solid var(--line);
   border-radius: 11px;
-  background: #fff;
+  background: var(--surface);
   text-align: left;
 }
 
@@ -5239,7 +5239,7 @@ body.tooth-inspection .studio .sidebar {
 }
 
 .studio .stage-track .active strong {
-  color: #fff;
+  color: var(--on-navy);
 }
 
 .studio .stage-track .active small {
@@ -5248,7 +5248,7 @@ body.tooth-inspection .studio .sidebar {
 
 .studio .stage-track .active .stage-index {
   background: #ffffff2e;
-  color: #fff;
+  color: var(--on-navy);
 }
 
 .studio .germ-diagram {
@@ -5480,4 +5480,604 @@ body.teaching.details-open .studio #teaching-view {
   body.teaching .studio .sidebar {
     display: none;
   }
+}
+
+/* ---- Final corrections --------------------------------------------------- */
+
+
+
+/* The bottom cluster follows the model, which is centred in the window, so it
+   stays centred on the window too. It used to be centred in the space left
+   between the panels, which slid it sideways whenever the inspector opened.
+   Its width shrinks instead, so it still clears both panels. */
+.studio .explode-dock,
+.studio .stage-bottom,
+.studio .caption-stack,
+body.details-open .studio .explode-dock,
+body.details-open .studio .stage-bottom,
+body.details-open .studio .caption-stack {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  margin-inline: 0;
+  width: min(470px, calc(100vw - 800px));
+}
+
+.studio .caption-stack,
+body.details-open .studio .caption-stack {
+  width: min(520px, calc(100vw - 800px));
+}
+
+/* With the inspector closed the right side is free, so the cluster can be
+   wider before it reaches the camera strip. */
+body:not(.details-open) .studio .explode-dock,
+body:not(.details-open) .studio .stage-bottom {
+  width: min(470px, calc(100vw - 480px));
+}
+
+body:not(.details-open) .studio .caption-stack {
+  width: min(520px, calc(100vw - 480px));
+}
+
+@media (max-width: 1080px) {
+  body.details-open .studio .sidebar {
+    display: none;
+  }
+  body.details-open .studio .explode-dock,
+  body.details-open .studio .stage-bottom {
+    width: min(470px, calc(100vw - 500px));
+  }
+  body.details-open .studio .caption-stack {
+    width: min(520px, calc(100vw - 500px));
+  }
+}
+
+@media (max-width: 860px) {
+  .studio .explode-dock,
+  .studio .stage-bottom,
+  .studio .caption-stack,
+  body.details-open .studio .explode-dock,
+  body.details-open .studio .stage-bottom,
+  body.details-open .studio .caption-stack,
+  body:not(.details-open) .studio .explode-dock,
+  body:not(.details-open) .studio .stage-bottom,
+  body:not(.details-open) .studio .caption-stack {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    transform: none;
+  }
+}
+
+/* ---- Explicit insets ----------------------------------------------------
+
+   The grid layout left behind rules that set top or right on elements the
+   studio layout positions by bottom or left. An absolutely positioned element
+   given both edges stretches between them, which turned the mode bar into a
+   498 by 455 white panel over the model on the dental tab. Rather than hunt
+   every stale declaration, each floating element states all four of its edges
+   here, so nothing it does not ask for can be inherited from the old rules. */
+
+@media (min-width: 861px) {
+  .studio .identity {
+    inset: 22px auto auto 26px;
+  }
+  .studio .tab-bar {
+    inset: 24px auto auto 50%;
+  }
+  .studio .top-actions {
+    inset: 24px 26px auto auto;
+  }
+  .studio .sidebar {
+    inset: 186px auto 62px 26px;
+  }
+  body.tooth-inspection .studio .sidebar {
+    inset: 186px auto 262px 26px;
+  }
+  .studio .view-controls {
+    inset: 50% 26px auto auto;
+  }
+  .studio #mode-bar {
+    inset: auto auto 322px 50%;
+  }
+  body.teaching .studio #mode-bar {
+    inset: 92px 124px auto 310px;
+  }
+  body.teaching.details-open .studio #mode-bar {
+    inset: 92px 460px auto 310px;
+  }
+  .studio #load-status {
+    inset: 46% auto auto 50%;
+  }
+  .studio #dental-3d-controls {
+    inset: auto auto 56px 26px;
+  }
+  .studio .caption-stack {
+    inset: auto auto 250px 50%;
+  }
+  .studio .explode-dock {
+    inset: auto auto 150px 50%;
+  }
+  .studio .stage-bottom {
+    inset: auto auto 74px 50%;
+  }
+  .studio .inspector {
+    inset: 88px 112px 62px auto;
+  }
+  body.details-open .studio #close-inspector {
+    inset: 96px 120px auto auto;
+  }
+  .studio .studio-footer {
+    inset: auto 26px 18px 26px;
+  }
+  body.teaching .studio #teaching-view {
+    inset: 146px 124px 62px 310px;
+  }
+  body.teaching.details-open .studio #teaching-view {
+    inset: 146px 460px 62px 310px;
+  }
+}
+
+@media (min-width: 861px) and (max-width: 1240px) {
+  .studio .sidebar {
+    inset: 186px auto 62px 26px;
+  }
+  .studio .inspector {
+    inset: 88px 108px 62px auto;
+  }
+  body.details-open .studio #close-inspector {
+    inset: 96px 116px auto auto;
+  }
+  body.teaching .studio #mode-bar {
+    inset: 92px 120px auto 286px;
+  }
+  body.teaching.details-open .studio #mode-bar {
+    inset: 92px 422px auto 286px;
+  }
+  body.teaching .studio #teaching-view {
+    inset: 146px 120px 62px 286px;
+  }
+  body.teaching.details-open .studio #teaching-view {
+    inset: 146px 422px 62px 286px;
+  }
+}
+
+@media (min-width: 861px) and (max-width: 1080px) {
+  body.details-open .studio .sidebar {
+    display: none;
+  }
+  body.teaching.details-open .studio #mode-bar {
+    inset: 92px 422px auto 26px;
+  }
+  body.teaching.details-open .studio #teaching-view {
+    inset: 146px 422px 62px 26px;
+  }
+}
+
+@media (max-width: 860px) {
+  .studio .identity {
+    inset: max(14px, env(safe-area-inset-top)) auto auto max(14px, env(safe-area-inset-left));
+  }
+  .studio .tab-bar {
+    inset: auto 12px calc(max(10px, env(safe-area-inset-bottom)) + 6px) 12px;
+  }
+  .studio .top-actions {
+    inset: max(14px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) auto auto;
+  }
+  .studio .sidebar,
+  body.tooth-inspection .studio .sidebar {
+    inset: auto 12px 126px 12px;
+  }
+  .studio #mobile-library {
+    inset: auto auto 70px 12px;
+  }
+  .studio .view-controls {
+    inset: auto 12px 70px auto;
+  }
+  .studio #mode-bar {
+    inset: auto 12px 348px 12px;
+  }
+  body.teaching .studio #mode-bar {
+    inset: auto 12px 74px 12px;
+  }
+  .studio #load-status {
+    inset: 42% auto auto 50%;
+  }
+  .studio #dental-3d-controls {
+    inset: auto 12px 126px 12px;
+  }
+  .studio .caption-stack {
+    inset: auto 12px 300px 12px;
+  }
+  .studio .explode-dock {
+    inset: auto 12px 202px 12px;
+  }
+  .studio .stage-bottom {
+    inset: auto 12px 126px 12px;
+  }
+  .studio .inspector {
+    inset: auto 12px 126px 12px;
+  }
+  body.details-open .studio #close-inspector {
+    inset: auto 20px calc(126px + min(52dvh, 480px) - 42px) auto;
+  }
+  body.teaching .studio #teaching-view,
+  body.teaching.details-open .studio #teaching-view {
+    inset: 74px 12px 132px 12px;
+  }
+}
+
+/* A box centred on the window can only clear a right hand panel if it is
+   narrow enough: with the inspector at 112px plus 330px wide, its half width
+   has to stay under 50vw minus 442. Below about 1200px that leaves too little
+   to be useful, so the cluster steps aside while the notes are open instead of
+   shrinking into nothing or sliding off centre. */
+@media (min-width: 861px) {
+  body.details-open .studio .explode-dock,
+  body.details-open .studio .stage-bottom {
+    width: min(470px, calc(100vw - 900px));
+  }
+  body.details-open .studio .caption-stack {
+    width: min(520px, calc(100vw - 900px));
+  }
+}
+
+@media (min-width: 861px) and (max-width: 1200px) {
+  body.details-open .studio .explode-dock,
+  body.details-open .studio .stage-bottom,
+  body.details-open .studio .caption-stack {
+    display: none;
+  }
+}
+
+/* ---- Theme --------------------------------------------------------------
+
+   Both themes are declared here as token values. Everything the studio layer
+   draws reads those tokens, so the chrome flips wholesale; the block after
+   this one handles the places in the older stylesheet that still name a color
+   directly. The theme is resolved before the first paint by a small script in
+   index.html and stored under omf-theme. */
+
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ink: #1b2027;
+  --ink-soft: #3c4854;
+  --muted: #69747d;
+  --faint: #8a949d;
+  --navy: #1f3b45;
+  --on-navy: #ffffff;
+  --teal: #2f7f8c;
+  --accent: #54aab9;
+  --line: #17242f1a;
+  --line-soft: #17242f12;
+  --stage: #f1f2f2;
+  --glass: #fffffff0;
+  --surface: #ffffff;
+  --surface-soft: #ffffffdd;
+  --surface-veil: #ffffffd6;
+  --wash: #17242f0a;
+  --wash-firm: #17242f14;
+  --scrollbar: #b9c1c8;
+  --shadow: 0 1px 2px #2433440a, 0 2px 6px #24334408, 0 18px 48px #2433440d;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e9eef2;
+  --ink-soft: #bcc8d2;
+  --muted: #8f9ba6;
+  --faint: #717e89;
+  --navy: #2c7c8b;
+  --on-navy: #f4fbfc;
+  --teal: #6fc3d0;
+  --accent: #54aab9;
+  --line: #ffffff24;
+  --line-soft: #ffffff14;
+  --stage: #0f1519;
+  --glass: #19222aef;
+  --surface: #212c35;
+  --surface-soft: #212c35d9;
+  --surface-veil: #141c22e0;
+  --wash: #ffffff0f;
+  --wash-firm: #ffffff1c;
+  --scrollbar: #4a5964;
+  --shadow: 0 1px 2px #00000040, 0 2px 8px #00000038, 0 18px 48px #00000045;
+}
+
+/* ---- Dark corrections for the older stylesheet ---------------------------
+
+   The rules above this file's studio layer were written for one theme and name
+   their colors directly. These override the ones that actually show, which are
+   the surfaces and text inside the panels; the anatomy illustrations keep
+   their tissue colors and only their labels are lightened. */
+
+:root[data-theme="dark"] body {
+  background: var(--stage);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .studio button,
+:root[data-theme="dark"] .studio select,
+:root[data-theme="dark"] .studio input,
+:root[data-theme="dark"] .studio summary,
+:root[data-theme="dark"] .studio details {
+  color: var(--ink-soft);
+}
+
+:root[data-theme="dark"] .studio select,
+:root[data-theme="dark"] .studio input[type="search"],
+:root[data-theme="dark"] .studio input[type="text"] {
+  background: var(--wash);
+  border-color: var(--line);
+}
+
+:root[data-theme="dark"] .studio button:hover {
+  background: var(--wash);
+}
+
+:root[data-theme="dark"] .studio .nav-button.active,
+:root[data-theme="dark"] .studio .structure.selected,
+:root[data-theme="dark"] .studio .view-controls .view-pills .active,
+:root[data-theme="dark"] .studio #mode-bar button.active,
+:root[data-theme="dark"] .studio .stage-track .active,
+:root[data-theme="dark"] .studio .inspector .primary {
+  background: var(--navy);
+  color: var(--on-navy);
+}
+
+:root[data-theme="dark"] .studio .layer-presets button[aria-pressed="true"],
+:root[data-theme="dark"] .studio .layer-presets .active {
+  background: var(--surface);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .studio h1,
+:root[data-theme="dark"] .studio h2,
+:root[data-theme="dark"] .studio h3,
+:root[data-theme="dark"] .studio h4,
+:root[data-theme="dark"] .studio strong,
+:root[data-theme="dark"] .studio .brand-word {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .studio p,
+:root[data-theme="dark"] .studio li,
+:root[data-theme="dark"] .studio td,
+:root[data-theme="dark"] .studio label {
+  color: var(--ink-soft);
+}
+
+:root[data-theme="dark"] .studio a,
+:root[data-theme="dark"] .studio .source-link {
+  color: var(--teal);
+}
+
+:root[data-theme="dark"] .studio .learning-note,
+:root[data-theme="dark"] .studio .stage-explanation {
+  background: #54aab91f;
+}
+
+:root[data-theme="dark"] .studio .schematic-callout {
+  background: #6fc3d01c;
+}
+
+:root[data-theme="dark"] .studio .schematic-badge {
+  background: #6fc3d024;
+  color: var(--teal);
+}
+
+:root[data-theme="dark"] .studio .detail-tag,
+:root[data-theme="dark"] .studio .section-label > span,
+:root[data-theme="dark"] .studio .stage-track .stage-index,
+:root[data-theme="dark"] .studio .explode-label output,
+:root[data-theme="dark"] .studio .chronology-head {
+  background: var(--wash-firm);
+  color: var(--muted);
+}
+
+:root[data-theme="dark"] .studio .brand-mark,
+:root[data-theme="dark"] .studio .stage-track button,
+:root[data-theme="dark"] .studio .tissue-3d-buttons button,
+:root[data-theme="dark"] .studio #reload-viewer,
+:root[data-theme="dark"] .studio #exit-tooth,
+:root[data-theme="dark"] .studio #isolate,
+:root[data-theme="dark"] .studio .stage-bottom [data-clear-selection],
+:root[data-theme="dark"] .studio .inspector .detail-actions button:not(.primary),
+:root[data-theme="dark"] body.details-open .studio #close-inspector {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink-soft);
+}
+
+:root[data-theme="dark"] .studio #browser,
+:root[data-theme="dark"] .studio .inspector .detail-body {
+  scrollbar-color: var(--scrollbar) transparent;
+}
+
+:root[data-theme="dark"] .studio #browser::-webkit-scrollbar-thumb,
+:root[data-theme="dark"] .studio .inspector .detail-body::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+}
+
+:root[data-theme="dark"] .vignette {
+  background: radial-gradient(ellipse at 50% 44%, transparent 38%, #0006 100%);
+}
+
+:root[data-theme="dark"] .part-hover {
+  background: #0d1319f7;
+  border: 1px solid var(--line);
+}
+
+:root[data-theme="dark"] dialog#modal {
+  background: var(--glass);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+:root[data-theme="dark"] dialog#modal::backdrop {
+  background: #05080ba8;
+}
+
+/* The teaching illustrations keep their tissue colors, which are the point of
+   them. Only the labels and leader lines move, so they stay legible. */
+:root[data-theme="dark"] .germ-diagram text,
+:root[data-theme="dark"] .tooth-section text {
+  fill: var(--ink-soft);
+}
+
+:root[data-theme="dark"] .germ-diagram path[stroke="#94a7b4"],
+:root[data-theme="dark"] .tooth-section g[stroke="#8295a1"] path {
+  stroke: var(--faint);
+}
+
+/* The diagrams are drawn for a light page, so they sit on their own ground
+   rather than being read against the dark one. */
+:root[data-theme="dark"] .germ-diagram,
+:root[data-theme="dark"] .tooth-section {
+  background: #e9e4d8;
+  border-radius: 12px;
+  padding: 6px;
+}
+
+:root[data-theme="dark"] .germ-diagram text,
+:root[data-theme="dark"] .tooth-section text {
+  fill: #45535e;
+}
+
+/* Several elements in the older stylesheet are addressed by id, which outranks
+   the studio layer's class selectors, so the theme has to meet them at the
+   same specificity or they stay white on a dark page. */
+:root[data-theme="dark"] #mode-bar,
+:root[data-theme="dark"] #teaching-view,
+:root[data-theme="dark"] #load-status,
+:root[data-theme="dark"] #dental-3d-controls,
+:root[data-theme="dark"] #inspector {
+  background: var(--glass);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] #toggle-details,
+:root[data-theme="dark"] #reset,
+:root[data-theme="dark"] #theme,
+:root[data-theme="dark"] #mobile-library,
+:root[data-theme="dark"] #close-inspector,
+:root[data-theme="dark"] #exit-tooth,
+:root[data-theme="dark"] #isolate,
+:root[data-theme="dark"] #restart,
+:root[data-theme="dark"] #reload-viewer,
+:root[data-theme="dark"] #credits,
+:root[data-theme="dark"] #coverage {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink-soft);
+}
+
+:root[data-theme="dark"] #credits,
+:root[data-theme="dark"] #coverage,
+:root[data-theme="dark"] #reassemble-dock {
+  background: none;
+  color: var(--muted);
+}
+
+:root[data-theme="dark"] #browser,
+:root[data-theme="dark"] #structure-library,
+:root[data-theme="dark"] #stage-title,
+:root[data-theme="dark"] #resolution-status {
+  background: none;
+}
+
+:root[data-theme="dark"] #stage-title {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] #selection-name {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .studio .sidebar::after {
+  background: linear-gradient(to top, var(--glass), transparent);
+}
+
+:root[data-theme="dark"] .studio .inspector::after {
+  background: linear-gradient(to top, var(--glass), transparent);
+}
+
+:root[data-theme="dark"] .studio .caption-stack .age-notice,
+:root[data-theme="dark"] .studio .caption-stack .stage-caption {
+  background: var(--surface-veil);
+  color: var(--muted);
+}
+
+/* Panel content written for the light theme: any button that was white needs
+   a dark surface, and the tooth chart needs its own ground rather than a pale
+   wash that leaves its numbers unreadable. */
+:root[data-theme="dark"] .studio .inspector :not(.dental-tabs) > button:not(.primary):not(.active),
+:root[data-theme="dark"] .studio .full-width,
+:root[data-theme="dark"] .studio .tooth-row button,
+:root[data-theme="dark"] .studio .related button,
+:root[data-theme="dark"] .studio .study-list button,
+:root[data-theme="dark"] .studio .text-button {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink-soft);
+}
+
+:root[data-theme="dark"] .studio .dental-chart {
+  background: var(--wash);
+  border-color: var(--line);
+}
+
+:root[data-theme="dark"] .studio .chart-orientation,
+:root[data-theme="dark"] .studio .tooth-row small,
+:root[data-theme="dark"] .studio .fine-print,
+:root[data-theme="dark"] .studio .muted {
+  color: var(--faint);
+}
+
+:root[data-theme="dark"] .studio .tooth-row button svg {
+  color: var(--muted);
+}
+
+:root[data-theme="dark"] .studio .tooth-row button.active,
+:root[data-theme="dark"] .studio .tooth-row button[aria-pressed="true"] {
+  background: var(--navy);
+  color: var(--on-navy);
+  border-color: var(--navy);
+}
+
+:root[data-theme="dark"] .studio .note,
+:root[data-theme="dark"] .studio details,
+:root[data-theme="dark"] .studio summary {
+  background: none;
+  color: var(--ink-soft);
+}
+
+:root[data-theme="dark"] .studio .detail-body h3,
+:root[data-theme="dark"] .studio .detail-body h4 {
+  color: var(--ink);
+}
+
+/* The dental tabs are underline tabs, not buttons, so the surface rule above
+   must not reach them; and the selected dentition pill needs a dark ground of
+   its own rather than the pale one written for the light theme. */
+:root[data-theme="dark"] .studio .dental-tabs button {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+}
+
+:root[data-theme="dark"] .studio .dental-tabs .active {
+  border-bottom-color: var(--teal);
+  color: var(--teal);
+  background: none;
+}
+
+:root[data-theme="dark"] .studio .dentition-switch .active {
+  background: #2c7c8b2e;
+  border-color: #2c7c8b6b;
+  color: var(--teal);
 }
