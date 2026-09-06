@@ -6845,10 +6845,14 @@ body.tooth-inspection .studio #consent {
     color: var(--ink-soft);
   }
 
+  /* A range input's default minimum width is wider than the space left on a
+     375px screen, so the row overflowed and the percentage sat under the
+     reset button. */
   .studio .dock-separation .explode-control input[type="range"] {
     order: 1;
     flex: 1;
     width: auto;
+    min-width: 0;
   }
 
   .studio .dock-separation .explode-label {
@@ -6970,5 +6974,20 @@ body.tooth-inspection .studio #consent {
 
   .studio #resolution-status {
     font-size: 9.5px;
+  }
+}
+
+/* At the narrowest phone widths the title block runs under the camera pills,
+   which are 166px of the right hand side however small the window gets. */
+@media (max-width: 380px) {
+  .studio .identity {
+    max-width: calc(100% - 192px);
+  }
+
+  .studio #resolution-status {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
