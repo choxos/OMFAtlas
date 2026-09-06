@@ -6081,3 +6081,64 @@ body:not(.details-open) .studio .caption-stack {
   border-color: #2c7c8b6b;
   color: var(--teal);
 }
+
+/* ---- Short windows -------------------------------------------------------
+   A 1366 by 768 laptop, and a 720p capture, leave far less vertical room than
+   the desktop offsets above assume. The identity block loses its breadcrumb,
+   the panels start higher, and the bottom stack tightens. */
+@media (min-width: 861px) and (max-height: 800px) {
+  .studio .breadcrumb {
+    display: none;
+  }
+  .studio h1#stage-title {
+    font-size: 24px;
+  }
+  .studio .identity {
+    gap: 1px;
+  }
+  .studio .sidebar {
+    inset: 150px auto 54px 26px;
+  }
+  body.tooth-inspection .studio .sidebar {
+    inset: 150px auto 246px 26px;
+  }
+  .studio .inspector {
+    inset: 78px 112px 54px auto;
+  }
+  body.details-open .studio #close-inspector {
+    inset: 86px 120px auto auto;
+  }
+  .studio .caption-stack {
+    inset: auto auto 218px 50%;
+  }
+  .studio .explode-dock {
+    inset: auto auto 128px 50%;
+  }
+  .studio .stage-bottom {
+    inset: auto auto 58px 50%;
+  }
+  .studio #mode-bar {
+    inset: auto auto 286px 50%;
+  }
+  .studio #dental-3d-controls {
+    inset: auto auto 46px 26px;
+  }
+  .studio .studio-footer {
+    inset: auto 26px 12px 26px;
+  }
+  .studio .caption-stack .age-notice {
+    font-size: 10.5px;
+  }
+  body.teaching .studio #mode-bar {
+    inset: 78px 124px auto 310px;
+  }
+  body.teaching.details-open .studio #mode-bar {
+    inset: 78px 460px auto 310px;
+  }
+  body.teaching .studio #teaching-view {
+    inset: 128px 124px 54px 310px;
+  }
+  body.teaching.details-open .studio #teaching-view {
+    inset: 128px 460px 54px 310px;
+  }
+}
