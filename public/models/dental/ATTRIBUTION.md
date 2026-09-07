@@ -1,14 +1,23 @@
 # Published dental models
 
-The files in this directory are derived from two openly licensed datasets.
-Both are redistributed here under CC BY 4.0, the licence their authors chose.
-Neither is drawn by this project, neither is segmented from a patient by this
-project, and neither is registered onto the head and neck assembly.
+The files in this directory are derived from three openly licensed datasets.
+None is drawn by this project, none is segmented by this project, and none is
+registered onto the head and neck assembly.
 
-`scripts/import-dental-models.mjs` produces `dental.bin` and `manifest.json`.
-The manifest records, for every structure, the source archive, the digest of
-the file it came from, the triangle count before and after simplification, and
-the limits the source itself states.
+**They are not all under the same license.** Two are CC BY 4.0. The third,
+Open-Full-Jaw, is **CC BY-NC-SA 4.0**: it may not be used commercially, and
+anything derived from it carries the same terms. The two licenses are kept in
+separate files so the file boundary is the license boundary:
+
+| File | Contents | License |
+| --- | --- | --- |
+| `dental.bin` | Diaz synthetic lower jaw, Kang immature molar | CC BY 4.0 |
+| `open-full-jaw.bin` | Open-Full-Jaw patient 12, both jaws | CC BY-NC-SA 4.0 |
+
+`scripts/import-dental-models.mjs` produces both, plus `manifest.json`. The
+manifest records, for every structure, which file it is in, the source archive,
+the digest of the file it came from, the triangle count before and after
+simplification, and the limits the source itself states.
 
 ## Synthetic lower jaw
 
@@ -50,8 +59,57 @@ lateral canals, no vessels and no nerve, and no canal length or preparation
 amount can be measured from it. The source gives the ligament thickness as
 0.15 mm in its methods and 0.2 mm in its discussion; the paper states both.
 
+## One patient's upper and lower jaw
+
+Gholamalizadeh T, Moshfeghifar F, Ferguson Z, Schneider T, Panozzo D, Darkner
+S, Makaremi M, Chan F, Sondergaard PL, Erleben K (2022). *Open-Full-Jaw: an
+open-access dataset and pipeline for finite element models of human jaw.*
+Computer Methods and Programs in Biomedicine 224:107009.
+<https://doi.org/10.1016/j.cmpb.2022.107009> · PMID 35872385
+
+Repository: <https://github.com/diku-dk/Open-Full-Jaw> · **CC BY-NC-SA 4.0**
+
+Patient 12 of the seventeen: the mandible and the maxilla, thirty one teeth as
+individual solids, and a periodontal ligament for each of them. The per tooth
+binary STL files and the jaw's ASCII STL bone and ligament surfaces are welded
+and simplified with meshoptimizer to 6,000 triangles a tooth, 3,000 a ligament
+and 34,000 a jaw of bone. The ligament arrives as one mesh per jaw and is
+separated here into its connected shells, one per tooth, each given to the
+tooth whose center it is nearest; the import refuses to run unless that comes
+out as one shell per tooth. Nothing is smoothed, thickened or moved, and both
+arches stay in the coordinate frame the scan was segmented in, which is what
+lets them stand in one scene as one person's mouth.
+
+The dataset also publishes each tooth's principal axes, and its own pipeline
+names them: toward the distal side, toward the labial side, toward the
+occlusal side. Those are carried into the manifest, which is what lets a tooth
+be stood on its own long axis and its cutting planes be named buccolingual,
+mesiodistal and horizontal rather than after an axis of the scanner.
+
+This is one adult segmented from a cone beam CT and clinically validated by
+the study, not a standard form. The teeth are worn, tipped and spaced as that
+person's are, and the upper left first molar is absent because that person is
+missing it. The dataset carries bone, teeth and ligament only: no pulp and no
+canal, no enamel and dentin division, no cementum, no gingiva and no nerve.
+The ligament was generated as the gap between each root and its socket rather
+than by extruding a fixed thickness, so its width follows the socket, but it
+is a generated surface and not segmented ligament tissue.
+
+The CBCT scans behind the dataset were provided by 3Shape A/S.
+
 ## Attribution when redistributing
 
-Keep this file with the assets. Both datasets require attribution to their
-authors and a link to the licence, and neither may be presented as this
-project's own work or as patient imaging.
+Keep this file with the assets. All three datasets require attribution to
+their authors and a link to the license, and none may be presented as this
+project's own work.
+
+Open-Full-Jaw adds two terms the other two do not. **NonCommercial:** it may
+not be used for commercial advantage, so anything built on `open-full-jaw.bin`
+inherits that restriction whatever the rest of this repository is licensed as.
+**ShareAlike:** the simplified meshes in `open-full-jaw.bin` are a derivative
+of it and must be distributed under CC BY-NC-SA 4.0 as well. The MIT `LICENSE`
+at the root of this repository covers the code, never these assets.
+
+Open-Full-Jaw is also the one set here that is a real person rather than a
+model, and it is presented that way on screen: it is a segmented patient scan
+shown as teaching material, not diagnostic imaging and not a norm.

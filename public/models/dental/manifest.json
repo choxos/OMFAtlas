@@ -2,6 +2,16 @@
  "generatedBy": "scripts/import-dental-models.mjs",
  "buffer": "dental.bin",
  "bufferBytes": 10321680,
+ "buffers": {
+  "dental": {
+   "file": "dental.bin",
+   "bytes": 10321680
+  },
+  "open-full-jaw": {
+   "file": "open-full-jaw.bin",
+   "bytes": 8274192
+  }
+ },
  "sources": {
   "diaz": {
    "title": "Data of synthetic 3D models of the human jaw, including teeth, ligaments, and bone structures",
@@ -35,6 +45,54 @@
     "pdl",
     "maintainer"
    ]
+  },
+  "openfulljaw": {
+   "title": "Open-Full-Jaw: an open-access dataset and pipeline for finite element models of human jaw",
+   "authors": "Torkan Gholamalizadeh, Faezeh Moshfeghifar, Zachary Ferguson, Teseo Schneider, Daniele Panozzo, Sune Darkner, Masrour Makaremi, Francois Chan, Peter Lampel Sondergaard, Kenny Erleben",
+   "year": 2022,
+   "doi": "10.1016/j.cmpb.2022.107009",
+   "url": "https://github.com/diku-dk/Open-Full-Jaw",
+   "license": "CC BY-NC-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+   "patient": "Patient 12 of 17",
+   "units": "millimeter",
+   "processing": "Per tooth binary STL and the jaw's ASCII STL bone and ligament surfaces, welded and simplified with meshoptimizer to 6,000 triangles a tooth, 3,000 a ligament and 34,000 a jaw of bone. The ligament arrives as one mesh per jaw and is separated into its connected shells, one per tooth. Nothing is smoothed, thickened or moved: both arches are in the coordinate frame the scan was segmented in.",
+   "derivation": "Segmented from the cone beam CT of one adult patient and clinically validated by the study. This is one person's mouth, not a standard form: the teeth are worn and tipped as that patient's teeth are, and one upper first molar is missing because that patient is missing it.",
+   "pdlModel": "The study generated the ligament as the gap between each root and its socket rather than by extruding a fixed thickness, so its width varies as the socket does. It is still a generated surface and not segmented ligament tissue.",
+   "limits": "Bone, teeth and ligament only. There is no pulp and no canal in this dataset, so a tooth from it cannot be opened to show one, and no enamel and dentin division, no cementum, no gingiva and no nerve. Being one patient is what makes it real and also what makes it not a norm. Redistributed under CC BY-NC-SA 4.0: not for commercial use, and any derivative of it carries the same terms. That is not the license the rest of this atlas carries.",
+   "used": [
+    38,
+    37,
+    36,
+    35,
+    34,
+    33,
+    32,
+    31,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    18,
+    17,
+    16,
+    15,
+    14,
+    13,
+    12,
+    11,
+    21,
+    22,
+    23,
+    24,
+    25,
+    27,
+    28
+   ]
   }
  },
  "parts": [
@@ -43,6 +101,7 @@
    "name": "Cortical bone, lower jaw",
    "group": "bone",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 0,
    "normals": 503400,
    "indices": 1006800,
@@ -69,6 +128,7 @@
    "name": "Cancellous bone, lower jaw",
    "group": "bone",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 2014320,
    "normals": 2454516,
    "indices": 2894712,
@@ -95,6 +155,7 @@
    "name": "Lower left central incisor",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 3775152,
    "normals": 3791316,
    "indices": 3807480,
@@ -122,6 +183,7 @@
    "name": "Lower left central incisor, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 3839760,
    "normals": 3851040,
    "indices": 3862320,
@@ -149,6 +211,7 @@
    "name": "Lower left lateral incisor",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 3884832,
    "normals": 3904884,
    "indices": 3924936,
@@ -176,6 +239,7 @@
    "name": "Lower left lateral incisor, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 3964992,
    "normals": 3979128,
    "indices": 3993264,
@@ -203,6 +267,7 @@
    "name": "Lower left canine",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4021488,
    "normals": 4045248,
    "indices": 4069008,
@@ -230,6 +295,7 @@
    "name": "Lower left canine, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4116480,
    "normals": 4135584,
    "indices": 4154688,
@@ -257,6 +323,7 @@
    "name": "Lower left first premolar",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4192848,
    "normals": 4215720,
    "indices": 4238592,
@@ -284,6 +351,7 @@
    "name": "Lower left first premolar, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4284288,
    "normals": 4301784,
    "indices": 4319280,
@@ -311,6 +379,7 @@
    "name": "Lower left second premolar",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4354224,
    "normals": 4374672,
    "indices": 4395120,
@@ -338,6 +407,7 @@
    "name": "Lower left second premolar, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4435968,
    "normals": 4447500,
    "indices": 4459032,
@@ -365,6 +435,7 @@
    "name": "Lower left first molar",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4482048,
    "normals": 4527372,
    "indices": 4572696,
@@ -392,6 +463,7 @@
    "name": "Lower left first molar, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4663296,
    "normals": 4718844,
    "indices": 4774392,
@@ -419,6 +491,7 @@
    "name": "Lower left second molar",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 4885440,
    "normals": 4927020,
    "indices": 4968600,
@@ -446,6 +519,7 @@
    "name": "Lower left second molar, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5051712,
    "normals": 5109456,
    "indices": 5167200,
@@ -473,6 +547,7 @@
    "name": "Lower right central incisor",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5282640,
    "normals": 5304492,
    "indices": 5326344,
@@ -500,6 +575,7 @@
    "name": "Lower right central incisor, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5370000,
    "normals": 5386056,
    "indices": 5402112,
@@ -527,6 +603,7 @@
    "name": "Lower right lateral incisor",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5434176,
    "normals": 5464116,
    "indices": 5494056,
@@ -554,6 +631,7 @@
    "name": "Lower right lateral incisor, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5553888,
    "normals": 5570580,
    "indices": 5587272,
@@ -581,6 +659,7 @@
    "name": "Lower right canine",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5620608,
    "normals": 5650452,
    "indices": 5680296,
@@ -608,6 +687,7 @@
    "name": "Lower right canine, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5739936,
    "normals": 5756376,
    "indices": 5772816,
@@ -635,6 +715,7 @@
    "name": "Lower right first premolar",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5805648,
    "normals": 5849328,
    "indices": 5893008,
@@ -662,6 +743,7 @@
    "name": "Lower right first premolar, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 5980320,
    "normals": 5997108,
    "indices": 6013896,
@@ -689,6 +771,7 @@
    "name": "Lower right second premolar",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 6047424,
    "normals": 6081360,
    "indices": 6115296,
@@ -716,6 +799,7 @@
    "name": "Lower right second premolar, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 6183120,
    "normals": 6199404,
    "indices": 6215688,
@@ -743,6 +827,7 @@
    "name": "Lower right first molar",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 6248208,
    "normals": 6316968,
    "indices": 6385728,
@@ -770,6 +855,7 @@
    "name": "Lower right first molar, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 6523200,
    "normals": 6583596,
    "indices": 6643992,
@@ -797,6 +883,7 @@
    "name": "Lower right second molar",
    "group": "tooth",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 6764736,
    "normals": 6796800,
    "indices": 6828864,
@@ -824,6 +911,7 @@
    "name": "Lower right second molar, periodontal ligament",
    "group": "pdl",
    "source": "diaz",
+   "buffer": "dental",
    "positions": 6892944,
    "normals": 6934116,
    "indices": 6975288,
@@ -851,6 +939,7 @@
    "name": "Tooth 46, outer surface",
    "group": "tooth",
    "source": "fang",
+   "buffer": "dental",
    "positions": 7057584,
    "normals": 7261608,
    "indices": 7465632,
@@ -879,6 +968,7 @@
    "name": "Pulp cavity",
    "group": "pulp",
    "source": "fang",
+   "buffer": "dental",
    "positions": 7873632,
    "normals": 8077656,
    "indices": 8281680,
@@ -907,6 +997,7 @@
    "name": "Periodontal ligament",
    "group": "pdl",
    "source": "fang",
+   "buffer": "dental",
    "positions": 8689680,
    "normals": 8893704,
    "indices": 9097728,
@@ -935,6 +1026,7 @@
    "name": "Band and loop space maintainer",
    "group": "appliance",
    "source": "fang",
+   "buffer": "dental",
    "positions": 9505728,
    "normals": 9709704,
    "indices": 9913680,
@@ -957,6 +1049,2732 @@
    "sourceSha256": "85a272f7fabd5217ae61e53b86d9d94b8c6ca960a39fcc4059c6be0cd0305741",
    "cadTriangles": 276612,
    "simplifiedError": 0.00019
+  },
+  {
+   "id": "jaw-tooth-38",
+   "name": "Lower left third molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 0,
+   "normals": 36024,
+   "indices": 72048,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     83.83181762695312,
+     75.77476501464844,
+     33.44480895996094
+    ],
+    [
+     95.61162567138672,
+     89.34306335449219,
+     49.490299224853516
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 38,
+   "universal": 17,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     89.7034451656408,
+     81.60757032479869,
+     44.22326375717045
+    ],
+    "side": [
+     0.2962439736031304,
+     0.8473007160256232,
+     0.44081856213899856
+    ],
+    "up": [
+     -0.22030956235137378,
+     -0.3884704823371108,
+     0.8947370457789923
+    ],
+    "out": [
+     0.9293563390004779,
+     -0.36217700227270205,
+     0.07158641061254657
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_17.stl",
+   "sourceSha256": "dcbdb006076dea5b0e735466d24d95551a04bd8f7b8e775a0a6521f2f32ce683",
+   "sourceTriangles": 18288,
+   "simplifiedError": 0.00066
+  },
+  {
+   "id": "jaw-pdl-38",
+   "name": "Lower left third molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 144048,
+   "normals": 162072,
+   "indices": 180096,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     85.10999298095703,
+     78.887451171875,
+     33.35593032836914
+    ],
+    [
+     95.37950897216797,
+     89.42919158935547,
+     42.67047882080078
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 38,
+   "universal": 17,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 4592,
+   "simplifiedError": 0.00025
+  },
+  {
+   "id": "jaw-tooth-37",
+   "name": "Lower left second molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 216096,
+   "normals": 252120,
+   "indices": 288144,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     80.22834777832031,
+     65.85731506347656,
+     28.056568145751953
+    ],
+    [
+     92.33506774902344,
+     77.89997100830078,
+     45.72589874267578
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 37,
+   "universal": 18,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     86.14513879103131,
+     71.90006921195176,
+     40.51205185250228
+    ],
+    "side": [
+     0.2469427714430053,
+     0.9167931959513773,
+     0.31386223648171974
+    ],
+    "up": [
+     -0.35486379807659474,
+     -0.21583679840281983,
+     0.9096626634472113
+    ],
+    "out": [
+     0.901715560721174,
+     -0.33601296450059764,
+     0.2720373783891083
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_18.stl",
+   "sourceSha256": "06cc6e7117fcd1d33b9d6432bc6b21e57f871c3321a83c8642910b2e15e4a71f",
+   "sourceTriangles": 18308,
+   "simplifiedError": 0.00052
+  },
+  {
+   "id": "jaw-pdl-37",
+   "name": "Lower left second molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 360144,
+   "normals": 378108,
+   "indices": 396072,
+   "vertexCount": 1497,
+   "indexCount": 8970,
+   "bounds": [
+    [
+     82.64411926269531,
+     68.85630798339844,
+     27.963499069213867
+    ],
+    [
+     92.45110321044922,
+     77.98481750488281,
+     37.13370132446289
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 37,
+   "universal": 18,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 2990,
+   "simplifiedError": 0
+  },
+  {
+   "id": "jaw-tooth-36",
+   "name": "Lower left first molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 431952,
+   "normals": 467976,
+   "indices": 504000,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     76.32935333251953,
+     55.539798736572266,
+     24.74557876586914
+    ],
+    [
+     89.24481201171875,
+     67.68994140625,
+     43.9676399230957
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 36,
+   "universal": 19,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     82.02738972874909,
+     60.979773437378064,
+     39.62254053996174
+    ],
+    "side": [
+     0.2465595489271702,
+     0.9500345993183025,
+     0.19142269701094095
+    ],
+    "up": [
+     -0.32280776355330015,
+     -0.10573235959076056,
+     0.9405401724142817
+    ],
+    "out": [
+     0.9137852792765668,
+     -0.2936918933737899,
+     0.2806092214164834
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_19.stl",
+   "sourceSha256": "5634979d7c1fdcd60135ba629a4817027b1e5925efa111e402bfb7ccd7d41901",
+   "sourceTriangles": 22736,
+   "simplifiedError": 0.00075
+  },
+  {
+   "id": "jaw-pdl-36",
+   "name": "Lower left first molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 576000,
+   "normals": 594024,
+   "indices": 612048,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     78.5721206665039,
+     57.352081298828125,
+     24.646760940551758
+    ],
+    [
+     89.32646942138672,
+     67.77085876464844,
+     34.69866943359375
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 36,
+   "universal": 19,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 6386,
+   "simplifiedError": 0.00038
+  },
+  {
+   "id": "jaw-tooth-35",
+   "name": "Lower left second premolar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 648048,
+   "normals": 684072,
+   "indices": 720096,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     74.2180404663086,
+     49.62601852416992,
+     26.01638412475586
+    ],
+    [
+     83.90098571777344,
+     57.70515441894531,
+     43.03870391845703
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 35,
+   "universal": 20,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     78.61413407006384,
+     53.316984913869625,
+     39.013828236287935
+    ],
+    "side": [
+     0.2074818195449974,
+     0.9520102217844895,
+     0.22500629363674324
+    ],
+    "up": [
+     -0.31244411128216076,
+     -0.15347227003070396,
+     0.93745663348057
+    ],
+    "out": [
+     0.9270005242088056,
+     -0.26480709950730075,
+     0.26560728184131166
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_20.stl",
+   "sourceSha256": "241775b45cfb6d354076da92f61ec1f9aef2450dbf476aaf3f8f485882ff2bdd",
+   "sourceTriangles": 11256,
+   "simplifiedError": 0.00044
+  },
+  {
+   "id": "jaw-pdl-35",
+   "name": "Lower left second premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 792096,
+   "normals": 807996,
+   "indices": 823896,
+   "vertexCount": 1325,
+   "indexCount": 7938,
+   "bounds": [
+    [
+     76.87821960449219,
+     51.821441650390625,
+     25.92708969116211
+    ],
+    [
+     83.99083709716797,
+     57.787330627441406,
+     34.18354034423828
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 35,
+   "universal": 20,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 2646,
+   "simplifiedError": 0
+  },
+  {
+   "id": "jaw-tooth-34",
+   "name": "Lower left first premolar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 855648,
+   "normals": 891672,
+   "indices": 927696,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     73.01170349121094,
+     42.77369689941406,
+     24.81379508972168
+    ],
+    [
+     80.70306396484375,
+     51.145851135253906,
+     43.35384750366211
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 34,
+   "universal": 21,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     76.52255520406366,
+     46.402300673316944,
+     38.65776156011149
+    ],
+    "side": [
+     0.052697641433153614,
+     0.9912001468297873,
+     0.1214299284031372
+    ],
+    "up": [
+     -0.12519262537095724,
+     -0.11408201798935402,
+     0.9855516727824087
+    ],
+    "out": [
+     0.9907319340467993,
+     -0.06713838020152756,
+     0.11807909537172008
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_21.stl",
+   "sourceSha256": "f1847857c0f260892f8af41cfd42b5da99fa162d30fd85cc71ec3a045c8918ec",
+   "sourceTriangles": 10480,
+   "simplifiedError": 0.00039
+  },
+  {
+   "id": "jaw-pdl-34",
+   "name": "Lower left first premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 999696,
+   "normals": 1016172,
+   "indices": 1032648,
+   "vertexCount": 1373,
+   "indexCount": 8226,
+   "bounds": [
+    [
+     73.90062713623047,
+     45.04924011230469,
+     24.7331600189209
+    ],
+    [
+     80.29286193847656,
+     51.22576904296875,
+     33.92470932006836
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 34,
+   "universal": 21,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 2742,
+   "simplifiedError": 0
+  },
+  {
+   "id": "jaw-tooth-33",
+   "name": "Lower left canine",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1065552,
+   "normals": 1101576,
+   "indices": 1137600,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     70.89710235595703,
+     36.14199447631836,
+     21.208669662475586
+    ],
+    [
+     77.83602142333984,
+     50.43671798706055,
+     42.00882339477539
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 33,
+   "universal": 22,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     74.37467789341608,
+     39.654211535533534,
+     37.99990745688838
+    ],
+    "side": [
+     0.6916513162156361,
+     0.7008637427233634,
+     0.17438024805859567
+    ],
+    "up": [
+     0.13935800514623503,
+     -0.36641804842736275,
+     0.9199549772615749
+    ],
+    "out": [
+     0.7086591586784436,
+     -0.6119867873757414,
+     -0.35110449854520454
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_22.stl",
+   "sourceSha256": "bff67cdfc26966630233a8a3f70709096c99e8bda356ec49ced3735ad7494222",
+   "sourceTriangles": 12980,
+   "simplifiedError": 0.0004
+  },
+  {
+   "id": "jaw-pdl-33",
+   "name": "Lower left canine, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1209600,
+   "normals": 1227624,
+   "indices": 1245648,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     70.80542755126953,
+     39.81589889526367,
+     21.12615966796875
+    ],
+    [
+     76.85045623779297,
+     50.50994873046875,
+     33.93218994140625
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 33,
+   "universal": 22,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 3498,
+   "simplifiedError": 0.00012
+  },
+  {
+   "id": "jaw-tooth-32",
+   "name": "Lower left lateral incisor",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1281648,
+   "normals": 1317672,
+   "indices": 1353696,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     65.27332305908203,
+     33.65727996826172,
+     23.581602096557617
+    ],
+    [
+     72.40950775146484,
+     46.922306060791016,
+     42.47370147705078
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 32,
+   "universal": 23,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     68.97957997007497,
+     37.20617932833011,
+     38.848269448341334
+    ],
+    "side": [
+     0.9624630158577443,
+     0.2701653118453224,
+     0.025993217991151285
+    ],
+    "up": [
+     0.08782389570539821,
+     -0.4006203653385548,
+     0.9120253758635942
+    ],
+    "out": [
+     0.2568110325689756,
+     -0.8755078681265677,
+     -0.4093092552084907
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_23.stl",
+   "sourceSha256": "00cbb9d6825ab7113979b7ec0e070f1121e084d1630af305c4003525bafbc6b0",
+   "sourceTriangles": 12100,
+   "simplifiedError": 0.0004
+  },
+  {
+   "id": "jaw-pdl-32",
+   "name": "Lower left lateral incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1425696,
+   "normals": 1443720,
+   "indices": 1461744,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     65.18609619140625,
+     38.00693130493164,
+     23.494909286499023
+    ],
+    [
+     70.64672088623047,
+     47.00421142578125,
+     34.5855598449707
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 32,
+   "universal": 23,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 3054,
+   "simplifiedError": 0.00004
+  },
+  {
+   "id": "jaw-tooth-31",
+   "name": "Lower left central incisor",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1497744,
+   "normals": 1533768,
+   "indices": 1569792,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     60.759456634521484,
+     33.11723709106445,
+     25.66374969482422
+    ],
+    [
+     66.57453918457031,
+     44.07506561279297,
+     42.9771728515625
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 31,
+   "universal": 24,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     63.81319926086663,
+     36.07174812722513,
+     39.83737133400215
+    ],
+    "side": [
+     0.9945265307574196,
+     0.02381792204195567,
+     -0.10173340753761652
+    ],
+    "up": [
+     0.10223288152602787,
+     -0.42286390253600026,
+     0.9004079952260027
+    ],
+    "out": [
+     -0.02157353829339568,
+     -0.9058801391583905,
+     -0.42298434477398633
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_24.stl",
+   "sourceSha256": "fb4dc2af5b06fad2f6b7870ca9f9f0334dd1f54081dc65cea043b12b1ce96c7d",
+   "sourceTriangles": 8796,
+   "simplifiedError": 0.00031
+  },
+  {
+   "id": "jaw-pdl-31",
+   "name": "Lower left central incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1641792,
+   "normals": 1655976,
+   "indices": 1670160,
+   "vertexCount": 1182,
+   "indexCount": 7080,
+   "bounds": [
+    [
+     60.666229248046875,
+     37.28974914550781,
+     25.454450607299805
+    ],
+    [
+     65.053466796875,
+     44.08407974243164,
+     35.26224136352539
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 31,
+   "universal": 24,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 2360,
+   "simplifiedError": 0
+  },
+  {
+   "id": "jaw-tooth-41",
+   "name": "Lower right central incisor",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1698480,
+   "normals": 1734504,
+   "indices": 1770528,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     55.60357666015625,
+     32.86663818359375,
+     24.77404022216797
+    ],
+    [
+     61.04520797729492,
+     44.199989318847656,
+     42.75279998779297
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 41,
+   "universal": 25,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     58.15196674484653,
+     35.83610257393692,
+     39.38030431228152
+    ],
+    "side": [
+     0.9710503298210316,
+     0.21858521588204752,
+     0.09634189302823691
+    ],
+    "up": [
+     -0.005866516793801701,
+     -0.3813711284089876,
+     0.9244034002516236
+    ],
+    "out": [
+     0.23880293326333663,
+     -0.8982074180354191,
+     -0.3690482261859174
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_25.stl",
+   "sourceSha256": "7c785898fa1c3a14e710b02d98772daa5360e5fabcfb4068d9a18746f3fd5cd3",
+   "sourceTriangles": 8972,
+   "simplifiedError": 0.00033
+  },
+  {
+   "id": "jaw-pdl-41",
+   "name": "Lower right central incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1842528,
+   "normals": 1857936,
+   "indices": 1873344,
+   "vertexCount": 1284,
+   "indexCount": 7692,
+   "bounds": [
+    [
+     56.16210174560547,
+     37.09727096557617,
+     24.683349609375
+    ],
+    [
+     60.34619903564453,
+     44.27867126464844,
+     34.56452941894531
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 41,
+   "universal": 25,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 2564,
+   "simplifiedError": 0
+  },
+  {
+   "id": "jaw-tooth-42",
+   "name": "Lower right lateral incisor",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 1904112,
+   "normals": 1940136,
+   "indices": 1976160,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     49.61692428588867,
+     33.75733184814453,
+     24.498764038085938
+    ],
+    [
+     55.40132522583008,
+     46.210174560546875,
+     43.03659439086914
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 42,
+   "universal": 26,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     52.769713181256165,
+     36.940490834230886,
+     39.86100052245022
+    ],
+    "side": [
+     0.9269912161019243,
+     -0.33724767287835605,
+     -0.1641684878653908
+    ],
+    "up": [
+     0.03621244668923402,
+     -0.35517229958246394,
+     0.9340991897620314
+    ],
+    "out": [
+     -0.3733308773389298,
+     -0.8718466864922053,
+     -0.3170290385404898
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_26.stl",
+   "sourceSha256": "c7d06ee4854da9fc87613c9849cecffd3432ab7c0c6d5b7039759f82974060ce",
+   "sourceTriangles": 10648,
+   "simplifiedError": 0.00037
+  },
+  {
+   "id": "jaw-pdl-42",
+   "name": "Lower right lateral incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2048160,
+   "normals": 2064480,
+   "indices": 2080800,
+   "vertexCount": 1360,
+   "indexCount": 8148,
+   "bounds": [
+    [
+     50.350440979003906,
+     37.25273132324219,
+     24.409400939941406
+    ],
+    [
+     54.85963821411133,
+     46.289798736572266,
+     34.197959899902344
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 42,
+   "universal": 26,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 2716,
+   "simplifiedError": 0
+  },
+  {
+   "id": "jaw-tooth-43",
+   "name": "Lower right canine",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2113392,
+   "normals": 2149416,
+   "indices": 2185440,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     43.301368713378906,
+     34.67463302612305,
+     22.65778923034668
+    ],
+    [
+     50.57246017456055,
+     49.07357406616211,
+     42.727081298828125
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 43,
+   "universal": 27,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     46.87897054223618,
+     38.52402630381274,
+     39.04624454186476
+    ],
+    "side": [
+     0.6288810795840525,
+     -0.7236130407412934,
+     -0.28441651676781343
+    ],
+    "up": [
+     -0.0499170014646849,
+     -0.4026305296286868,
+     0.9140005194613938
+    ],
+    "out": [
+     -0.775897467907952,
+     -0.5606004137351868,
+     -0.28932731536093537
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_27.stl",
+   "sourceSha256": "f4dcf4d2da4c2eda916659eab8707e44612c7827b68648131ed5482934b980bf",
+   "sourceTriangles": 13900,
+   "simplifiedError": 0.00042
+  },
+  {
+   "id": "jaw-pdl-43",
+   "name": "Lower right canine, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2257440,
+   "normals": 2275464,
+   "indices": 2293488,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     43.936798095703125,
+     38.57801818847656,
+     22.579830169677734
+    ],
+    [
+     50.65562057495117,
+     49.1550407409668,
+     34.684959411621094
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 43,
+   "universal": 27,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 3580,
+   "simplifiedError": 0.00011
+  },
+  {
+   "id": "jaw-tooth-44",
+   "name": "Lower right first premolar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2329488,
+   "normals": 2365512,
+   "indices": 2401536,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     39.782432556152344,
+     41.50425338745117,
+     24.170644760131836
+    ],
+    [
+     47.74993896484375,
+     50.8558349609375,
+     44.23691940307617
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 44,
+   "universal": 28,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     44.058832392469526,
+     45.207261559396954,
+     39.57824458227868
+    ],
+    "side": [
+     0.07088112412484075,
+     -0.9838746560789253,
+     -0.1642148816897408
+    ],
+    "up": [
+     0.0991943704672665,
+     -0.15686035221230565,
+     0.9826267382742209
+    ],
+    "out": [
+     -0.9925403483538597,
+     -0.0859388796145734,
+     0.0864763890330235
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_28.stl",
+   "sourceSha256": "1b8bc7490c54ec56eade3fd1df5071036ee1c986a749fdb870a3834c3d3eb058",
+   "sourceTriangles": 11884,
+   "simplifiedError": 0.00039
+  },
+  {
+   "id": "jaw-pdl-44",
+   "name": "Lower right first premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2473536,
+   "normals": 2491560,
+   "indices": 2509584,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     40.20246887207031,
+     43.663818359375,
+     24.074800491333008
+    ],
+    [
+     46.92689895629883,
+     50.937530517578125,
+     35.45460891723633
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 44,
+   "universal": 28,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 3202,
+   "simplifiedError": 0.00007
+  },
+  {
+   "id": "jaw-tooth-45",
+   "name": "Lower right second premolar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2545584,
+   "normals": 2581608,
+   "indices": 2617632,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     37.03780746459961,
+     48.519798278808594,
+     27.858308792114258
+    ],
+    [
+     46.32881164550781,
+     55.99616622924805,
+     44.86937713623047
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 45,
+   "universal": 29,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     41.79192245547638,
+     52.27592708837332,
+     40.70599502571847
+    ],
+    "side": [
+     0.365967509114614,
+     -0.9127076071191575,
+     -0.18174874464288998
+    ],
+    "up": [
+     0.2780283313336375,
+     -0.07914902089395087,
+     0.9573064710255343
+    ],
+    "out": [
+     -0.8881261336365915,
+     -0.4008743648555617,
+     0.22479260297743103
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_29.stl",
+   "sourceSha256": "56b64450182fbdb64d422af91cf4e41f5729e288755e00afa86f8d800fe4419d",
+   "sourceTriangles": 11496,
+   "simplifiedError": 0.0004
+  },
+  {
+   "id": "jaw-pdl-45",
+   "name": "Lower right second premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2689632,
+   "normals": 2706540,
+   "indices": 2723448,
+   "vertexCount": 1409,
+   "indexCount": 8442,
+   "bounds": [
+    [
+     36.95960998535156,
+     50.0526008605957,
+     27.77083969116211
+    ],
+    [
+     44.33491134643555,
+     56.08251953125,
+     36.88364028930664
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 45,
+   "universal": 29,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 2814,
+   "simplifiedError": 0
+  },
+  {
+   "id": "jaw-tooth-46",
+   "name": "Lower right first molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2757216,
+   "normals": 2793240,
+   "indices": 2829264,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     30.430370330810547,
+     54.72317123413086,
+     27.179977416992188
+    ],
+    [
+     44.870574951171875,
+     66.69302368164062,
+     46.330387115478516
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "universal": 30,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     38.53012037360305,
+     59.927339514377074,
+     40.855162723451855
+    ],
+    "side": [
+     0.30350641619738605,
+     -0.9494671918330961,
+     -0.079974414406069
+    ],
+    "up": [
+     0.4055826843225607,
+     0.05278503279919283,
+     0.9125329728234998
+    ],
+    "out": [
+     -0.8621986670743146,
+     -0.3093958499155454,
+     0.40110804847361586
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_30.stl",
+   "sourceSha256": "030c83fd745171d95879ac361ea907b7c143e2a28c044cc3aa41fe0bd196863d",
+   "sourceTriangles": 23132,
+   "simplifiedError": 0.00079
+  },
+  {
+   "id": "jaw-pdl-46",
+   "name": "Lower right first molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2901264,
+   "normals": 2919288,
+   "indices": 2937312,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     30.337940216064453,
+     55.484039306640625,
+     27.09375
+    ],
+    [
+     42.492881774902344,
+     66.76969146728516,
+     38.04032897949219
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "universal": 30,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 7678,
+   "simplifiedError": 0.00052
+  },
+  {
+   "id": "jaw-tooth-47",
+   "name": "Lower right second molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 2973312,
+   "normals": 3009336,
+   "indices": 3045360,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     28.432964324951172,
+     65.53721618652344,
+     28.957590103149414
+    ],
+    [
+     41.125831604003906,
+     78.3060531616211,
+     46.6109619140625
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 47,
+   "universal": 31,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     35.07008415166428,
+     70.68947614834796,
+     42.17290665553946
+    ],
+    "side": [
+     0.06347090106554114,
+     -0.9575272088760264,
+     -0.28127049077358796
+    ],
+    "up": [
+     0.2224160980163458,
+     -0.2611782584138066,
+     0.9393173035109671
+    ],
+    "out": [
+     -0.9728836128032532,
+     -0.12217840068530021,
+     0.19639224614243786
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_31.stl",
+   "sourceSha256": "75ffd3efe5f3ef834ccbe750a85d2043fb96a1044931ae01f4e2bbedbbe5552c",
+   "sourceTriangles": 18872,
+   "simplifiedError": 0.0006
+  },
+  {
+   "id": "jaw-pdl-47",
+   "name": "Lower right second molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 3117360,
+   "normals": 3135384,
+   "indices": 3153408,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     28.343780517578125,
+     67.21436309814453,
+     28.871580123901367
+    ],
+    [
+     38.76340866088867,
+     78.37330627441406,
+     39.022239685058594
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 47,
+   "universal": 31,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 4936,
+   "simplifiedError": 0.00029
+  },
+  {
+   "id": "jaw-tooth-48",
+   "name": "Lower right third molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 3189408,
+   "normals": 3225432,
+   "indices": 3261456,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     24.869123458862305,
+     74.85945129394531,
+     34.94231414794922
+    ],
+    [
+     37.882564544677734,
+     88.68344116210938,
+     50.54064178466797
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 48,
+   "universal": 32,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     31.672407656413146,
+     80.40073258443192,
+     46.53726654655854
+    ],
+    "side": [
+     0.34031264509141546,
+     -0.8572826145002455,
+     -0.38633382257641896
+    ],
+    "up": [
+     0.24201094599970505,
+     -0.3171627286810681,
+     0.9169724671722195
+    ],
+    "out": [
+     -0.908635243432265,
+     -0.40555433965278104,
+     0.09953728940244135
+    ]
+   },
+   "sourceMember": "Patient_12/input/mandible/teeth/tooth_32.stl",
+   "sourceSha256": "5c0065141f075ea678ac9e3a52b47fe628eb5c330941c6f84880e2e38a9dbe65",
+   "sourceTriangles": 18852,
+   "simplifiedError": 0.00073
+  },
+  {
+   "id": "jaw-pdl-48",
+   "name": "Lower right third molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 3333456,
+   "normals": 3351480,
+   "indices": 3369504,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     24.785049438476562,
+     78.2416763305664,
+     34.85050964355469
+    ],
+    [
+     35.1640510559082,
+     88.76024627685547,
+     43.67525100708008
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 48,
+   "universal": 32,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/pdls.stl",
+   "sourceSha256": "4c062988f3626052c12b91b2ccde9860fabe8507e572e59ffdd94185604c3dbf",
+   "sourceTriangles": 4724,
+   "simplifiedError": 0.0003
+  },
+  {
+   "id": "jaw-bone-mandible",
+   "name": "Mandible",
+   "group": "bone",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 3405504,
+   "normals": 3609528,
+   "indices": 3813552,
+   "vertexCount": 17002,
+   "indexCount": 102000,
+   "bounds": [
+    [
+     9.13645076751709,
+     35.9640998840332,
+     0.15675969421863556
+    ],
+    [
+     114.76840209960938,
+     101.44229888916016,
+     84.02252197265625
+    ]
+   ],
+   "openEdges": 0,
+   "jaw": "mandible",
+   "sourceMember": "Patient_12/output/mandible/surface_meshes/bone.stl",
+   "sourceSha256": "00507e40fce23785a7963449ec54df5407830098cf1e9cd813e45c4e27f9e327",
+   "sourceTriangles": 81988,
+   "simplifiedError": 0.00033
+  },
+  {
+   "id": "jaw-tooth-18",
+   "name": "Upper right third molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 4221552,
+   "normals": 4257576,
+   "indices": 4293600,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     25.89410400390625,
+     75.47660064697266,
+     51.39240264892578
+    ],
+    [
+     37.81098175048828,
+     84.80689239501953,
+     67.919189453125
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 18,
+   "universal": 1,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     30.7345600630388,
+     80.48651840159454,
+     54.7342116478909
+    ],
+    "side": [
+     -0.28585252956109536,
+     0.916321847149669,
+     0.28043288640910474
+    ],
+    "up": [
+     -0.007336667475808414,
+     0.29054256418270097,
+     -0.9568339415533348
+    ],
+    "out": [
+     -0.9582455346381076,
+     -0.2755708453997987,
+     -0.07632957822343668
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_1.stl",
+   "sourceSha256": "4b7ce8daea62a021bba022c6ac455a9c9d6b39d50b7176255468ce17750cc150",
+   "sourceTriangles": 15756,
+   "simplifiedError": 0.00056
+  },
+  {
+   "id": "jaw-pdl-18",
+   "name": "Upper right third molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 4365600,
+   "normals": 4383624,
+   "indices": 4401648,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     26.804500579833984,
+     76.0135269165039,
+     59.88364028930664
+    ],
+    [
+     37.896060943603516,
+     83.43544006347656,
+     67.98506164550781
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 18,
+   "universal": 1,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 4094,
+   "simplifiedError": 0.00021
+  },
+  {
+   "id": "jaw-tooth-17",
+   "name": "Upper right second molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 4437648,
+   "normals": 4473672,
+   "indices": 4509696,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     28.873355865478516,
+     67.22880554199219,
+     49.1827278137207
+    ],
+    [
+     40.334529876708984,
+     78.036376953125,
+     66.10931396484375
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 17,
+   "universal": 2,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     33.95911761870945,
+     72.66558309454221,
+     52.229793776281305
+    ],
+    "side": [
+     -0.2272266466581665,
+     0.9721316421525634,
+     0.057689872371542265
+    ],
+    "up": [
+     -0.004651230117573852,
+     0.058155422245178626,
+     -0.9982967058554676
+    ],
+    "out": [
+     -0.9738307949058083,
+     -0.2271079417132853,
+     -0.008692853609538531
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_2.stl",
+   "sourceSha256": "c067c64cada8910dfe16735d81d4ac72d11ac4ac7ca46b7129be4c2921ede95d",
+   "sourceTriangles": 16764,
+   "simplifiedError": 0.00061
+  },
+  {
+   "id": "jaw-pdl-17",
+   "name": "Upper right second molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 4581696,
+   "normals": 4599720,
+   "indices": 4617744,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     29.492069244384766,
+     68.5412826538086,
+     58.23590850830078
+    ],
+    [
+     39.269989013671875,
+     76.32987213134766,
+     66.16387176513672
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 17,
+   "universal": 2,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 3322,
+   "simplifiedError": 0.00008
+  },
+  {
+   "id": "jaw-tooth-16",
+   "name": "Upper right first molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 4653744,
+   "normals": 4689768,
+   "indices": 4725792,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     30.125455856323242,
+     58.59881591796875,
+     48.1291389465332
+    ],
+    [
+     43.337284088134766,
+     70.07528686523438,
+     66.63159942626953
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 16,
+   "universal": 3,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     37.167670528480876,
+     64.54257711014648,
+     53.3152041842573
+    ],
+    "side": [
+     -0.27462667861496076,
+     0.9600345628633314,
+     -0.053979861992482434
+    ],
+    "up": [
+     -0.010425796245058898,
+     -0.05910802405013267,
+     -0.9981971469932909
+    ],
+    "out": [
+     -0.961494404646003,
+     -0.27356878403922713,
+     0.02624176506500928
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_3.stl",
+   "sourceSha256": "fb69a8cebaa12235b33e5f1cc19c367895bad5f2ca66b6a3cb732273da2f48b3",
+   "sourceTriangles": 21780,
+   "simplifiedError": 0.00093
+  },
+  {
+   "id": "jaw-pdl-16",
+   "name": "Upper right first molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 4797792,
+   "normals": 4815816,
+   "indices": 4833840,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     30.045480728149414,
+     59.7775993347168,
+     57.875240325927734
+    ],
+    [
+     42.47462844848633,
+     68.62132263183594,
+     66.64824676513672
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 16,
+   "universal": 3,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 7654,
+   "simplifiedError": 0.00045
+  },
+  {
+   "id": "jaw-tooth-15",
+   "name": "Upper right second premolar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 4869840,
+   "normals": 4905864,
+   "indices": 4941888,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     35.01311111450195,
+     53.08192825317383,
+     47.92901611328125
+    ],
+    [
+     44.75128936767578,
+     59.231449127197266,
+     64.93988800048828
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 15,
+   "universal": 4,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     39.73859867588508,
+     56.33353121286336,
+     53.07086894851185
+    ],
+    "side": [
+     -0.31812928653711414,
+     0.9476476562483782,
+     -0.027525926947919787
+    ],
+    "up": [
+     0.09899900970805933,
+     0.004330762596381989,
+     -0.9950781077745393
+    ],
+    "out": [
+     -0.9428642283617561,
+     -0.31928852798415613,
+     -0.09519392193570295
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_4.stl",
+   "sourceSha256": "a0a8821505973e113116ae8d55f4bdc61beefae3193bc62389b34d1e5b453a01",
+   "sourceTriangles": 10600,
+   "simplifiedError": 0.00043
+  },
+  {
+   "id": "jaw-pdl-15",
+   "name": "Upper right second premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5013888,
+   "normals": 5030736,
+   "indices": 5047584,
+   "vertexCount": 1404,
+   "indexCount": 8412,
+   "bounds": [
+    [
+     35.03858184814453,
+     53.9898796081543,
+     58.43050003051758
+    ],
+    [
+     42.64807891845703,
+     58.55540084838867,
+     64.99910736083984
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 15,
+   "universal": 4,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 2804,
+   "simplifiedError": 0
+  },
+  {
+   "id": "jaw-tooth-14",
+   "name": "Upper right first premolar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5081232,
+   "normals": 5117256,
+   "indices": 5153280,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     37.031497955322266,
+     46.057579040527344,
+     46.65080642700195
+    ],
+    [
+     46.36090087890625,
+     53.25718307495117,
+     67.29885864257812
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 14,
+   "universal": 5,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     41.580824907782585,
+     49.84132848142258,
+     52.61181866513635
+    ],
+    "side": [
+     -0.4635656227624074,
+     0.8860403420342633,
+     -0.006278987235796937
+    ],
+    "up": [
+     0.08721868771831257,
+     0.038577496265581615,
+     -0.9954419507407625
+    ],
+    "out": [
+     -0.881759498902959,
+     -0.46200031284587356,
+     -0.095162476978679
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_5.stl",
+   "sourceSha256": "1fa26dfa2b860b67c5a746e9a706704fd24ccc30f1a6d3c9508ca6b7f66d0bca",
+   "sourceTriangles": 13080,
+   "simplifiedError": 0.00043
+  },
+  {
+   "id": "jaw-pdl-14",
+   "name": "Upper right first premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5225280,
+   "normals": 5243304,
+   "indices": 5261328,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     37.57923889160156,
+     47.05870819091797,
+     58.205379486083984
+    ],
+    [
+     44.93397903442383,
+     52.39318084716797,
+     67.34261322021484
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 14,
+   "universal": 5,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 3102,
+   "simplifiedError": 0.00003
+  },
+  {
+   "id": "jaw-tooth-13",
+   "name": "Upper right canine",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5297328,
+   "normals": 5333352,
+   "indices": 5369376,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     39.99127197265625,
+     38.255828857421875,
+     46.335205078125
+    ],
+    [
+     48.60429000854492,
+     47.86899948120117,
+     70.8153076171875
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 13,
+   "universal": 6,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     44.301078759832485,
+     42.77688021389437,
+     52.89394309629248
+    ],
+    "side": [
+     -0.6684459435356791,
+     0.7431047458994221,
+     0.03123070912501829
+    ],
+    "up": [
+     0.03352963435607141,
+     0.07205534806055179,
+     -0.9968368925936786
+    ],
+    "out": [
+     -0.7430045653901759,
+     -0.665284422963313,
+     -0.07308113553939706
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_6.stl",
+   "sourceSha256": "ad4b35c928871dcada47bac539c0b515402f3fe8584b8c15db2390635b216594",
+   "sourceTriangles": 16120,
+   "simplifiedError": 0.00037
+  },
+  {
+   "id": "jaw-pdl-13",
+   "name": "Upper right canine, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5441376,
+   "normals": 5459400,
+   "indices": 5477424,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     41.045841217041016,
+     40.20512008666992,
+     57.52145004272461
+    ],
+    [
+     48.68463897705078,
+     47.940921783447266,
+     70.80391693115234
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 13,
+   "universal": 6,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 4524,
+   "simplifiedError": 0.00018
+  },
+  {
+   "id": "jaw-tooth-12",
+   "name": "Upper right lateral incisor",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5513424,
+   "normals": 5549448,
+   "indices": 5585472,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     45.39662551879883,
+     33.44196319580078,
+     47.0342903137207
+    ],
+    [
+     53.26206970214844,
+     45.160919189453125,
+     67.92752075195312
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 12,
+   "universal": 7,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     49.50606425542777,
+     37.242157951765336,
+     51.18267949583168
+    ],
+    "side": [
+     -0.8733031475448694,
+     0.4831614269387062,
+     -0.06242313679059836
+    ],
+    "up": [
+     -0.06710408788087827,
+     -0.2462087743369071,
+     -0.9668910387573119
+    ],
+    "out": [
+     -0.48253357797970875,
+     -0.8402001398226917,
+     0.24743700443553257
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_7.stl",
+   "sourceSha256": "c051f33b0a72fe2c5e4f64b76eaaf0fe8945920d884992bbf809823107fcd02e",
+   "sourceTriangles": 13564,
+   "simplifiedError": 0.00044
+  },
+  {
+   "id": "jaw-pdl-12",
+   "name": "Upper right lateral incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5657472,
+   "normals": 5675496,
+   "indices": 5693520,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     46.92356872558594,
+     36.505279541015625,
+     56.881080627441406
+    ],
+    [
+     53.35102081298828,
+     45.22949981689453,
+     67.98489379882812
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 12,
+   "universal": 7,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 3752,
+   "simplifiedError": 0.00013
+  },
+  {
+   "id": "jaw-tooth-11",
+   "name": "Upper right central incisor",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5729520,
+   "normals": 5765544,
+   "indices": 5801568,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     52.43906021118164,
+     31.0949649810791,
+     46.04865646362305
+    ],
+    [
+     61.392459869384766,
+     42.15190124511719,
+     67.60700988769531
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 11,
+   "universal": 8,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     56.98883113325545,
+     34.89185135456433,
+     50.46910630606283
+    ],
+    "side": [
+     -0.9895250799146309,
+     0.1357124160598459,
+     -0.04921642355090806
+    ],
+    "up": [
+     0.017264470144930065,
+     -0.22722922654052297,
+     -0.9736882543588633
+    ],
+    "out": [
+     -0.14332499534469872,
+     -0.9643386431814267,
+     0.2225060155960887
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_8.stl",
+   "sourceSha256": "f4421a0ae9990609aa068b5fea776c821a8d102703fa5e15bea5d100833edc73",
+   "sourceTriangles": 15676,
+   "simplifiedError": 0.00044
+  },
+  {
+   "id": "jaw-pdl-11",
+   "name": "Upper right central incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5873568,
+   "normals": 5891592,
+   "indices": 5909616,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     53.67472839355469,
+     34.62417984008789,
+     56.39060974121094
+    ],
+    [
+     61.050140380859375,
+     42.2228889465332,
+     67.65908813476562
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 11,
+   "universal": 8,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 3906,
+   "simplifiedError": 0.00014
+  },
+  {
+   "id": "jaw-tooth-21",
+   "name": "Upper left central incisor",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 5945616,
+   "normals": 5981640,
+   "indices": 6017664,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     61.50370407104492,
+     31.262920379638672,
+     46.079498291015625
+    ],
+    [
+     70.67308044433594,
+     42.181331634521484,
+     68.19204711914062
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 21,
+   "universal": 9,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     65.82713418639915,
+     35.08647178219929,
+     50.75379321559764
+    ],
+    "side": [
+     -0.9727166574398891,
+     -0.22072608070979513,
+     0.07143039712518945
+    ],
+    "up": [
+     -0.022241076745046884,
+     -0.2177538914006826,
+     -0.9757502637893983
+    ],
+    "out": [
+     0.2309277784160888,
+     -0.9507172240337045,
+     0.20690365168709984
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_9.stl",
+   "sourceSha256": "b5b442d2ec58c637e1312e9e248830ec800dfe6e9ade42d7c21d4dceb0f62ccb",
+   "sourceTriangles": 15816,
+   "simplifiedError": 0.00042
+  },
+  {
+   "id": "jaw-pdl-21",
+   "name": "Upper left central incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6089664,
+   "normals": 6107688,
+   "indices": 6125712,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     62.41975021362305,
+     34.70872116088867,
+     56.34109115600586
+    ],
+    [
+     69.5827407836914,
+     42.25284957885742,
+     68.24600982666016
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 21,
+   "universal": 9,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 4056,
+   "simplifiedError": 0.00014
+  },
+  {
+   "id": "jaw-tooth-22",
+   "name": "Upper left lateral incisor",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6161712,
+   "normals": 6197736,
+   "indices": 6233760,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     69.4521484375,
+     33.992530822753906,
+     46.43334197998047
+    ],
+    [
+     76.91316986083984,
+     44.566184997558594,
+     67.04850769042969
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 22,
+   "universal": 10,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     73.00485204204708,
+     37.868948051896595,
+     50.45657539105467
+    ],
+    "side": [
+     -0.7494923398646911,
+     -0.6508208970009614,
+     0.12121630464180363
+    ],
+    "up": [
+     0.012995610398505116,
+     -0.19753144730242336,
+     -0.9802104067173437
+    ],
+    "out": [
+     0.6618854482420057,
+     -0.7330849114212324,
+     0.15650612145217535
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_10.stl",
+   "sourceSha256": "bbca11d4d942cfd88fe4cede3b0f81e4d9bf3407bdfbf210dcc17d6e86ddbb0f",
+   "sourceTriangles": 12884,
+   "simplifiedError": 0.00041
+  },
+  {
+   "id": "jaw-pdl-22",
+   "name": "Upper left lateral incisor, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6305760,
+   "normals": 6323784,
+   "indices": 6341808,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     69.9533462524414,
+     36.987701416015625,
+     56.453460693359375
+    ],
+    [
+     76.08970642089844,
+     44.646060943603516,
+     67.1029281616211
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 22,
+   "universal": 10,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 3474,
+   "simplifiedError": 0.0001
+  },
+  {
+   "id": "jaw-tooth-23",
+   "name": "Upper left canine",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6377808,
+   "normals": 6413832,
+   "indices": 6449856,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     74.28059387207031,
+     39.08884811401367,
+     46.10213088989258
+    ],
+    [
+     82.91456604003906,
+     48.71490478515625,
+     70.28563690185547
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 23,
+   "universal": 11,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     78.38264840428528,
+     43.78240359413752,
+     52.989189182406975
+    ],
+    "side": [
+     -0.34348677556460355,
+     -0.9303529622051993,
+     0.1282973137997947
+    ],
+    "up": [
+     -0.25583450256397067,
+     -0.038751101635639836,
+     -0.9659436108903408
+    ],
+    "out": [
+     0.9036401619616516,
+     -0.36461173573821715,
+     -0.22470589634427654
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_11.stl",
+   "sourceSha256": "df4ad68dc45c34b8354f9b1c7a5df354778a530cb447c40275dc1343ba7eab72",
+   "sourceTriangles": 16280,
+   "simplifiedError": 0.0004
+  },
+  {
+   "id": "jaw-pdl-23",
+   "name": "Upper left canine, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6521856,
+   "normals": 6539880,
+   "indices": 6557904,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     74.7519302368164,
+     40.991600036621094,
+     56.536380767822266
+    ],
+    [
+     82.99786376953125,
+     48.79322052001953,
+     70.33287048339844
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 23,
+   "universal": 11,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 4642,
+   "simplifiedError": 0.0002
+  },
+  {
+   "id": "jaw-tooth-24",
+   "name": "Upper left first premolar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6593904,
+   "normals": 6629928,
+   "indices": 6665952,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     75.42491149902344,
+     47.18632125854492,
+     45.39019012451172
+    ],
+    [
+     85.12334442138672,
+     55.00765609741211,
+     64.89010620117188
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 24,
+   "universal": 12,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     80.44676947066208,
+     51.263441009338656,
+     51.76548786387707
+    ],
+    "side": [
+     -0.4939878673853773,
+     -0.8673411478470932,
+     0.06078914481495429
+    ],
+    "up": [
+     -0.1846990435142288,
+     0.036360216981641706,
+     -0.9821222927649982
+    ],
+    "out": [
+     0.8496247702374129,
+     -0.4963841938179888,
+     -0.1781585864523196
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_12.stl",
+   "sourceSha256": "7331e9250cc40aca50e12ca529f6bef7f7f3c3af7cec4eeedd15098e76d4c71b",
+   "sourceTriangles": 13748,
+   "simplifiedError": 0.00048
+  },
+  {
+   "id": "jaw-pdl-24",
+   "name": "Upper left first premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6737952,
+   "normals": 6755976,
+   "indices": 6774000,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     77.30387878417969,
+     47.94306945800781,
+     56.137481689453125
+    ],
+    [
+     85.1632308959961,
+     54.31333923339844,
+     64.90804290771484
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 24,
+   "universal": 12,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 3280,
+   "simplifiedError": 0.00007
+  },
+  {
+   "id": "jaw-tooth-25",
+   "name": "Upper left second premolar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6810000,
+   "normals": 6846024,
+   "indices": 6882048,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     78.12445068359375,
+     53.56893539428711,
+     46.00939178466797
+    ],
+    [
+     87.48893737792969,
+     61.24209976196289,
+     64.95146942138672
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 25,
+   "universal": 13,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     82.77989799285595,
+     57.3565511007382,
+     51.60542981954465
+    ],
+    "side": [
+     -0.4670187902676857,
+     -0.884247343179848,
+     -0.0002926026097480605
+    ],
+    "up": [
+     -0.09853284857416592,
+     0.05236935950816946,
+     -0.9937548631008377
+    ],
+    "out": [
+     0.8787404208802331,
+     -0.4640733630193446,
+     -0.11158488449223809
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_13.stl",
+   "sourceSha256": "99cc2920dbd24fa1a21180eb3777342cab104c73e00ef1ac46f8d2f7700d9843",
+   "sourceTriangles": 13216,
+   "simplifiedError": 0.00048
+  },
+  {
+   "id": "jaw-pdl-25",
+   "name": "Upper left second premolar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 6954048,
+   "normals": 6972072,
+   "indices": 6990096,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     79.43939971923828,
+     54.02962875366211,
+     55.68355178833008
+    ],
+    [
+     87.52020263671875,
+     60.222049713134766,
+     65.01022338867188
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 25,
+   "universal": 13,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 3340,
+   "simplifiedError": 0.00007
+  },
+  {
+   "id": "jaw-tooth-27",
+   "name": "Upper left second molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 7026096,
+   "normals": 7062120,
+   "indices": 7098144,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     83.06466674804688,
+     68.23372650146484,
+     47.52923583984375
+    ],
+    [
+     94.71980285644531,
+     78.75251007080078,
+     66.88768768310547
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 27,
+   "universal": 15,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     89.04911445937556,
+     73.69704251932959,
+     51.473657830786536
+    ],
+    "side": [
+     -0.21677938521026538,
+     -0.9702624123612399,
+     0.10769191848419611
+    ],
+    "up": [
+     0.013685198796352443,
+     -0.11332468945599321,
+     -0.9934637537895415
+    ],
+    "out": [
+     0.9761246915644353,
+     -0.2138886764619625,
+     0.037844690507206694
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_15.stl",
+   "sourceSha256": "1835f00eb4ba834b769a0933e4a39fe82b2288a7d2c416d0e77d2daa3b43006a",
+   "sourceTriangles": 19368,
+   "simplifiedError": 0.00061
+  },
+  {
+   "id": "jaw-pdl-27",
+   "name": "Upper left second molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 7170144,
+   "normals": 7188168,
+   "indices": 7206192,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     83.0068130493164,
+     69.90464782714844,
+     57.36920928955078
+    ],
+    [
+     93.87554168701172,
+     78.53157806396484,
+     66.9231185913086
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 27,
+   "universal": 15,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 4586,
+   "simplifiedError": 0.00021
+  },
+  {
+   "id": "jaw-tooth-28",
+   "name": "Upper left third molar",
+   "group": "tooth",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 7242192,
+   "normals": 7278216,
+   "indices": 7314240,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     85.77483367919922,
+     76.81265258789062,
+     50.00027847290039
+    ],
+    [
+     97.71138763427734,
+     86.2716064453125,
+     69.20404052734375
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 28,
+   "universal": 16,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     92.61930094627651,
+     81.83601851172175,
+     54.12950373271153
+    ],
+    "side": [
+     -0.1788108354289905,
+     -0.9638497749817015,
+     -0.1975355573078172
+    ],
+    "up": [
+     0.14151896944001366,
+     0.17348761143897157,
+     -0.9746150162837822
+    ],
+    "out": [
+     0.9736524361505107,
+     -0.2022267537813025,
+     0.10538156211241242
+    ]
+   },
+   "sourceMember": "Patient_12/input/maxilla/teeth/tooth_16.stl",
+   "sourceSha256": "03993731ebd4e100fc801c1a561f67bbfd683bfbbd4fc8f52eb0d42f39d40880",
+   "sourceTriangles": 17484,
+   "simplifiedError": 0.00055
+  },
+  {
+   "id": "jaw-pdl-28",
+   "name": "Upper left third molar, periodontal ligament",
+   "group": "pdl",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 7386240,
+   "normals": 7404264,
+   "indices": 7422288,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     85.69286346435547,
+     77.38448333740234,
+     57.52738952636719
+    ],
+    [
+     96.62315368652344,
+     85.23296356201172,
+     69.26554107666016
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 28,
+   "universal": 16,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/pdls.stl",
+   "sourceSha256": "5ccda67ee4c1aa7cf17edef8ca907068803042add5c0fdeba611de8b77f6f90c",
+   "sourceTriangles": 4726,
+   "simplifiedError": 0.00024
+  },
+  {
+   "id": "jaw-bone-maxilla",
+   "name": "Maxilla",
+   "group": "bone",
+   "source": "openfulljaw",
+   "buffer": "open-full-jaw",
+   "positions": 7458288,
+   "normals": 7662240,
+   "indices": 7866192,
+   "vertexCount": 16996,
+   "indexCount": 102000,
+   "bounds": [
+    [
+     7.815231800079346,
+     32.921390533447266,
+     54.256309509277344
+    ],
+    [
+     111.97850036621094,
+     104.62159729003906,
+     84.13046264648438
+    ]
+   ],
+   "openEdges": 0,
+   "jaw": "maxilla",
+   "sourceMember": "Patient_12/output/maxilla/surface_meshes/bone.stl",
+   "sourceSha256": "06a138cc7e9c7807544c0974a621e6fb52a529ce4fa8382ee5c27ac555930c18",
+   "sourceTriangles": 133460,
+   "simplifiedError": 0.00044
   }
  ]
 }

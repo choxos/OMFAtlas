@@ -69,9 +69,15 @@ The summary above in full.
 <a id="published-dental-models"></a>
 
 Everything else in the 3D dental views is procedural teaching geometry built by
-this project. These two are not. They are published datasets, both CC BY 4.0,
-loaded as their authors modeled them, and the Source models view names the
-authors, the licence and the limits on screen rather than only here.
+this project. These three are not. They are published datasets loaded as their
+authors made them, and the Source models view names the authors, the license
+and the limits on screen rather than only here.
+
+**They are not under the same terms.** The first two are CC BY 4.0. The third
+is CC BY-NC-SA 4.0: not for commercial use, and anything derived from it
+carries the same terms. The two licenses are kept in separate files, so the
+file boundary is the license boundary and a reader who never opens one never
+downloads it.
 
 **A synthetic lower jaw.** Diaz and colleagues (2024), Mendeley Data
 [10.17632/xjsx7nfhj8.1](https://doi.org/10.17632/xjsx7nfhj8.1). Cortical and
@@ -95,13 +101,34 @@ lateral canals, no vessels, no nerve, and no canal length can be measured from
 it. Its ligament thickness is given as 0.15 mm in the paper's methods and
 0.2 mm in its discussion; the paper states both, so this does too.
 
-Neither model is registered onto the head and neck assembly, because a position
-on this skull is not something either dataset carries, and they are two
-different jaws so they are never shown in one frame. `scripts/import-dental-models.mjs`
-converts them and records the digest of every source file, the tessellation
-settings, and the triangle count before and after simplification in
-`public/models/dental/manifest.json`. Full terms are in
-[public/models/dental/ATTRIBUTION.md](public/models/dental/ATTRIBUTION.md).
+**One patient's upper and lower jaw.** Gholamalizadeh and colleagues (2022),
+Open-Full-Jaw, Computer Methods and Programs in Biomedicine 224:107009
+([10.1016/j.cmpb.2022.107009](https://doi.org/10.1016/j.cmpb.2022.107009)),
+CC BY-NC-SA 4.0. Patient 12 of seventeen: the mandible, the maxilla, thirty
+one teeth as individual solids, and a periodontal ligament around every one of
+them, all in the frame the cone beam CT was segmented in. This is the only
+source here with an upper jaw, and the only one that is a person rather than a
+model, so it is what a reader now sees when they open an arch or zoom into any
+tooth but a lower first molar. Being one patient is what makes it real and
+also what makes it not a norm: the teeth are worn, tipped and spaced as that
+person's are, and the upper left first molar is absent because that person is
+missing it. The dataset carries bone, teeth and ligament only, with no pulp
+and therefore no canal, and no enamel and dentin division, no cementum, no
+gingiva and no nerve. Its ligament was generated as the gap between each root
+and its socket rather than by extruding a fixed thickness, so its width
+follows the socket, but it is a generated surface rather than segmented
+ligament tissue. The dataset also publishes each tooth's principal axes and
+names them, which is what lets a tooth here stand on its own long axis and its
+cutting planes be called buccolingual, mesiodistal and horizontal rather than
+after an axis of the scanner.
+
+No model is registered onto the head and neck assembly, because a position on
+this skull is not something any of these datasets carries, and no two of them
+are ever shown in one frame. `scripts/import-dental-models.mjs` converts them
+and records, for every structure, which file it is in, the digest of the
+source file, the tessellation settings, and the triangle count before and
+after simplification, in `public/models/dental/manifest.json`. Full terms are
+in [public/models/dental/ATTRIBUTION.md](public/models/dental/ATTRIBUTION.md).
 
 ## Schematic anatomy
 <a id="schematic-anatomy"></a>
@@ -124,7 +151,7 @@ Google Analytics runs under Consent Mode v2. The tag loads on every visit with e
 
 The source assembly contains 28 permanent teeth through the second molars and 615 other head-and-neck meshes. Some named structures consist of multiple source meshes. Anatomy is cropped below the C7 disk; crossing structures have open cut ends. See [model coverage](documentation/qa/MODEL-COVERAGE.md) and [facial muscle registration](documentation/qa/FACIAL-SOURCE.md) for source details. The cross-version facial overlay has a held-out bone surface RMS mismatch of 0.26 mm; clinical attachment accuracy has not been independently validated.
 
-Primary teeth, third molars, dental arches, and the internal dental tissues of the cutaway use procedural 3D teaching geometry, not segmented source anatomy. The Source models view is the exception: those two models are published datasets, and what they are is stated with them. The cutaway spreads representative roots into the section plane, exaggerates thin tissues, and does not implement all canal variants. It is not a treatment access outline. Typical patterns and eruption ranges do not predict an individual patient.
+Primary teeth, third molars, dental arches, and the internal dental tissues of the cutaway use procedural 3D teaching geometry, not segmented source anatomy. The Source models view is the exception: those models are published datasets, and what they are is stated with them. The arches and the per-tooth cutaway are published datasets too wherever one exists for the tooth in question. The cutaway spreads representative roots into the section plane, exaggerates thin tissues, and does not implement all canal variants. It is not a treatment access outline. Typical patterns and eruption ranges do not predict an individual patient.
 
 This release is not an exhaustive clinical dentistry reference. Parotid gland, facial vein, and external jugular trunk meshes remain absent. The venous layer contains the two internal jugular segments. Pediatric skull/soft-tissue anatomy, craniofacial growth, tooth buds, root resorption, microscopic periodontal fibers, patient-specific imaging, pathology, and dynamic occlusion are not modeled. Independent dental-specialist editorial review is needed before curricular or clinical adoption. Model coverage is visible in the app.
 
@@ -141,7 +168,7 @@ node scripts/extract-models.mjs /absolute/path/to/human-atlas
 npm test
 ```
 
-Application code uses the repository MIT license. BodyParts3D 4.0 geometry is CC BY 4.0; the separate adapted 3.0 facial meshes retain CC BY-SA 2.1 Japan; the two published dental datasets are CC BY 4.0 and carry [their own attribution file](public/models/dental/ATTRIBUTION.md). Preserve [the full attribution](public/ATTRIBUTION.md) and [facial asset attribution](public/models/facial/ATTRIBUTION.md) when redistributing assets.
+Application code uses the repository MIT license. BodyParts3D 4.0 geometry is CC BY 4.0; the separate adapted 3.0 facial meshes retain CC BY-SA 2.1 Japan; of the three published dental datasets two are CC BY 4.0 and Open-Full-Jaw is CC BY-NC-SA 4.0, which is NonCommercial and ShareAlike, and all three carry [their own attribution file](public/models/dental/ATTRIBUTION.md). Preserve [the full attribution](public/ATTRIBUTION.md) and [facial asset attribution](public/models/facial/ATTRIBUTION.md) when redistributing assets.
 
 Run `node scripts/validate-explorer.mjs /path/to/browse http://localhost:3017` and `node scripts/validate-camera.mjs /path/to/browse http://localhost:3017` against a running production preview for browser interaction checks. [Reference UI study](documentation/qa/REFERENCE-UX.md) distinguishes upstream behavior from requested extensions.
 

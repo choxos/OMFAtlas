@@ -4,9 +4,13 @@ import { MASTICATORY, groups, toothNumber } from "./content.js";
 import { createExplosionLayout, tissueSeparation } from "./explosion-layout.js";
 import { createSchematicParts, deriveLandmarks } from "./schematic-anatomy.js";
 import {
+  buffersForTooth,
+  buffersForView,
   createModelGroup,
   createPublishedDentitionModel,
   createPublishedToothModel,
+  groupsInView,
+  publishedTeeth,
 } from "./dental-models.js";
 import {
   createToothModel,
@@ -183,28 +187,66 @@ export async function createViewer(host, atlas, handlers) {
     return { texture, ratio: canvas.width / canvas.height };
   };
 
-  // Every tooth one of the two published datasets can show.
-  const PUBLISHED_TEETH = new Set([
-    31, 32, 33, 34, 35, 36, 37, 41, 42, 43, 44, 45, 46, 47,
-  ]);
+  // The published sets are in separate files, so a reader who only opens one
+  // of them only downloads one of them. The manifest says which file every
+  // part is in; nothing here fetches a file a view does not need.
   let dentalModels = null;
-  let dentalModelsPending = null;
-  async function loadDentalModels() {
-    if (dentalModels) return dentalModels;
-    if (!dentalModelsPending)
-      dentalModelsPending = (async () => {
-        const [manifest, buffer] = await Promise.all([
-          fetch("/models/dental/manifest.json").then((r) => {
-            if (!r.ok) throw new Error(`dental manifest ${r.status}`);
-            return r.json();
-          }),
-          loadBuffer("/models/dental/dental.bin"),
-        ]);
-        dentalModels = { manifest, buffer };
-        return dentalModels;
-      })();
-    return dentalModelsPending;
+  let manifestPending = null;
+  const bufferPending = new Map();
+
+  async function loadManifest() {
+    if (dentalModels) return dentalModels.manifest;
+    if (!manifestPending)
+      manifestPending = fetch("/models/dental/manifest.json").then((r) => {
+        if (!r.ok) throw new Error(`dental manifest ${r.status}`);
+        return r.json();
+      });
+    const manifest = await manifestPending;
+    if (!dentalModels) dentalModels = { manifest, buffers: {} };
+    return manifest;
   }
+
+  /** The manifest, plus whichever buffers the caller asks for. `pick` is given
+   *  the manifest, because which file a view needs is written in the manifest
+   *  and the caller does not have it until this has fetched it. */
+  async function loadDentalModels(pick) {
+    const manifest = await loadManifest();
+    const wanted = pick
+      ? pick(manifest)
+      : Object.keys(manifest.buffers || { dental: 1 });
+    await Promise.all(
+      wanted.map((name) => {
+        if (dentalModels.buffers[name]) return null;
+        if (!bufferPending.has(name)) {
+          const file = manifest.buffers?.[name]?.file;
+          if (!file) throw new Error(`no dental buffer named ${name}`);
+          bufferPending.set(
+            name,
+            loadBuffer(`/models/dental/${file}`).then((buffer) => {
+              dentalModels.buffers[name] = buffer;
+              return buffer;
+            }),
+          );
+        }
+        return bufferPending.get(name);
+      }),
+    );
+    return dentalModels;
+  }
+
+  /** Every tooth a published model exists for, from the manifest rather than
+   *  a list here: a hardcoded set silently leaves a new arch schematic. */
+  const publishedFor = (fdi) =>
+    dentalModels ? publishedTeeth(dentalModels.manifest).has(fdi) : false;
+
+  // A load that failed, or a set that turns out not to be in the manifest at
+  // all, must stop the retry rather than ask for the same file forever.
+  let dentalLoadFailed = false;
+  const haveBuffers = (names) =>
+    !!dentalModels && names.every((name) => dentalModels.buffers[name]);
+  const publishedArchExists = () =>
+    !dentalModels ||
+    dentalModels.manifest.parts.some((part) => part.source === "openfulljaw");
 
   // One plane, reused by every published cutaway.
   // A longitudinal cut across the tooth. World X is mesiodistal once the
@@ -756,7 +798,10 @@ export async function createViewer(host, atlas, handlers) {
   });
   const api = {
     landmarks: () => landmarks.map((l) => ({ ...l })),
-    prefetchModels: () => loadDentalModels().catch(() => {}),
+    // Entering the dental tab shows an arch, so that file starts arriving
+    // before a reader taps anything.
+    prefetchModels: () =>
+      loadDentalModels((m) => buffersForView(m, "patient")).catch(() => {}),
     modelManifest: () => dentalModels?.manifest || null,
     publishedArch: () => dentalModel?.userData.publishedArch || null,
     faceCut() {
@@ -784,16 +829,8 @@ export async function createViewer(host, atlas, handlers) {
             tissues: dentalModel.userData.tissues,
           }
         : null,
-    modelGroups: (viewId) => {
-      const view = dentalModels?.manifest?.parts;
-      if (!view) return [];
-      const source = viewId === "molar" ? "fang" : "diaz";
-      return [
-        ...new Set(
-          view.filter((p) => p.source === source).map((p) => p.group),
-        ),
-      ];
-    },
+    modelGroups: (viewId) =>
+      dentalModels ? groupsInView(dentalModels.manifest, viewId) : [],
     showLandmark(id) {
       showLandmark(id);
       render();
@@ -814,24 +851,28 @@ export async function createViewer(host, atlas, handlers) {
         if (dentalModel) disposeModel(dentalModel);
         dentalModel = null;
         if (state.mode === "models") {
-          // The buffer may not be here yet; the view rebuilds when it lands.
-          if (dentalModels)
+          // The file may not be here yet; the view rebuilds when it lands.
+          const ready =
+            dentalModels &&
+            haveBuffers(buffersForView(dentalModels.manifest, state.modelView));
+          if (ready)
             dentalModel = createModelGroup(
               dentalModels.manifest,
-              dentalModels.buffer,
+              dentalModels.buffers,
               state.modelView,
             );
-          else
-            loadDentalModels()
+          else if (!dentalLoadFailed)
+            loadDentalModels((m) => buffersForView(m, state.modelView))
               .then(() => {
                 dentalKey = "";
                 if (currentState) api.update(currentState);
                 onModelsReady();
                 api.view("oblique", true);
               })
-              .catch((error) =>
-                onPartsChanged({ failed: 1, message: error.message }),
-              );
+              .catch((error) => {
+                dentalLoadFailed = true;
+                onPartsChanged({ failed: 1, message: error.message });
+              });
         } else if (key) {
           const published =
             state.age !== "adult"
@@ -839,20 +880,25 @@ export async function createViewer(host, atlas, handlers) {
               : state.toothDetail
                 ? createPublishedToothModel(
                     dentalModels?.manifest,
-                    dentalModels?.buffer,
+                    dentalModels?.buffers,
                     state.fdi,
                   )
                 : state.archSource === "drawn"
                   ? null
                   : createPublishedDentitionModel(
                       dentalModels?.manifest,
-                      dentalModels?.buffer,
+                      dentalModels?.buffers,
                     );
+          // A published model may exist and simply not be downloaded yet, so
+          // this asks the manifest rather than a list written in this file.
           const awaitingPublished =
-            !dentalModels &&
+            !published &&
+            !dentalLoadFailed &&
             state.age === "adult" &&
             state.archSource !== "drawn" &&
-            (state.toothDetail ? PUBLISHED_TEETH.has(state.fdi) : true);
+            (state.toothDetail
+              ? !dentalModels || publishedFor(state.fdi)
+              : publishedArchExists());
           if (published) dentalModel = published;
           else {
             // Never draw a schematic stand in for a tooth that has a published
@@ -867,7 +913,11 @@ export async function createViewer(host, atlas, handlers) {
             // The published buffer may simply not be here yet. Fetch it and
             // rebuild rather than leaving the drawn tooth in place.
             if (awaitingPublished)
-              loadDentalModels()
+              loadDentalModels((m) =>
+                state.toothDetail
+                  ? buffersForTooth(m, state.fdi)
+                  : buffersForView(m, "patient"),
+              )
                 .then(() => {
                   dentalKey = "";
                   if (currentState) api.update(currentState);
@@ -879,7 +929,7 @@ export async function createViewer(host, atlas, handlers) {
                   // be the published one, so it is reported and the drawn
                   // geometry is built deliberately rather than by accident.
                   resolutionStatus(`Published model unavailable: ${error.message}`);
-                  dentalModels = { manifest: null, buffer: null };
+                  dentalLoadFailed = true;
                   dentalKey = "";
                   if (currentState) api.update(currentState);
                 });

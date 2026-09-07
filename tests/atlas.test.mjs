@@ -174,17 +174,28 @@ test("original-detail manifest upgrades real source meshes with valid buffers", 
   }
 });
 
-test("published dental models carry their source, licence and limits", () => {
+test("published dental models carry their source, license and limits", () => {
   const manifest = JSON.parse(
     readFileSync(new URL("../public/models/dental/manifest.json", import.meta.url)),
   );
-  const bytes = statSync(
-    new URL("../public/models/dental/dental.bin", import.meta.url),
-  ).size;
-  assert.equal(bytes, manifest.bufferBytes, "buffer matches the manifest");
+  for (const [name, entry] of Object.entries(manifest.buffers)) {
+    const bytes = statSync(
+      new URL(`../public/models/dental/${entry.file}`, import.meta.url),
+    ).size;
+    assert.equal(bytes, entry.bytes, `${name} matches the manifest`);
+  }
 
   for (const source of Object.values(manifest.sources)) {
-    assert.match(source.license, /^CC BY 4\.0$/);
+    assert.match(source.license, /^CC BY(-NC-SA)? 4\.0$/);
+    // One of these sets forbids commercial use and binds derivatives to the
+    // same terms. A reader cannot honour a term they are not told about, so
+    // the set that carries it has to say so where its limits are read.
+    if (source.license !== "CC BY 4.0")
+      assert.match(
+        source.limits,
+        new RegExp(source.license.replace(/[.]/g, "\\.")),
+        `${source.title} must name its license in its limits`,
+      );
     assert.ok(source.doi.length > 8, "every source names a DOI");
     // The limits are the difference between a model of a jaw and a jaw, so a
     // source that does not state them cannot ship.
@@ -206,7 +217,10 @@ test("published dental models carry their source, licence and limits", () => {
       [part.indices, part.indexCount * 4],
     ]) {
       assert.equal(at % 4, 0, `${part.id} offset is unaligned`);
-      assert.ok(at + length <= manifest.bufferBytes, `${part.id} runs past the buffer`);
+      assert.ok(
+        at + length <= manifest.buffers[part.buffer].bytes,
+        `${part.id} runs past ${part.buffer}`,
+      );
     }
     // A solid that is not closed cannot be faded without showing its inside.
     assert.equal(part.openEdges, 0, `${part.id} has ${part.openEdges} open edges`);

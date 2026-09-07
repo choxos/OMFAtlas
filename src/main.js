@@ -874,7 +874,7 @@ function renderModelControls() {
       })
       .join("")}</div>
     <p class="fine-print">${escape(view.limits)}</p>
-    <p class="fine-print model-credit">${escape(view.caption)} · CC BY 4.0. Redistributed as modeled, not registered onto this skull. <button id="model-sources">Sources and method</button></p>`;
+    <p class="fine-print model-credit">${escape(view.caption)} · ${escape(view.license)}. Redistributed as modeled, not registered onto this skull. <button id="model-sources">Sources and method</button></p>`;
   host.querySelectorAll("[data-model-view]").forEach((button) => {
     button.onclick = () => {
       state.modelView = button.dataset.modelView;
@@ -922,6 +922,19 @@ function renderToothTissues() {
     return;
   }
   document.querySelector("#dental-3d-controls")?.classList.add("published");
+  // Two of the three sets do not record which of their axes is buccolingual
+  // and which is mesiodistal, so their planes keep the names of the model's
+  // own frame; the third publishes each tooth's axes and its planes are named
+  // for the section they leave behind.
+  const cuts = published.cuts;
+  if (cuts) {
+    for (const button of document.querySelectorAll("[data-cut-axis]")) {
+      const span = button.querySelector("span");
+      if (span) span.textContent = cuts[button.dataset.cutAxis];
+    }
+    const note = document.querySelector(".cut-controls .fine-print");
+    if (note) note.textContent = cuts.note;
+  }
   host.innerHTML = published.tissues
     .map(
       (tissue) =>
@@ -1007,7 +1020,7 @@ function renderDental(panel) {
           `<button data-dental-tab="${id}" class="${state.dentalTab === id ? "active" : ""}">${title}</button>`,
       )
       .join("")}</div>
-    <div class="detail-body"><button id="tooth-isolate" class="primary full-width">Open 3D tooth cutaway</button><button id="show-arches" class="full-width">Show ${state.age === "adult" ? "the published lower jaw" : `the complete ${state.age === "child" ? "20-tooth" : "mixed"} arches`}</button>${state.age === "adult" ? '<button id="show-drawn-arches" class="full-width">Show the drawn 32-tooth arches</button>' : ""}<label class="fine-print"><input id="auto-detail" type="checkbox" ${state.autoDetail ? "checked" : ""}> Reveal internal anatomy when zooming into a tooth</label><p class="fine-print">3D tissues and root canals are schematic teaching models, not reconstructed from the external surface. ${tooth.primary ? "Primary proportions and root divergence differ from permanent teeth." : "Representative root and canal forms vary between patients."}</p>
+    <div class="detail-body"><button id="tooth-isolate" class="primary full-width">Open 3D tooth cutaway</button><button id="show-arches" class="full-width">Show ${state.age === "adult" ? "one patient's own jaws" : `the complete ${state.age === "child" ? "20-tooth" : "mixed"} arches`}</button>${state.age === "adult" ? '<button id="show-drawn-arches" class="full-width">Show the drawn 32-tooth arches</button>' : ""}<label class="fine-print"><input id="auto-detail" type="checkbox" ${state.autoDetail ? "checked" : ""}> Reveal internal anatomy when zooming into a tooth</label><p class="fine-print">3D tissues and root canals are schematic teaching models, not reconstructed from the external surface. ${tooth.primary ? "Primary proportions and root divergence differ from permanent teeth." : "Representative root and canal forms vary between patients."}</p>
     ${dentalContent(tooth)}
     <details class="references"><summary>References for this tooth</summary>${dentalSources.map(sourceLink).join("")}</details></div>`;
   if (!state.selected) panel.querySelectorAll("[data-tooth]").forEach((button) => {
@@ -1335,14 +1348,15 @@ function modelSources() {
   const manifest = viewer?.modelManifest?.();
   const sources = manifest?.sources;
   document.querySelector("#modal-content").innerHTML = `<h2>Published dental models</h2>
-  <p>Two datasets are redistributed here as their authors modeled them. Neither is drawn by this project, neither is segmented from a patient by this project, and neither is registered onto the head assembly, because a position on this skull is not something either dataset carries. Both are CC BY 4.0.</p>
+  <p>Three datasets are redistributed here as their authors made them. None is drawn by this project, none is segmented by this project, and none is registered onto the head assembly, because a position on this skull is not something any of them carries.</p>
+  <p><strong>They are not under the same terms.</strong> Two are CC BY 4.0. Open-Full-Jaw is CC BY-NC-SA 4.0: not for commercial use, and anything derived from it carries the same terms. It is also the one that is a real person rather than a model, shown here as teaching material and not as diagnostic imaging.</p>
   ${
     sources
       ? Object.entries(sources)
           .map(
             ([key, source]) =>
               `<h3>${escape(source.title)}</h3>
-      <p>${escape(source.authors)}, ${source.year}. <a href="https://doi.org/${source.doi}" target="_blank" rel="noreferrer">doi:${source.doi}</a>${source.article ? ` · study: <a href="https://doi.org/${source.article}" target="_blank" rel="noreferrer">doi:${source.article}</a>` : ""} · <a href="${source.licenseUrl}" target="_blank" rel="noreferrer">CC BY 4.0</a></p>
+      <p>${escape(source.authors)}, ${source.year}. <a href="https://doi.org/${source.doi}" target="_blank" rel="noreferrer">doi:${source.doi}</a>${source.article ? ` · study: <a href="https://doi.org/${source.article}" target="_blank" rel="noreferrer">doi:${source.article}</a>` : ""} · <a href="${source.licenseUrl}" target="_blank" rel="noreferrer">${escape(source.license)}</a>${source.patient ? ` · ${escape(source.patient)}` : ""}</p>
       <p><strong>What was done to it here.</strong> ${escape(source.processing)}${source.units ? ` ${escape(source.units)}` : ""}</p>
       ${source.derivation ? `<p><strong>Where the shape came from.</strong> ${escape(source.derivation)}</p>` : ""}
       <p><strong>The ligament.</strong> ${escape(source.pdlModel)}</p>
@@ -1351,7 +1365,7 @@ function modelSources() {
           .join("")
       : "<p>The models have not been loaded yet.</p>"
   }
-  <h3>Why they are separate</h3><p>These are two different jaws, modeled by different groups for different studies, and they are never shown in one frame. The rest of the 3D dental views in this atlas are procedural teaching geometry built by this project and are labeled as such wherever they appear.</p>`;
+  <h3>Why they are separate</h3><p>These are different jaws, made by different groups for different studies, and no two of them are ever shown in one frame. Taking a pulp cavity out of one and a crown out of another would be inventing anatomy rather than showing it. The rest of the 3D dental views in this atlas are procedural teaching geometry built by this project and are labeled as such wherever they appear.</p>`;
   document.querySelector("#modal").showModal();
 }
 
