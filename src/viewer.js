@@ -11,7 +11,7 @@ import {
   createPublishedDentitionModel,
   createPublishedToothModel,
   groupsInView,
-  publishedTeeth,
+  publishedToothPlan,
 } from "./dental-models.js";
 import {
   createToothModel,
@@ -198,10 +198,17 @@ export async function createViewer(host, atlas, handlers) {
   async function loadManifest() {
     if (dentalModels) return dentalModels.manifest;
     if (!manifestPending)
-      manifestPending = fetch("/models/dental/manifest.json").then((r) => {
-        if (!r.ok) throw new Error(`dental manifest ${r.status}`);
-        return r.json();
-      });
+      // A rejected promise left in the cache is a failure nothing can retry.
+      manifestPending = fetch("/models/dental/manifest.json")
+        .then((r) => {
+          if (!r.ok) throw new Error(`dental manifest ${r.status}`);
+          return r.json();
+        })
+        .catch((error) => {
+          manifestPending = null;
+          manifestFailed = true;
+          throw error;
+        });
     const manifest = await manifestPending;
     if (!dentalModels) dentalModels = { manifest, buffers: {} };
     return manifest;
@@ -221,12 +228,27 @@ export async function createViewer(host, atlas, handlers) {
         if (!bufferPending.has(name)) {
           const file = manifest.buffers?.[name]?.file;
           if (!file) throw new Error(`no dental buffer named ${name}`);
+          const expected = manifest.buffers[name].bytes;
           bufferPending.set(
             name,
-            loadBuffer(`/models/dental/${file}`).then((buffer) => {
-              dentalModels.buffers[name] = buffer;
-              return buffer;
-            }),
+            loadBuffer(`/models/dental/${file}`)
+              .then((buffer) => {
+                // A short read is a broken file, not a smaller model. Cached,
+                // it makes every geometry built from it throw, including the
+                // one the failure handler builds while reporting the failure,
+                // and that second throw escapes as an unhandled rejection.
+                if (buffer.byteLength !== expected)
+                  throw new Error(
+                    `${file} is ${buffer.byteLength} bytes, expected ${expected}`,
+                  );
+                dentalModels.buffers[name] = buffer;
+                return buffer;
+              })
+              .catch((error) => {
+                bufferPending.delete(name);
+                failedBuffers.add(name);
+                throw error;
+              }),
           );
         }
         return bufferPending.get(name);
@@ -235,16 +257,28 @@ export async function createViewer(host, atlas, handlers) {
     return dentalModels;
   }
 
-  /** Every tooth a published model exists for, from the manifest rather than
-   *  a list here: a hardcoded set silently leaves a new arch schematic. */
+  /** Is there a complete published model for this tooth?
+   *
+   *  Asking the manifest whether it lists the tooth is not enough. A plan
+   *  needs the tooth and its companion tissue, and the ToothFairy importer
+   *  will publish a tooth whose pulp was too thin for the scan to hold. When
+   *  that happens this used to decide a published model was on the way, ask
+   *  for the zero files such a plan needs, succeed at loading nothing, and
+   *  start over: an unbounded rebuild loop with no download to show for it. */
   const publishedFor = (fdi, source) =>
     dentalModels
-      ? publishedTeeth(dentalModels.manifest, source).has(fdi)
+      ? !!publishedToothPlan(dentalModels.manifest, fdi, source)
       : false;
 
-  // A load that failed, or a set that turns out not to be in the manifest at
-  // all, must stop the retry rather than ask for the same file forever.
-  let dentalLoadFailed = false;
+  // A file that failed is remembered as that file. One unreachable dataset
+  // used to switch off automatic loading for all of them, so a reader who
+  // could not get the scan could not fall back to the model either.
+  const failedBuffers = new Set();
+  let manifestFailed = false;
+  const canLoad = (names) =>
+    !manifestFailed &&
+    names.length > 0 &&
+    !names.some((name) => failedBuffers.has(name));
   const haveBuffers = (names) =>
     !!dentalModels && names.every((name) => dentalModels.buffers[name]);
   const publishedArchExists = (source) =>
@@ -858,16 +892,16 @@ export async function createViewer(host, atlas, handlers) {
         dentalModel = null;
         if (state.mode === "models") {
           // The file may not be here yet; the view rebuilds when it lands.
-          const ready =
-            dentalModels &&
-            haveBuffers(buffersForView(dentalModels.manifest, state.modelView));
-          if (ready)
+          const need = dentalModels
+            ? buffersForView(dentalModels.manifest, state.modelView)
+            : null;
+          if (need && haveBuffers(need))
             dentalModel = createModelGroup(
               dentalModels.manifest,
               dentalModels.buffers,
               state.modelView,
             );
-          else if (!dentalLoadFailed)
+          else if (!need || canLoad(need))
             loadDentalModels((m) => buffersForView(m, state.modelView))
               .then(() => {
                 dentalKey = "";
@@ -875,10 +909,9 @@ export async function createViewer(host, atlas, handlers) {
                 onModelsReady();
                 api.view("oblique", true);
               })
-              .catch((error) => {
-                dentalLoadFailed = true;
-                onPartsChanged({ failed: 1, message: error.message });
-              });
+              .catch((error) =>
+                onPartsChanged({ failed: 1, message: error.message }),
+              );
         } else if (key) {
           const published =
             state.age !== "adult"
@@ -899,14 +932,27 @@ export async function createViewer(host, atlas, handlers) {
                     );
           // A published model may exist and simply not be downloaded yet, so
           // this asks the manifest rather than a list written in this file.
+          // It also asks which files that model actually needs: a plan that
+          // needs none is a plan that cannot be completed by loading, and
+          // retrying it forever is how that used to present itself.
+          const need = dentalModels
+            ? state.toothDetail
+              ? buffersForTooth(
+                  dentalModels.manifest,
+                  state.fdi,
+                  state.toothSource,
+                )
+              : buffersForArch(dentalModels.manifest, state.toothSource)
+            : null;
           const awaitingPublished =
             !published &&
-            !dentalLoadFailed &&
             state.age === "adult" &&
             state.archSource !== "drawn" &&
-            (state.toothDetail
-              ? !dentalModels || publishedFor(state.fdi, state.toothSource)
-              : publishedArchExists(state.toothSource));
+            (!dentalModels ||
+              (canLoad(need) &&
+                (state.toothDetail
+                  ? publishedFor(state.fdi, state.toothSource)
+                  : publishedArchExists(state.toothSource))));
           if (published) dentalModel = published;
           else {
             // Never draw a schematic stand in for a tooth that has a published
@@ -937,7 +983,6 @@ export async function createViewer(host, atlas, handlers) {
                   // be the published one, so it is reported and the drawn
                   // geometry is built deliberately rather than by accident.
                   resolutionStatus(`Published model unavailable: ${error.message}`);
-                  dentalLoadFailed = true;
                   dentalKey = "";
                   if (currentState) api.update(currentState);
                 });

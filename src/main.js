@@ -140,6 +140,28 @@ try {
 } catch {}
 let atlas, viewer;
 
+// What the drawn tooth is built out of, and what the panel says about it. A
+// published tooth replaces both. When there is no published model for the
+// tooth a reader asked for, the panel has to come back to these rather than
+// keep the last patient's name, notes and license on screen over geometry
+// this project drew.
+const SCHEMATIC_TISSUES = [
+  ["enamel", "Enamel"],
+  ["dentin", "Dentin"],
+  ["pulp", "Pulp & canals"],
+  ["cementum", "Cementum"],
+  ["pdl", "Ligament"],
+  ["bone", "Bone"],
+  ["gingiva", "Gingiva"],
+];
+const SCHEMATIC_STATUS =
+  "Rotate to inspect the section. Teaching geometry built by this project, not a scan and not a patient.";
+const schematicTissueButtons = () =>
+  SCHEMATIC_TISSUES.map(
+    ([id, name]) =>
+      `<button data-tissue3d="${id}" aria-pressed="${!state.hiddenTissues.has(id)}">${name}</button>`,
+  ).join("");
+
 document.querySelector("#app").innerHTML = `
   <div class="studio">
   <div id="viewer" class="scene"></div><div class="vignette" aria-hidden="true"></div>
@@ -200,35 +222,20 @@ document.querySelector("#app").innerHTML = `
         `<button data-tool="${id}" class="${id === "tissues" ? "active" : ""}">${name}</button>`,
     )
     .join("")}</div><div class="tool-body"><div class="cut-controls"><label class="cut-enable"><input id="cutaway" type="checkbox" checked> Cutaway</label><div class="cut-axes">${[
-    ["a", "Longitudinal A"],
-    ["b", "Longitudinal B"],
-    ["crossing", "Crossing"],
+    ["a", "Longitudinal A", "Long. A"],
+    ["b", "Longitudinal B", "Long. B"],
+    ["crossing", "Crossing", "Cross"],
   ]
     .map(
-      ([id, name]) =>
-        `<button data-cut-axis="${id}" class="${id === "a" ? "active" : ""}"><span>${name}</span></button>`,
+      ([id, name, short]) =>
+        `<button data-cut-axis="${id}" data-short="${short}" class="${id === "a" ? "active" : ""}"><span>${name}</span></button>`,
     )
     .join("")}</div>
   <label class="section-slider"><span>Cutting position <output id="section-depth-out">50%</output></span><input id="section-depth" type="range" min="0" max="100" value="50"></label>
   <label class="section-slider"><span>Tilt <output id="cut-tilt-out">0°</output></span><input id="cut-tilt" type="range" min="-45" max="45" value="0"></label>
   <label class="section-slider"><span>Rotate <output id="cut-rotate-out">0°</output></span><input id="cut-rotate" type="range" min="-90" max="90" value="0"></label>
   <div class="cut-actions"><button id="cut-flip"><span>Reverse the side that remains</span></button><button id="cut-face"><span>Face the cut</span></button><button id="cut-whole"><span>View the whole</span></button></div>
-  <p class="fine-print">Longitudinal A and B are the two vertical planes of the model's own frame and Crossing is the horizontal one. None of them is a fixed buccolingual or mesiodistal direction: neither dataset records which of its axes is which.</p></div><div class="tissue-3d-buttons">${[
-    ["enamel", "Enamel"],
-    ["dentin", "Dentin"],
-    ["pulp", "Pulp & canals"],
-    ["cementum", "Cementum"],
-    ["pdl", "Ligament"],
-    ["bone", "Bone"],
-    ["gingiva", "Gingiva"],
-  ]
-    .map(
-      ([id, name]) =>
-        `<button data-tissue3d="${id}" aria-pressed="true">${name}</button>`,
-    )
-    .join(
-      "",
-    )}</div><span id="tissue-3d-status" role="status">Rotate to inspect the section. Teaching geometry, not a scan.</span></div></section>
+  <p class="fine-print">Longitudinal A and B are the two vertical planes of the model's own frame and Crossing is the horizontal one. None of them is a fixed buccolingual or mesiodistal direction: neither dataset records which of its axes is which.</p></div><div class="tissue-3d-buttons">${schematicTissueButtons()}</div><span id="tissue-3d-status" role="status">${SCHEMATIC_STATUS}</span></div></section>
 
   <svg id="orientation" viewBox="-50 -50 100 100" aria-hidden="true"><g id="orientation-axes"></g></svg>
   <section id="model-controls" class="panel" hidden aria-label="Published dental models"></section>
@@ -381,7 +388,7 @@ function updateScene() {
     ? "3D tooth & periodontium"
     : state.arches || state.age !== "adult"
       ? publishedArch
-        ? "14 published lower teeth"
+        ? `${publishedArch.toothCount} published teeth`
         : `${getDentitionFDIs(state.age).length} schematic teeth`
       : `${state.isolated ? 1 : atlas.parts.filter((p) => state.layers.has(p.group)).length} structures visible`;
   document.querySelector("#dental-3d-controls").hidden =
@@ -399,7 +406,7 @@ function updateScene() {
     : state.age === "adult"
       ? state.arches
         ? publishedArch
-          ? publishedArch.caption
+          ? `${publishedArch.caption} · ${publishedArch.license}`
           : "Permanent dentition · 32 teeth including third molars · Schematic arches"
         : "Adult male reference · Select a tooth, then zoom to reveal internal anatomy"
       : state.age === "child"
@@ -929,6 +936,19 @@ function renderModelControls() {
   host.querySelector("#model-sources").onclick = () => modelSources();
 }
 
+function bindTissueButtons(host) {
+  host.querySelectorAll("[data-tissue3d]").forEach((button) => {
+    button.onclick = () => {
+      const id = button.dataset.tissue3d;
+      state.hiddenTissues.has(id)
+        ? state.hiddenTissues.delete(id)
+        : state.hiddenTissues.add(id);
+      button.setAttribute("aria-pressed", String(!state.hiddenTissues.has(id)));
+      updateScene();
+    };
+  });
+}
+
 /** Name the three cutting planes for the model on screen. Two of the three
  *  sets do not record which of their axes is buccolingual and which is
  *  mesiodistal, so their planes keep the names of the model's own frame; the
@@ -937,8 +957,14 @@ function renderModelControls() {
 function nameCuts(cuts) {
   if (!cuts) return;
   for (const button of document.querySelectorAll("[data-cut-axis]")) {
+    const axis = button.dataset.cutAxis;
     const span = button.querySelector("span");
-    if (span) span.textContent = cuts[button.dataset.cutAxis];
+    if (span) span.textContent = cuts[axis];
+    // A phone has no room for "Buccolingual" in a 66px segment, so it shows
+    // an abbreviation. That abbreviation has to come from the same model the
+    // full name does: a fixed one in the stylesheet told a reader the plane
+    // was "Long. A" on exactly the models that do name it buccolingual.
+    button.dataset.short = cuts.short?.[axis] || cuts[axis];
   }
   const note = document.querySelector(".cut-controls .fine-print");
   if (note) note.textContent = cuts.note;
@@ -950,10 +976,17 @@ function renderToothTissues() {
   const status = document.querySelector("#tissue-3d-status");
   if (!host) return;
   if (!published) {
+    // Coming back to a drawn tooth is a change of what the reader is looking
+    // at, so everything the published tooth put on screen has to go: its
+    // tissues, its plane names, and above all its provenance. Returning here
+    // without clearing them left one patient's name, notes and license
+    // sitting over geometry this project drew, which is the one claim this
+    // atlas must never make.
     document.querySelector("#dental-3d-controls")?.classList.remove("published");
-    // A drawn tooth is built by this project along its own axes, so it cannot
-    // keep the anatomical plane names the last published tooth put there.
     nameCuts(UNNAMED_CUTS);
+    host.innerHTML = schematicTissueButtons();
+    bindTissueButtons(host);
+    if (status) status.textContent = SCHEMATIC_STATUS;
     return;
   }
   document.querySelector("#dental-3d-controls")?.classList.add("published");
@@ -964,16 +997,7 @@ function renderToothTissues() {
         `<button data-tissue3d="${tissue.id}" aria-pressed="${!state.hiddenTissues.has(tissue.id)}">${tissue.name}</button>`,
     )
     .join("");
-  host.querySelectorAll("[data-tissue3d]").forEach((button) => {
-    button.onclick = () => {
-      const id = button.dataset.tissue3d;
-      state.hiddenTissues.has(id)
-        ? state.hiddenTissues.delete(id)
-        : state.hiddenTissues.add(id);
-      button.setAttribute("aria-pressed", String(!state.hiddenTissues.has(id)));
-      updateScene();
-    };
-  });
+  bindTissueButtons(host);
   if (status)
     status.innerHTML = `${toothSourceChoice()}<strong>${escape(published.note)}</strong><span>${escape(published.limits)}</span><button id="tooth-model-sources">Sources and method</button>`;
   status.querySelector("#tooth-model-sources").onclick = () => modelSources();
@@ -1444,7 +1468,10 @@ function coverage() {
   <h3>Zoom-to-inspect tooth anatomy</h3><p>Zooming into a selected tooth opens rotatable 3D teaching geometry with enamel, dentin, pulp and root canals, cementum, periodontal ligament, alveolar bone and gingiva. Internal structures are not derived from the source surface. Roots are spread in the section plane for inspection; proportions are illustrative and tissue thickness is exaggerated. Canal variations are explained separately, not all built into one representative tooth.</p>
   <h3>Resolution</h3><p>Assembly geometry is optimized for the browser. Where available, original archive meshes load on selection to provide increased surface detail. Original archive resolution is still a reduced educational dataset, not patient imaging.</p>
   <h3>Clinical sources</h3>${[...Object.values(sources), ...dentalSources, ...Object.values(endoSources), ...perioSources, ["AAPD: developing dentition", "https://www.aapd.org/globalassets/media/policies_guidelines/bp_developdentition.pdf"], ["Primary tooth anatomy", "https://www.ncbi.nlm.nih.gov/books/NBK573074/"]].map(sourceLink).join("")}
-  <h3>Attribution</h3><p>BodyParts3D © The Database Center for Life Science, CC BY 4.0. Geometry adapted from <a href="https://github.com/ashemag/human-atlas" target="_blank" rel="noreferrer">Human Atlas by ashemag</a> and the official OBJ archive. <a href="/ATTRIBUTION.md" target="_blank">Full attribution</a>.</p><p>Educational use only. Independent specialist editorial review remains necessary.</p>`;
+  <h3>Attribution</h3><p>BodyParts3D © The Database Center for Life Science, CC BY 4.0. Geometry adapted from <a href="https://github.com/ashemag/human-atlas" target="_blank" rel="noreferrer">Human Atlas by ashemag</a> and the official OBJ archive. <a href="/ATTRIBUTION.md" target="_blank">Full attribution</a>.</p>
+  <p><strong>The published dental models are separate and are not all CC BY 4.0.</strong> Two of the four bind anything derived from them to their own terms, and one of those also forbids commercial use. <button id="coverage-model-sources">Their sources, methods and licenses</button> · <a href="/models/dental/ATTRIBUTION.md" target="_blank">Dental attribution file</a>.</p>
+  <p>Educational use only. Independent specialist editorial review remains necessary.</p>`;
+  document.querySelector("#coverage-model-sources").onclick = () => modelSources();
   document.querySelector("#modal").showModal();
 }
 document.querySelectorAll("[data-tab]").forEach(

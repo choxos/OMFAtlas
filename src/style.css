@@ -7604,21 +7604,16 @@ body.source-models .studio .caption-stack {
   }
 
   /* "Longitudinal A" wrapped to two lines in a 66px segment at 320px and the
-     second line was clipped by the segment's own height. */
+     second line was clipped by the segment's own height. The abbreviation is
+     whatever the model on screen calls that plane, written onto the button by
+     nameCuts: hardcoding it here said "Long. A" on the published teeth that
+     do know the plane is buccolingual. */
   body.tooth-inspection .studio .cut-axes button span {
     display: none;
   }
 
-  body.tooth-inspection .studio [data-cut-axis="a"]::after {
-    content: "Long. A";
-  }
-
-  body.tooth-inspection .studio [data-cut-axis="b"]::after {
-    content: "Long. B";
-  }
-
-  body.tooth-inspection .studio [data-cut-axis="crossing"]::after {
-    content: "Cross";
+  body.tooth-inspection .studio [data-cut-axis]::after {
+    content: attr(data-short);
   }
 
   body.tooth-inspection .studio .cut-controls .section-slider,

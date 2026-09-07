@@ -185,18 +185,58 @@ test("published dental models carry their source, license and limits", () => {
     assert.equal(bytes, entry.bytes, `${name} matches the manifest`);
   }
 
-  for (const source of Object.values(manifest.sources)) {
-    assert.match(source.license, /^CC BY(-NC-SA|-SA)? 4\.0$/);
-    // Two of these sets bind derivatives to their own terms and one of those
-    // also forbids commercial use. A reader cannot honour a term they are not
-    // told about, so a set carrying one has to say so where its limits are
-    // read, not only in a file beside the assets.
-    if (source.license !== "CC BY 4.0")
+  // Which set is under which terms, and which file carries it, written here
+  // rather than read from the manifest. Deciding what to check from the same
+  // field being checked proves nothing: setting both restricted licenses to
+  // "CC BY 4.0" in the manifest used to satisfy this whole test, because the
+  // restriction check was conditional on the license it was verifying.
+  const TERMS = {
+    diaz: { license: "CC BY 4.0", buffer: "dental", restricted: false },
+    fang: { license: "CC BY 4.0", buffer: "dental", restricted: false },
+    openfulljaw: {
+      license: "CC BY-NC-SA 4.0",
+      buffer: "open-full-jaw",
+      restricted: true,
+    },
+    toothfairy: {
+      license: "CC BY-SA 4.0",
+      buffer: "toothfairy",
+      restricted: true,
+    },
+  };
+  assert.deepEqual(
+    Object.keys(manifest.sources).sort(),
+    Object.keys(TERMS).sort(),
+    "a new dataset must be given its terms here before it can ship",
+  );
+  for (const [name, source] of Object.entries(manifest.sources)) {
+    const terms = TERMS[name];
+    assert.equal(source.license, terms.license, `${name} license`);
+    assert.ok(
+      source.licenseUrl.includes(
+        terms.license.toLowerCase().replace("cc ", "").replace(/ /g, "/"),
+      ),
+      `${name} license URL must match its license: ${source.licenseUrl}`,
+    );
+    // The file boundary is the license boundary, so nothing under one set of
+    // terms may be packed into a file that carries another.
+    for (const part of manifest.parts.filter((p) => p.source === name))
+      assert.equal(part.buffer, terms.buffer, `${part.id} is in the wrong file`);
+    // A reader cannot honour a term they are not told about, so a set that
+    // binds derivatives has to say so where its limits are read, not only in
+    // a file beside the assets.
+    if (terms.restricted) {
       assert.match(
         source.limits,
-        new RegExp(source.license.replace(/[.]/g, "\\.")),
-        `${source.title} must name its license in its limits`,
+        new RegExp(terms.license.replace(/[.]/g, "\\.")),
+        `${name} must name its license in its limits`,
       );
+      assert.match(
+        source.limits,
+        /derivative|ShareAlike|same terms/i,
+        `${name} must say derivatives carry its terms`,
+      );
+    }
     assert.ok(source.doi.length > 8, "every source names a DOI");
     // The limits are the difference between a model of a jaw and a jaw, so a
     // source that does not state them cannot ship.

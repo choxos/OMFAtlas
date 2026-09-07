@@ -17,6 +17,7 @@ import {
   mkdirSync,
   readFileSync,
   readdirSync,
+  renameSync,
   writeFileSync,
 } from "node:fs";
 import { join } from "node:path";
@@ -24,14 +25,12 @@ import { MeshoptSimplifier } from "meshoptimizer";
 
 export const OUT = "public/models/dental";
 
-export
-const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+export const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
 /** Every file under a directory. Names here carry spaces, commas and CJK, and
  *  macOS and Linux disagree about how to normalize the last of those, so
  *  nothing in this script addresses a source file by its name. */
-export
-function walk(directory) {
+export function walk(directory) {
   const found = [];
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const path = join(directory, entry.name);
@@ -41,19 +40,17 @@ function walk(directory) {
   return found;
 }
 
-export
-function findOne(files, ends, what) {
+export function findOne(files, ends, what) {
   const matches = files.filter((path) => path.endsWith(ends));
   if (matches.length !== 1)
     throw new Error(
-      `expected one ${what} under ${REFS}, found ${matches.length} for ${ends}`,
+      `expected one ${what} matching ${ends}, found ${matches.length}`,
     );
   return matches[0];
 }
 
 /** Binary STL to indexed triangles, welding on exact coordinates. */
-export
-function readBinaryStl(bytes) {
+export function readBinaryStl(bytes) {
   const view = new DataView(
     bytes.buffer,
     bytes.byteOffset,
@@ -90,8 +87,7 @@ function readBinaryStl(bytes) {
  *  face separately, which leaves a seam at every patch boundary: the surface
  *  is closed but the mesh is not, and nothing can be simplified across it.
  *  Six decimals of a millimeter is far below the tessellation tolerance. */
-export
-function weld(positions, indices) {
+export function weld(positions, indices) {
   const seen = new Map();
   const merged = [];
   const remap = new Uint32Array(positions.length / 3);
@@ -113,8 +109,7 @@ function weld(positions, indices) {
 /** Collapse to a triangle budget, keeping the boundary and reporting the error
  *  so the manifest can carry it. A tooth that has to travel over the network
  *  cannot arrive at its CAD tessellation density. */
-export
-async function simplify(positions, indices, target) {
+export async function simplify(positions, indices, target) {
   if (indices.length / 3 <= target) return { positions, indices, error: 0 };
   await MeshoptSimplifier.ready;
   const [collapsed, error] = MeshoptSimplifier.simplify(
@@ -129,8 +124,7 @@ async function simplify(positions, indices, target) {
 }
 
 /** Area weighted vertex normals, so a welded mesh shades smoothly. */
-export
-function vertexNormals(positions, indices) {
+export function vertexNormals(positions, indices) {
   const normals = new Float32Array(positions.length);
   for (let i = 0; i < indices.length; i += 3) {
     const [a, b, c] = [indices[i] * 3, indices[i + 1] * 3, indices[i + 2] * 3];
@@ -159,8 +153,7 @@ function vertexNormals(positions, indices) {
   return normals;
 }
 
-export
-function boundsOf(positions) {
+export function boundsOf(positions) {
   const lo = [Infinity, Infinity, Infinity];
   const hi = [-Infinity, -Infinity, -Infinity];
   for (let i = 0; i < positions.length; i += 3)
@@ -173,8 +166,7 @@ function boundsOf(positions) {
 }
 
 /** Count edges used by exactly one triangle: a closed surface has none. */
-export
-function openEdges(indices) {
+export function openEdges(indices) {
   const edges = new Map();
   for (let i = 0; i < indices.length; i += 3)
     for (const [a, b] of [
@@ -192,8 +184,7 @@ function openEdges(indices) {
 
 /** One output buffer. Each set of parts writes into its own, because the
  *  license a reader accepts by downloading them is not the same one. */
-export
-function writer(name, file) {
+export function writer(name, file) {
   const chunks = [];
   let offset = 0;
   return {
@@ -223,8 +214,7 @@ function writer(name, file) {
   };
 }
 
-export
-function compact(positions, indices) {
+export function compact(positions, indices) {
   const remap = new Int32Array(positions.length / 3).fill(-1);
   const kept = [];
   const out = new Uint32Array(indices.length);
@@ -239,8 +229,7 @@ function compact(positions, indices) {
   return { positions: Float32Array.from(kept), indices: out };
 }
 
-export
-function pack(into, id, name, group, source, rawPositions, rawIndices, extra = {}) {
+export function pack(into, id, name, group, source, rawPositions, rawIndices, extra = {}) {
   const { positions, indices } = compact(rawPositions, rawIndices);
   const normals = vertexNormals(positions, indices);
   const part = {
@@ -295,7 +284,15 @@ export function publish({ buffer, owns, sources, parts }) {
         a.buffer.localeCompare(b.buffer) || a.positions - b.positions,
     ),
   };
-  writeFileSync(manifestPath, JSON.stringify(manifest, null, 1));
+  // The buffer is on disk before the manifest that describes it, so an
+  // interrupted run can leave new bytes under old offsets. Renaming the
+  // manifest into place makes it all or nothing, and the viewer refuses a
+  // buffer whose length is not the one the manifest gives, which is what
+  // catches the half written pair. Two importers running at the same time
+  // would still race on this read and write; they are run by hand, one after
+  // another, and nothing here pretends otherwise.
+  writeFileSync(`${manifestPath}.tmp`, JSON.stringify(manifest, null, 1));
+  renameSync(`${manifestPath}.tmp`, manifestPath);
 
   const triangles = parts.reduce((sum, part) => sum + part.indexCount / 3, 0);
   console.log(

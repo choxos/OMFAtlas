@@ -220,7 +220,17 @@ def tooth_axes(points, fdi, arch_center, along):
     The labial direction is the part of "away from the middle of the arch"
     that is square to the arch itself."""
     center = points.mean(axis=0)
-    _, _, basis = np.linalg.svd(points - center, full_matrices=False)
+    _, spread, basis = np.linalg.svd(points - center, full_matrices=False)
+    # A tooth is longer than it is wide, so its first principal component is
+    # its long axis. If the first two are the same size there is no long axis
+    # to find and the "long axis" returned would be an arbitrary direction in
+    # a plane: a symmetric blob comes back with up = [1, 0, 0] and every
+    # section named off it would be a fiction. Refuse instead.
+    if spread[0] < spread[1] * 1.08:
+        raise AssertionError(
+            f"FDI {fdi} has no distinct long axis: principal spreads "
+            f"{spread[0]:.3f} and {spread[1]:.3f}"
+        )
     up = basis[0] / np.linalg.norm(basis[0])
     crown_is_up = fdi >= 30           # quadrants 3 and 4 are the lower jaw
     if (up[2] > 0) != crown_is_up:

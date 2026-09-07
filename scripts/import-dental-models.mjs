@@ -30,9 +30,7 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import occtimportjs from "occt-import-js";
 import {
-  boundsOf,
   findOne,
-  openEdges,
   pack,
   publish,
   readBinaryStl,
@@ -155,10 +153,16 @@ const occt = await occtimportjs();
 const fangUsed = [];
 for (const [id, spec] of Object.entries(FANG)) {
   const bytes = byDigest.get(spec.sha256);
-  if (!bytes) {
-    console.warn(`skipped ${id}: no source file with digest ${spec.sha256.slice(0, 12)}`);
-    continue;
-  }
+  // Publishing claims ownership of every Fang part and replaces the file they
+  // live in, so a missing source does not mean "skip one solid", it means
+  // "delete the ones already published". Refuse rather than quietly drop them.
+  if (!bytes)
+    throw new Error(
+      `no source file with digest ${spec.sha256.slice(0, 12)} for fang-${id}. ` +
+        `This run would replace dental.bin without it and drop every Fang ` +
+        `part from the manifest. Restore the figshare archive under ${REFS} ` +
+        `or leave dental.bin alone.`,
+    );
   const result = occt.ReadStepFile(new Uint8Array(bytes), {
     linearUnit: "millimeter",
     linearDeflectionType: "bounding_box_ratio",

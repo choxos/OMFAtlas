@@ -113,7 +113,7 @@ The published paper is the earlier ToothFairy challenge, which is the canal
 alone across 443 scans: Bolelli F and colleagues (2025), *Segmenting the
 Inferior Alveolar Canal in CBCTs Volumes: The ToothFairy Challenge*, IEEE
 Transactions on Medical Imaging 44(4):1890-1906,
-<https://doi.org/10.1109/TMI.2024.3523096>, PMID 35872385. It is the lineage
+<https://doi.org/10.1109/TMI.2024.3523096>, PMID 40030587. It is the lineage
 of this release rather than its own paper.
 
 Case F_026 of the 532, chosen because it is one of fifteen carrying all

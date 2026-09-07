@@ -234,6 +234,7 @@ export const UNNAMED_CUTS = {
   a: "Longitudinal A",
   b: "Longitudinal B",
   crossing: "Crossing",
+  short: { a: "Long. A", b: "Long. B", crossing: "Cross" },
   note: "Longitudinal A and B are the two vertical planes of the model's own frame and Crossing is the horizontal one. Neither of them is a fixed buccolingual or mesiodistal direction: this dataset does not record which of its axes is which.",
 };
 // Open-Full-Jaw publishes each tooth's own axes and its pipeline names them:
@@ -244,6 +245,7 @@ const NAMED_CUTS = {
   a: "Buccolingual",
   b: "Mesiodistal",
   crossing: "Horizontal",
+  short: { a: "Bucco.", b: "Mesio.", crossing: "Horiz." },
   note: "The tooth stands on its own long axis, which this dataset publishes along with its labial and distal directions. Buccolingual and mesiodistal are the two vertical sections and horizontal is the cross section. A tooth on its own is shown crown up whichever jaw it came from.",
 };
 // ToothFairy3 publishes no axes, so this atlas measures them: the long axis
@@ -442,6 +444,7 @@ export function createPublishedToothModel(manifest, buffers, fdi, source) {
 const ARCHES = {
   toothfairy: {
     source: "toothfairy",
+    license: "CC BY-SA 4.0",
     tissues: ["tooth", "pulp", "bone", "canal", "sinus"],
     caption: "Whole mouth · one patient's scan · ToothFairy3 F_026",
     note: "Thirty two teeth with the pulp inside each of them, both inferior alveolar canals, and the bone they all sit in, from one adult's cone beam CT. Select a tooth to open it, or fade the bone to watch a canal pass under the molar roots.",
@@ -450,6 +453,7 @@ const ARCHES = {
   },
   openfulljaw: {
     source: "openfulljaw",
+    license: "CC BY-NC-SA 4.0",
     tissues: ["tooth", "pdl", "bone"],
     caption:
       "Upper and lower arch · one patient's model · Gholamalizadeh and colleagues 2022",
@@ -516,6 +520,8 @@ export function createPublishedDentitionModel(
     caption: arch.caption,
     note: arch.note,
     limits: arch.limits,
+    license: arch.license,
+    toothCount: teeth.length,
   };
   group.userData.tissues = arch.tissues
     .filter((id) => wanted.some((part) => part.group === id))

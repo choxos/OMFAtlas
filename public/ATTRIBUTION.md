@@ -1,5 +1,18 @@
 # Anatomy data and application attribution
 
+**The published dental models are not covered by this file and are not all
+CC BY 4.0.** Four separate datasets under `models/dental/` carry their own
+terms, two of which bind derivatives and one of which forbids commercial use.
+They have their own notice, and it must travel with them:
+[models/dental/ATTRIBUTION.md](models/dental/ATTRIBUTION.md).
+
+| File | Source | License |
+| --- | --- | --- |
+| `models/dental/dental.bin` | Diaz synthetic lower jaw; Kang immature molar | CC BY 4.0 |
+| `models/dental/open-full-jaw.bin` | Open-Full-Jaw patient 12 | CC BY-NC-SA 4.0 |
+| `models/dental/toothfairy.bin` | ToothFairy3 case F_026 | CC BY-SA 4.0 |
+
+
 The separate 47 adapted facial/masticatory meshes under `models/facial/` come from BodyParts3D 3.0 and retain **CC Attribution-Share Alike 2.1 Japan**. See [their full source, transformation, and license notice](models/facial/ATTRIBUTION.md). The CC BY 4.0 statement below applies to the 4.0 base and high-resolution assets, not these supplemental assets.
 
 BodyParts3D, © The Database Center for Life Science, licensed under Creative Commons Attribution 4.0 International.
