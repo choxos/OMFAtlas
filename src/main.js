@@ -40,7 +40,7 @@ import {
 } from "./embryology.js";
 import { getDentitionFDIs } from "./dental-geometry.js";
 import { TISSUE_ORDER, tissueGroup } from "./explosion-layout.js";
-import { MODEL_GROUPS, MODEL_VIEWS } from "./dental-models.js";
+import { MODEL_GROUPS, MODEL_VIEWS, UNNAMED_CUTS } from "./dental-models.js";
 
 const touchLayout = () => matchMedia("(max-width: 860px)").matches;
 const groupOpacity = (group) => state.opacity.get(group) ?? 1;
@@ -912,6 +912,21 @@ function renderModelControls() {
   host.querySelector("#model-sources").onclick = () => modelSources();
 }
 
+/** Name the three cutting planes for the model on screen. Two of the three
+ *  sets do not record which of their axes is buccolingual and which is
+ *  mesiodistal, so their planes keep the names of the model's own frame; the
+ *  third publishes each tooth's axes, so its planes are named for the section
+ *  they leave behind. */
+function nameCuts(cuts) {
+  if (!cuts) return;
+  for (const button of document.querySelectorAll("[data-cut-axis]")) {
+    const span = button.querySelector("span");
+    if (span) span.textContent = cuts[button.dataset.cutAxis];
+  }
+  const note = document.querySelector(".cut-controls .fine-print");
+  if (note) note.textContent = cuts.note;
+}
+
 function renderToothTissues() {
   const published = viewer?.publishedTooth?.();
   const host = document.querySelector(".tissue-3d-buttons");
@@ -919,22 +934,13 @@ function renderToothTissues() {
   if (!host) return;
   if (!published) {
     document.querySelector("#dental-3d-controls")?.classList.remove("published");
+    // A drawn tooth is built by this project along its own axes, so it cannot
+    // keep the anatomical plane names the last published tooth put there.
+    nameCuts(UNNAMED_CUTS);
     return;
   }
   document.querySelector("#dental-3d-controls")?.classList.add("published");
-  // Two of the three sets do not record which of their axes is buccolingual
-  // and which is mesiodistal, so their planes keep the names of the model's
-  // own frame; the third publishes each tooth's axes and its planes are named
-  // for the section they leave behind.
-  const cuts = published.cuts;
-  if (cuts) {
-    for (const button of document.querySelectorAll("[data-cut-axis]")) {
-      const span = button.querySelector("span");
-      if (span) span.textContent = cuts[button.dataset.cutAxis];
-    }
-    const note = document.querySelector(".cut-controls .fine-print");
-    if (note) note.textContent = cuts.note;
-  }
+  nameCuts(published.cuts);
   host.innerHTML = published.tissues
     .map(
       (tissue) =>

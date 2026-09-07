@@ -118,19 +118,29 @@ test("standing a tooth up is a rotation, not a reflection", () => {
 });
 
 test("a tooth cutaway stands crown up whichever jaw it came from", () => {
-  for (const fdi of [11, 18, 27, 31, 41, 48]) {
-    const group = createPublishedToothModel(manifest, buffers, fdi);
-    assert.ok(group, `no cutaway for FDI ${fdi}`);
+  // Turning a tooth by the inverse of its own basis puts that basis's up on
+  // +Y by algebra, so asking the basis proves nothing about which end of the
+  // tooth it points at. The ligament wraps the root and not the crown, so
+  // where the ligament ends up is the evidence.
+  for (const tooth of jawTeeth) {
+    const group = createPublishedToothModel(manifest, buffers, tooth.fdi);
+    assert.ok(group, `no cutaway for FDI ${tooth.fdi}`);
     group.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(group);
-    // The crown is wider than the root, so the widest slice is near the top.
-    const size = box.getSize(new THREE.Vector3());
-    assert.ok(size.y > 0.004, `FDI ${fdi} is ${size.y}m tall`);
-    const crown = group.userData.published.axes.up;
-    assert.ok(crown, `FDI ${fdi} has no published axes`);
-    // Turning the tooth by the inverse of its own basis puts occlusal on +Y.
-    const up = new THREE.Vector3(...crown).applyQuaternion(group.quaternion);
-    assert.ok(up.y > 0.99, `FDI ${fdi} does not stand crown up: ${up.y}`);
+    const middle = (tissue) => {
+      const mesh = group.children.find((m) => m.userData.tissue === tissue);
+      return new THREE.Box3()
+        .setFromObject(mesh)
+        .getCenter(new THREE.Vector3()).y;
+    };
+    assert.ok(
+      middle("pdl") < middle("tooth"),
+      `FDI ${tooth.fdi} has its root above its crown`,
+    );
+    const size = new THREE.Box3()
+      .setFromObject(group)
+      .getSize(new THREE.Vector3());
+    // A tooth is a centimetre or two of a metre, never a hundred of them.
+    assert.ok(size.y > 0.004 && size.y < 0.05, `FDI ${tooth.fdi}: ${size.y}m`);
   }
 });
 

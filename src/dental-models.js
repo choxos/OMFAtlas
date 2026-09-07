@@ -209,7 +209,7 @@ const CUTAWAY_TISSUES = {
 // The two vertical planes and the horizontal one, named for what they cut.
 // Kang and Diaz do not record which of their axes is buccolingual and which is
 // mesiodistal, so their planes keep the names of the model's own frame.
-const UNNAMED_CUTS = {
+export const UNNAMED_CUTS = {
   a: "Longitudinal A",
   b: "Longitudinal B",
   crossing: "Crossing",
