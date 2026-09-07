@@ -105,6 +105,11 @@ const state = {
   hidden: new Set(),
   modelView: "jaw",
   archSource: "published",
+  cutAxis: "a",
+  cutPosition: 50,
+  cutTilt: 0,
+  cutRotate: 0,
+  cutFlip: false,
   explode: 0,
   tab: "anatomy",
   query: "",
@@ -176,7 +181,21 @@ document.querySelector("#app").innerHTML = `
   <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active"><span>3D anatomy</span></button><button data-mode="section"><span>Tooth &amp; periodontium</span></button><button data-mode="canals"><span>Root canal explorer</span></button><button data-mode="development"><span>Tooth development</span></button><button data-mode="models"><span>Source models</span></button></div>
   <div id="load-status" class="panel" role="status"><strong>Preparing the anatomy</strong><span id="load-detail">Loading the head and neck assembly</span><div class="loading-track"><i id="load-bar"></i></div></div>
 
-  <section id="dental-3d-controls" class="panel" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><label class="section-slider">Section depth <input id="section-depth" type="range" min="0" max="100" value="50"></label><div class="tissue-3d-buttons">${[
+  <section id="dental-3d-controls" class="panel" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><div class="cut-controls"><div class="cut-axes">${[
+    ["a", "Longitudinal A"],
+    ["b", "Longitudinal B"],
+    ["crossing", "Crossing"],
+  ]
+    .map(
+      ([id, name]) =>
+        `<button data-cut-axis="${id}" class="${id === "a" ? "active" : ""}">${name}</button>`,
+    )
+    .join("")}</div>
+  <label class="section-slider"><span>Cutting position <output id="section-depth-out">50%</output></span><input id="section-depth" type="range" min="0" max="100" value="50"></label>
+  <label class="section-slider"><span>Tilt <output id="cut-tilt-out">0°</output></span><input id="cut-tilt" type="range" min="-45" max="45" value="0"></label>
+  <label class="section-slider"><span>Rotate <output id="cut-rotate-out">0°</output></span><input id="cut-rotate" type="range" min="-90" max="90" value="0"></label>
+  <div class="cut-actions"><button id="cut-flip">Reverse the side that remains</button><button id="cut-face">Face the cut</button><button id="cut-whole">View the whole</button></div>
+  <p class="fine-print">Longitudinal A and B are the two vertical planes of the model's own frame and Crossing is the horizontal one. None of them is a fixed buccolingual or mesiodistal direction: neither dataset records which of its axes is which.</p></div><div class="tissue-3d-buttons">${[
     ["enamel", "Enamel"],
     ["dentin", "Dentin"],
     ["pulp", "Pulp & canals"],
@@ -1366,9 +1385,46 @@ document.querySelector("#cutaway").onchange = (e) => {
   updateScene();
 };
 document.querySelector("#section-depth").oninput = (e) => {
+  document.querySelector("#section-depth-out").value = `${e.target.value}%`;
+  // The drawn cutaway wants a small offset in metres; the published one wants
+  // the percentage itself, because it slides a plane across a real model.
+  state.cutPosition = Number(e.target.value);
   state.sectionDepth = (Number(e.target.value) - 50) * 0.00008;
   updateScene();
 };
+document.querySelectorAll("[data-cut-axis]").forEach((button) => {
+  button.onclick = () => {
+    state.cutAxis = button.dataset.cutAxis;
+    document
+      .querySelectorAll("[data-cut-axis]")
+      .forEach((b) => b.classList.toggle("active", b === button));
+    if (!state.cutaway) {
+      state.cutaway = true;
+      document.querySelector("#cutaway").checked = true;
+    }
+    updateScene();
+  };
+});
+for (const [id, key, unit] of [
+  ["#cut-tilt", "cutTilt", "°"],
+  ["#cut-rotate", "cutRotate", "°"],
+]) {
+  const input = document.querySelector(id);
+  input.oninput = () => {
+    state[key] = Number(input.value);
+    document.querySelector(`${id}-out`).value = `${input.value}${unit}`;
+    updateScene();
+  };
+}
+document.querySelector("#cut-flip").onclick = () => {
+  state.cutFlip = !state.cutFlip;
+  document
+    .querySelector("#cut-flip")
+    .setAttribute("aria-pressed", String(state.cutFlip));
+  updateScene();
+};
+document.querySelector("#cut-face").onclick = () => viewer?.faceCut();
+document.querySelector("#cut-whole").onclick = () => viewer?.view("oblique", true);
 document.querySelectorAll("[data-tissue3d]").forEach(
   (b) =>
     (b.onclick = () => {

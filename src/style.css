@@ -7328,3 +7328,73 @@ body.source-models .studio .caption-stack {
   color: var(--teal);
   text-decoration: underline;
 }
+
+/* ---- Cutting a published tooth ------------------------------------------- */
+
+.studio .cut-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.studio .cut-axes {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line-soft);
+  border-radius: 9px;
+  background: #17242f06;
+}
+
+.studio .cut-axes button {
+  flex: 1;
+  height: 28px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.studio .cut-axes button.active {
+  background: var(--navy);
+  color: var(--on-navy);
+}
+
+.studio .cut-controls .section-slider span {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.studio .cut-controls output {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+.studio .cut-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.studio .cut-actions button {
+  flex: 1;
+  min-width: 72px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  font-size: 10.5px;
+  font-weight: 450;
+  color: var(--ink-soft);
+}
+
+.studio .cut-actions button[aria-pressed="true"] {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: var(--on-navy);
+}

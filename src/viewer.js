@@ -211,6 +211,39 @@ export async function createViewer(host, atlas, handlers) {
   // model has been stood up, which is the section a tooth is usually drawn in.
   const sectionPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), 0);
 
+  // Where the cut goes. Longitudinal A and B are the two vertical planes of
+  // the model's own frame and Crossing is the horizontal one; none of them is
+  // a fixed buccolingual or mesiodistal direction, because the datasets do not
+  // record which of their axes is which. Tilt and rotation turn the plane away
+  // from those starting positions, and the position slider slides it across
+  // whatever the model measures along that normal.
+  const CUT_AXES = {
+    a: [1, 0, 0],
+    b: [0, 0, 1],
+    crossing: [0, 1, 0],
+  };
+  function setSectionPlane(model, state) {
+    const normal = new THREE.Vector3().fromArray(
+      CUT_AXES[state.cutAxis] || CUT_AXES.a,
+    );
+    normal.applyAxisAngle(
+      new THREE.Vector3(0, 0, 1),
+      THREE.MathUtils.degToRad(state.cutTilt || 0),
+    );
+    normal.applyAxisAngle(
+      new THREE.Vector3(0, 1, 0),
+      THREE.MathUtils.degToRad(state.cutRotate || 0),
+    );
+    normal.normalize();
+    if (state.cutFlip) normal.negate();
+    const box = new THREE.Box3().setFromObject(model);
+    const centre = box.getCenter(new THREE.Vector3());
+    const half = box.getSize(new THREE.Vector3()).length() / 2 || 0.01;
+    const middle = centre.dot(normal);
+    const offset = middle + (((state.cutPosition ?? 50) / 100) * 2 - 1) * half;
+    sectionPlane.set(normal, -offset);
+  }
+
   // How solid each tissue of an opened tooth is before the reader changes it.
   const CUTAWAY_FADE = { tooth: 0.58, pdl: 0.26, bone: 0.2, pulp: 1 };
 
@@ -725,6 +758,24 @@ export async function createViewer(host, atlas, handlers) {
     landmarks: () => landmarks.map((l) => ({ ...l })),
     modelManifest: () => dentalModels?.manifest || null,
     publishedArch: () => dentalModel?.userData.publishedArch || null,
+    faceCut() {
+      if (!dentalModel || !currentState) return;
+      setSectionPlane(dentalModel, currentState);
+      const box = new THREE.Box3().setFromObject(dentalModel);
+      const centre = box.getCenter(new THREE.Vector3());
+      const distance = camera.position.distanceTo(controls.target) || 0.04;
+      framing = true;
+      controls.target.copy(centre);
+      camera.position
+        .copy(centre)
+        .addScaledVector(sectionPlane.normal, -distance);
+      camera.up.set(0, 1, 0);
+      if (Math.abs(sectionPlane.normal.y) > 0.9) camera.up.set(0, 0, -1);
+      camera.updateProjectionMatrix();
+      controls.update();
+      render();
+      framing = false;
+    },
     publishedTooth: () =>
       dentalModel?.userData.published
         ? {
@@ -865,18 +916,7 @@ export async function createViewer(host, atlas, handlers) {
       if (dentalModel && state.toothDetail && dentalModel.userData.published) {
         const plan = dentalModel.userData.published;
         resolutionStatus(plan.caption);
-        // Half the widest span of the tooth itself, so the sweep crosses it.
-        const box = new THREE.Box3().setFromObject(dentalModel);
-        const span = box.getSize(new THREE.Vector3());
-        const radius = Math.max(span.x, span.z) / 2 || 0.01;
-        // The plane sweeps from behind the tooth to its middle, which is what
-        // the depth slider meant on the drawn cutaway.
-        const middle = box.getCenter(new THREE.Vector3()).x;
-        const offset =
-          middle - radius + ((state.sectionDepth ?? 50) / 100) * 2 * radius;
-        sectionPlane.constant = -offset;
-        // A renderer wide plane rather than a per material one: it needs no
-        // shader recompile, and nothing else is on screen in this view.
+        setSectionPlane(dentalModel, state);
         renderer.clippingPlanes = state.cutaway ? [sectionPlane] : [];
         for (const mesh of dentalModel.children) {
           const tissue = mesh.userData.tissue;
