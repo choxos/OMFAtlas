@@ -319,7 +319,7 @@ export function publishedToothPlan(manifest, fdi, source = "toothfairy") {
       mirrored: fdi === 36,
       cuts: UNNAMED_CUTS,
       caption: `FDI ${fdi} · immature first molar · Kang 2024`,
-      note: "The outer surface, the pulp cavity and the ligament of a mandibular first permanent molar, modeled from the cone beam CT of a seven year old. The roots are still forming and the apices are open. It is the only immature tooth in this atlas, and the only one whose ligament and pulp cavity come from the same model.",
+      note: "The outer surface, the pulp cavity and the ligament of a mandibular first permanent molar, modeled from the cone beam CT of a seven year old. The roots are still forming and the apices are open. It is the only immature tooth in this atlas and is offered as a model in its own right rather than as a stand in for an adult tooth.",
       limits:
         "An immature tooth in mixed dentition, not an adult standard form, and its outer surface is not divided into enamel and dentin. The pulp cavity is the cavity that was modeled, not pulp tissue: no apical foramen, no lateral canals, no vessels and no nerve, and no canal length or preparation amount can be measured from it. The ligament is an even shell; the source gives 0.15 mm in its methods and 0.2 mm in its discussion.",
       parts,
