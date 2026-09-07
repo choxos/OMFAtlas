@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <!-- The tooth mark from the site's own icon set (src/main.js), drawn on the
+       brand accent so the tab icon reads on a light or a dark browser chrome. -->
+  <rect width="24" height="24" rx="5" fill="#54aab9"/>
+  <path d="M12 5C6-1 1 5 4 12c1 3 1 9 4 9 2 0 1-8 4-8s2 8 4 8c3 0 3-6 4-9 3-7-2-13-8-7Z"
+        fill="none" stroke="#ffffff" stroke-width="1.6"
+        stroke-linecap="round" stroke-linejoin="round"
+        transform="translate(12 12) scale(0.82) translate(-12 -12)"/>
+</svg>

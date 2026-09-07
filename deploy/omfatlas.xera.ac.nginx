@@ -53,9 +53,14 @@ server {
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'" always;
 
-    # Single page app: unknown paths fall back to the shell.
+    # The atlas is one page with no router, so there is no deep link to fall
+    # back for. Serving the shell at every unknown path instead made each
+    # typo, each stale link, and each probe a 200 OK copy of the homepage,
+    # which is what a search engine reads as a soft 404. It also swallowed
+    # /robots.txt, /sitemap.xml, and /favicon.ico before those files existed,
+    # answering each of them with HTML. Unknown paths are now 404.
     location / {
-        try_files $uri $uri/ /index.html;
+        try_files $uri $uri/ =404;
     }
 
     # Vite content-hashes these filenames, so they can be cached forever.

@@ -10,6 +10,90 @@
       content="Explore oral and maxillofacial anatomy in 3D. An educational atlas for dental students, dentists, and specialists."
     />
     <title>OMF Atlas | Oral & maxillofacial anatomy</title>
+    <link rel="canonical" href="https://omfatlas.xera.ac/" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="author" content="Ahmad Sofi-Mahmudi" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <!-- Link previews. The card in /og.png is a rendered title card, not a
+         screenshot: the atlas draws itself with WebGL, which no link scraper
+         runs, so a scraped frame would be an empty stage. Absolute URLs are
+         required here; a scraper does not resolve relative ones. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="OMF Atlas" />
+    <meta property="og:url" content="https://omfatlas.xera.ac/" />
+    <meta property="og:title" content="OMF Atlas | Oral & maxillofacial anatomy" />
+    <meta
+      property="og:description"
+      content="Explore oral and maxillofacial anatomy in 3D. An educational atlas for dental students, dentists, and specialists."
+    />
+    <meta property="og:image" content="https://omfatlas.xera.ac/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="OMF Atlas, an interactive 3D atlas of oral and maxillofacial anatomy"
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OMF Atlas | Oral & maxillofacial anatomy" />
+    <meta
+      name="twitter:description"
+      content="Explore oral and maxillofacial anatomy in 3D. An educational atlas for dental students, dentists, and specialists."
+    />
+    <meta name="twitter:image" content="https://omfatlas.xera.ac/og.png" />
+
+    <!-- Structured data. The atlas is one page, so one WebSite node and one
+         LearningResource node describing it is the whole graph. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://omfatlas.xera.ac/#website",
+            "url": "https://omfatlas.xera.ac/",
+            "name": "OMF Atlas",
+            "description": "An interactive 3D atlas of oral and maxillofacial anatomy.",
+            "inLanguage": "en",
+            "publisher": { "@id": "https://omfatlas.xera.ac/#author" }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://omfatlas.xera.ac/#author",
+            "name": "Ahmad Sofi-Mahmudi",
+            "url": "https://github.com/choxos"
+          },
+          {
+            "@type": "LearningResource",
+            "@id": "https://omfatlas.xera.ac/#atlas",
+            "name": "OMF Atlas: an interactive 3D atlas of oral and maxillofacial anatomy",
+            "description": "Explore oral and maxillofacial anatomy in 3D. An educational atlas for dental students, dentists, and specialists.",
+            "url": "https://omfatlas.xera.ac/",
+            "image": "https://omfatlas.xera.ac/og.png",
+            "inLanguage": "en",
+            "isAccessibleForFree": true,
+            "license": "https://opensource.org/licenses/MIT",
+            "learningResourceType": "Interactive atlas",
+            "educationalLevel": "Undergraduate, postgraduate, and continuing dental education",
+            "audience": {
+              "@type": "EducationalAudience",
+              "educationalRole": "student"
+            },
+            "about": [
+              { "@type": "Thing", "name": "Oral and maxillofacial anatomy" },
+              { "@type": "Thing", "name": "Dental anatomy" },
+              { "@type": "Thing", "name": "Tooth morphology" },
+              { "@type": "Thing", "name": "Endodontics" },
+              { "@type": "Thing", "name": "Periodontium" },
+              { "@type": "Thing", "name": "Tooth development" }
+            ],
+            "author": { "@id": "https://omfatlas.xera.ac/#author" },
+            "isPartOf": { "@id": "https://omfatlas.xera.ac/#website" }
+          }
+        ]
+      }
+    </script>
     <!-- Google tag (gtag.js), under Consent Mode v2.
          The consent defaults are set BEFORE the tag loads, so Google Analytics
          stores nothing and sets no cookies until the reader accepts. A grant
@@ -59,6 +143,36 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script>
+    <!-- A crawler that renders JavaScript gets the whole interface: the shell
+         is written into #app at module scope, before the 3D viewer is built,
+         so it survives a machine with no WebGL. This block is for the ones
+         that do not run JavaScript at all. It sits in noscript rather than in
+         #app so a reader never watches it appear and then get replaced. -->
+    <noscript>
+      <h1>OMF Atlas</h1>
+      <p>
+        An interactive 3D atlas of oral and maxillofacial anatomy, built for
+        dental students, dentists, and specialists. It needs JavaScript and a
+        browser with WebGL.
+      </p>
+      <p>Inside it:</p>
+      <ul>
+        <li>
+          Head and neck anatomy: bone, muscle, nerve, and vessel layers you can
+          isolate, fade, and cut through.
+        </li>
+        <li>
+          A dental atlas of all 32 permanent and 20 primary teeth, numbered in
+          the FDI system, with enamel, dentine, pulp, and root canal anatomy.
+        </li>
+        <li>The periodontium, tooth development, and endodontic canal patterns.</li>
+        <li>A study guide and a self-test built from the same material.</li>
+      </ul>
+      <p>
+        Source code and the anatomical sources it is built from:
+        <a href="https://github.com/choxos/OMFAtlas">github.com/choxos/OMFAtlas</a>.
+      </p>
+    </noscript>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

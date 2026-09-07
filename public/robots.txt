@@ -1,0 +1,5 @@
+# OMF Atlas. Everything here is a public teaching atlas; nothing is private.
+User-agent: *
+Allow: /
+
+Sitemap: https://omfatlas.xera.ac/sitemap.xml
