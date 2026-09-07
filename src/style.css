@@ -7398,3 +7398,313 @@ body.source-models .studio .caption-stack {
   background: var(--navy);
   color: var(--on-navy);
 }
+
+/* ---- The tooth cutaway on a phone ----------------------------------------
+
+   Zooming into a tooth put a 300px panel over the middle of a 585px window,
+   and the camera frames the tooth to the whole window, so the crown was the
+   only part of it above the panel. Everything below is about giving the tooth
+   the screen back.
+
+   The panel carries eleven controls in three unrelated groups: the tissue
+   switches, the cutting plane, and what the model is and cannot be read for.
+   All three fit side by side on a wide window. On a phone they take turns,
+   and the panel is a fixed height either way so the camera does not reframe
+   when a reader changes group.
+
+   The mode selector goes while a cutaway is open. It is the band directly
+   under the panel, and the panel's own first control is the way back to the
+   arches where that selector lives. Two taps to reach another mode is worth
+   52px of tooth. */
+
+.studio .tool-tabs {
+  display: none;
+}
+
+/* All three groups read down the panel on a wide window, so the wrapper that
+   lets them take turns on a phone has nothing to do there. */
+.studio .tool-body {
+  display: contents;
+}
+
+/* A pre-studio `#dental-3d-controls { flex-wrap: wrap }` is still live on a
+   wide window, and a wrapping column with a max height spills into a second
+   column beside the panel rather than scrolling inside it. The tissue
+   switches were already one line away from falling out of the panel and the
+   cutaway switch moving in next to the cutting plane pushed them out. */
+.studio #dental-3d-controls {
+  flex-wrap: nowrap;
+}
+
+.studio .cut-enable {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 860px) {
+  /* Row of controls, one group of them, and the panel's own padding. The
+     cutting group is the tall one; the tissue switches are two rows of
+     chips and would otherwise leave a fifth of the window empty. */
+  .studio {
+    --mb-tooth: 132px;
+  }
+
+  body[data-tool="cut"] .studio {
+    --mb-tooth: 194px;
+  }
+
+  body[data-tool="about"] .studio {
+    --mb-tooth: 158px;
+  }
+
+  /* The band the mode selector held is the panel's now. */
+  body.tooth-inspection .studio #mode-bar {
+    display: none;
+  }
+
+  /* The camera frames the tooth to this box, so this box is what decides
+     whether the reader can see the tooth. It stops above the panel. */
+  body.tooth-inspection .studio #viewer,
+  body.tooth-inspection.details-open .studio #viewer {
+    inset: 100px 0 calc(var(--mb-b) + var(--mb-tooth) + 6px) 0;
+  }
+
+  body.tooth-inspection .studio #dental-3d-controls {
+    inset: auto 12px var(--mb-b) 12px;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: 32px minmax(0, 1fr);
+    gap: 8px;
+    height: var(--mb-tooth);
+    max-height: var(--mb-tooth);
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  body.tooth-inspection .studio #dental-3d-controls[hidden] {
+    display: none;
+  }
+
+  body.tooth-inspection .studio #dental-3d-controls .detail-actions {
+    grid-area: 1 / 1;
+  }
+
+  /* "Back to head & neck" is four words of a 32px row that has three group
+     names to fit beside it. */
+  body.tooth-inspection .studio #dental-3d-controls #exit-tooth {
+    flex: none;
+    width: 62px;
+    height: 32px;
+    padding: 0;
+  }
+
+  body.tooth-inspection .studio #exit-tooth span {
+    display: none;
+  }
+
+  body.tooth-inspection .studio #exit-tooth::after {
+    content: "\2190 Back";
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .studio .tool-tabs {
+    grid-area: 1 / 2;
+    display: flex;
+    gap: 3px;
+    padding: 3px;
+    border: 1px solid var(--line-soft);
+    border-radius: 9px;
+    background: #17242f06;
+  }
+
+  .studio .tool-tabs button {
+    flex: 1;
+    min-width: 0;
+    height: 24px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .studio .tool-tabs button.active {
+    background: var(--navy);
+    color: var(--on-navy);
+  }
+
+  /* The groups take the row under the tabs, and the notes are two paragraphs
+     from two different places in the panel, so the row is a column rather
+     than a single cell they would draw on top of each other in. */
+  body.tooth-inspection .studio .tool-body {
+    grid-area: 2 / 1 / 3 / 3;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .studio #dental-3d-controls[data-tool="tissues"] .cut-controls,
+  .studio #dental-3d-controls[data-tool="tissues"] #tissue-3d-status,
+  .studio #dental-3d-controls[data-tool="cut"] .tissue-3d-buttons,
+  .studio #dental-3d-controls[data-tool="cut"] #tissue-3d-status,
+  .studio #dental-3d-controls[data-tool="about"] .tissue-3d-buttons {
+    display: none;
+  }
+
+  /* The note under the cutting controls says what the axis names do and do
+     not mean, which belongs with the rest of what the model is rather than
+     taking a fifth of the cutting group. It stays where it is written and is
+     shown with the notes. */
+  .studio #dental-3d-controls[data-tool="cut"] .cut-controls .fine-print {
+    display: none;
+  }
+
+  .studio #dental-3d-controls[data-tool="about"] .cut-controls {
+    display: block;
+  }
+
+  .studio
+    #dental-3d-controls[data-tool="about"]
+    .cut-controls
+    > *:not(.fine-print) {
+    display: none;
+  }
+
+  /* The cutting group has to fit without scrolling: a slider a reader has to
+     find by scrolling is a slider they will not find. The switch that turns
+     the cut on sits beside the plane it turns on rather than above it. */
+  body.tooth-inspection .studio .cut-controls {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px 8px;
+    align-content: start;
+  }
+
+  body.tooth-inspection .studio .cut-enable {
+    grid-column: 1;
+    font-size: 11px;
+  }
+
+  body.tooth-inspection .studio .cut-axes {
+    grid-column: 2;
+    padding: 2px;
+  }
+
+  body.tooth-inspection .studio .cut-axes button {
+    height: 24px;
+    font-size: 10px;
+  }
+
+  /* "Longitudinal A" wrapped to two lines in a 66px segment at 320px and the
+     second line was clipped by the segment's own height. */
+  body.tooth-inspection .studio .cut-axes button span {
+    display: none;
+  }
+
+  body.tooth-inspection .studio [data-cut-axis="a"]::after {
+    content: "Long. A";
+  }
+
+  body.tooth-inspection .studio [data-cut-axis="b"]::after {
+    content: "Long. B";
+  }
+
+  body.tooth-inspection .studio [data-cut-axis="crossing"]::after {
+    content: "Cross";
+  }
+
+  body.tooth-inspection .studio .cut-controls .section-slider,
+  body.tooth-inspection .studio .cut-actions,
+  body.tooth-inspection .studio .cut-controls .fine-print {
+    grid-column: 1 / 3;
+  }
+
+  body.tooth-inspection .studio .cut-controls .section-slider {
+    gap: 8px;
+    font-size: 10.5px;
+  }
+
+  body.tooth-inspection .studio .cut-controls .section-slider > span {
+    flex: none;
+    width: 96px;
+  }
+
+  body.tooth-inspection .studio .cut-controls .section-slider input {
+    min-width: 0;
+  }
+
+  /* Three sentences of button label in a 118px column wrapped to two lines
+     each and still clipped. */
+  body.tooth-inspection .studio .cut-actions button {
+    height: 26px;
+    padding: 0 4px;
+    font-size: 10.5px;
+  }
+
+  body.tooth-inspection .studio .cut-actions button span {
+    display: none;
+  }
+
+  body.tooth-inspection .studio #cut-flip::after {
+    content: "Flip side";
+  }
+
+  body.tooth-inspection .studio #cut-face::after {
+    content: "Face the cut";
+  }
+
+  body.tooth-inspection .studio #cut-whole::after {
+    content: "Whole tooth";
+  }
+
+  /* Seven tissue switches, three rows, no horizontal scroll. */
+  body.tooth-inspection .studio .tissue-3d-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 5px;
+  }
+
+  body.tooth-inspection .studio #dental-3d-controls [data-tissue3d] {
+    min-height: 0;
+    height: 28px;
+    padding: 0 9px;
+    font-size: 10.5px;
+  }
+
+  body.tooth-inspection .studio #tissue-3d-status {
+    font-size: 10.5px;
+    line-height: 1.5;
+  }
+
+  /* The notes sheet and the layers sheet both stopped above the mode bar,
+     which is not there while a cutaway is open. */
+  body.tooth-inspection .studio .inspector,
+  body.tooth-inspection .studio .sidebar,
+  body.tooth-inspection .studio #consent {
+    bottom: calc(var(--mb-b) + var(--mb-tooth) + 6px);
+  }
+
+  /* The subtitle under the title is a caption of the model, so on this view
+     it is a whole citation: an FDI number, a dataset and its authors. It ran
+     under the three window buttons at every width above 380px, because the
+     cap that keeps it clear of them was written for the narrowest phones. */
+  .studio .identity {
+    max-width: calc(100% - 192px);
+  }
+
+  .studio #resolution-status {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

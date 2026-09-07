@@ -181,20 +181,29 @@ document.querySelector("#app").innerHTML = `
   <div id="mode-bar" class="panel" hidden><button data-mode="3d" class="active"><span>3D anatomy</span></button><button data-mode="section"><span>Tooth &amp; periodontium</span></button><button data-mode="canals"><span>Root canal explorer</span></button><button data-mode="development"><span>Tooth development</span></button><button data-mode="models"><span>Source models</span></button></div>
   <div id="load-status" class="panel" role="status"><strong>Preparing the anatomy</strong><span id="load-detail">Loading the head and neck assembly</span><div class="loading-track"><i id="load-bar"></i></div></div>
 
-  <section id="dental-3d-controls" class="panel" hidden aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth">Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</button><label><input id="cutaway" type="checkbox" checked> Cutaway</label></div><div class="cut-controls"><div class="cut-axes">${[
+  <section id="dental-3d-controls" class="panel" hidden data-tool="tissues" aria-label="3D dental inspection"><div class="detail-actions"><button id="exit-tooth"><span>Back to ${state.age === "adult" ? "head & neck" : "dental arches"}</span></button></div><div class="tool-tabs">${[
+    ["tissues", "Tissues"],
+    ["cut", "Cut"],
+    ["about", "Notes"],
+  ]
+    .map(
+      ([id, name]) =>
+        `<button data-tool="${id}" class="${id === "tissues" ? "active" : ""}">${name}</button>`,
+    )
+    .join("")}</div><div class="tool-body"><div class="cut-controls"><label class="cut-enable"><input id="cutaway" type="checkbox" checked> Cutaway</label><div class="cut-axes">${[
     ["a", "Longitudinal A"],
     ["b", "Longitudinal B"],
     ["crossing", "Crossing"],
   ]
     .map(
       ([id, name]) =>
-        `<button data-cut-axis="${id}" class="${id === "a" ? "active" : ""}">${name}</button>`,
+        `<button data-cut-axis="${id}" class="${id === "a" ? "active" : ""}"><span>${name}</span></button>`,
     )
     .join("")}</div>
   <label class="section-slider"><span>Cutting position <output id="section-depth-out">50%</output></span><input id="section-depth" type="range" min="0" max="100" value="50"></label>
   <label class="section-slider"><span>Tilt <output id="cut-tilt-out">0°</output></span><input id="cut-tilt" type="range" min="-45" max="45" value="0"></label>
   <label class="section-slider"><span>Rotate <output id="cut-rotate-out">0°</output></span><input id="cut-rotate" type="range" min="-90" max="90" value="0"></label>
-  <div class="cut-actions"><button id="cut-flip">Reverse the side that remains</button><button id="cut-face">Face the cut</button><button id="cut-whole">View the whole</button></div>
+  <div class="cut-actions"><button id="cut-flip"><span>Reverse the side that remains</span></button><button id="cut-face"><span>Face the cut</span></button><button id="cut-whole"><span>View the whole</span></button></div>
   <p class="fine-print">Longitudinal A and B are the two vertical planes of the model's own frame and Crossing is the horizontal one. None of them is a fixed buccolingual or mesiodistal direction: neither dataset records which of its axes is which.</p></div><div class="tissue-3d-buttons">${[
     ["enamel", "Enamel"],
     ["dentin", "Dentin"],
@@ -210,7 +219,7 @@ document.querySelector("#app").innerHTML = `
     )
     .join(
       "",
-    )}</div><span id="tissue-3d-status" role="status">Rotate to inspect the section. Teaching geometry, not a scan.</span></section>
+    )}</div><span id="tissue-3d-status" role="status">Rotate to inspect the section. Teaching geometry, not a scan.</span></div></section>
 
   <svg id="orientation" viewBox="-50 -50 100 100" aria-hidden="true"><g id="orientation-axes"></g></svg>
   <section id="model-controls" class="panel" hidden aria-label="Published dental models"></section>
@@ -368,7 +377,7 @@ function updateScene() {
       : `${state.isolated ? 1 : atlas.parts.filter((p) => state.layers.has(p.group)).length} structures visible`;
   document.querySelector("#dental-3d-controls").hidden =
     !state.toothDetail || state.mode !== "3d";
-  document.querySelector("#exit-tooth").textContent =
+  document.querySelector("#exit-tooth span").textContent =
     state.age === "adult" && !state.arches
       ? "Back to head & neck"
       : "Back to dental arches";
@@ -1426,6 +1435,23 @@ document.querySelector("#cut-flip").onclick = () => {
     .setAttribute("aria-pressed", String(state.cutFlip));
   updateScene();
 };
+// On a phone the cutaway panel shows one of its three groups at a time. All
+// three are on screen at once on a wide window, where there is room for them,
+// so the switch is a touch layout control and the panel keeps its data-tool
+// either way.
+document.querySelectorAll(".tool-tabs [data-tool]").forEach((button) => {
+  button.onclick = () => {
+    document.querySelector("#dental-3d-controls").dataset.tool =
+      button.dataset.tool;
+    // The three groups are three different heights, and on a phone the panel
+    // is sitting on top of the tooth. The body carries the choice so the
+    // viewer's own box can give back whatever this group does not need.
+    document.body.dataset.tool = button.dataset.tool;
+    document
+      .querySelectorAll(".tool-tabs [data-tool]")
+      .forEach((b) => b.classList.toggle("active", b === button));
+  };
+});
 document.querySelector("#cut-face").onclick = () => viewer?.faceCut();
 document.querySelector("#cut-whole").onclick = () => viewer?.view("oblique", true);
 document.querySelectorAll("[data-tissue3d]").forEach(
