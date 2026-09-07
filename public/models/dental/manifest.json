@@ -1,7 +1,8 @@
 {
- "generatedBy": "scripts/import-dental-models.mjs",
- "buffer": "dental.bin",
- "bufferBytes": 10321680,
+ "generatedBy": [
+  "scripts/import-dental-models.mjs",
+  "scripts/import-toothfairy.mjs"
+ ],
  "buffers": {
   "dental": {
    "file": "dental.bin",
@@ -10,6 +11,10 @@
   "open-full-jaw": {
    "file": "open-full-jaw.bin",
    "bytes": 8274192
+  },
+  "toothfairy": {
+   "file": "toothfairy.bin",
+   "bytes": 8176368
   }
  },
  "sources": {
@@ -92,6 +97,93 @@
     25,
     27,
     28
+   ]
+  },
+  "toothfairy": {
+   "title": "ToothFairy3: segmentation of maxillofacial CBCT volumes",
+   "authors": "Federico Bolelli, Luca Lumetti, Shankeeth Vinayahalingam and colleagues; University of Modena and Reggio Emilia",
+   "year": 2025,
+   "doi": "10.1109/TMI.2024.3523096",
+   "doiNote": "That DOI is the 2023 ToothFairy challenge paper, which is the canal alone across 443 scans. It is the lineage of this release rather than its own paper; the release itself is the 2025 challenge and is cited from its page.",
+   "url": "https://ditto.ing.unimore.it/toothfairy3/",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+   "patient": "Case ToothFairy3F_026 of 532",
+   "units": "millimeter",
+   "processing": "Voxel labels rather than meshes, so the surfaces are made here. Each label is taken at its largest connected component, padded, blurred by 0.7 of a voxel and passed through marching cubes at the half level, then smoothed with a Taubin filter that does not shrink it, welded and simplified with meshoptimizer to 6,000 triangles a tooth, 3,000 a pulp, 4,000 a canal, 2,000 a sinus floor and 34,000 a jaw of bone. Nothing is moved: the frame is the scan's own, turned a half turn about the anteroposterior axis to stand it up.",
+   "orientation": "The volume's stored affine claims superior is +Z and it is not: the voxel index it calls Z increases toward the feet. Orientation here is taken from the anatomy instead, and the correction is a rotation rather than a negated axis, because negating one axis would mirror the patient and put every left and right in this atlas on the wrong side of a real person.",
+   "derivation": "Segmented from the cone beam CT of one adult and released as training data for a segmentation challenge. This case was chosen from all 532 because it is one of fifteen carrying all thirty two teeth and a pulp inside every one of them, with both inferior alveolar canals in one piece and no bridge, crown or implant.",
+   "axes": "This dataset does not publish tooth axes, so they are measured here: the long axis is the tooth's own first principal component, the crown end of it is known from which jaw the tooth is in, and the labial direction is the part of \"away from the middle of the arch\" that is square to the arch itself. Checked against the axes Open-Full-Jaw does publish, the same method lands within a median of 9 degrees on all three axes and never more than 25.",
+   "pdlModel": "None. This dataset carries no periodontal ligament at all; the Open-Full-Jaw patient is the only source here that does.",
+   "limits": "One patient rather than a norm, and a scan rather than a model, so every surface is what a 0.3 mm voxel could resolve and no finer. The pulp reaches 78 to 97 percent of the way down each root and stops 0.6 to 4.5 mm short of the apex, because a canal narrower than the sampling cannot be recovered: chambers and the coronal and middle canal are real here, apical anatomy and working length are not, and a molar pulp arrives in two to four pieces for the same reason. The maxillary sinus and the upper jawbone are cut off by the scan's field of view, so what is here is a sinus floor and an alveolar process rather than a whole sinus or a whole maxilla. There is no periodontal ligament, no enamel and dentin division, no cementum, no gingiva and no nerve inside the canal. Redistributed under CC BY-SA 4.0: any derivative carries the same terms. That is not the license the rest of this atlas carries.",
+   "case": "ToothFairy3F_026",
+   "caseSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "voxelSpacingMm": 0.30000001192092896,
+   "used": [
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48
    ]
   }
  },
@@ -3775,6 +3867,3182 @@
    "sourceSha256": "06a138cc7e9c7807544c0974a621e6fb52a529ce4fa8382ee5c27ac555930c18",
    "sourceTriangles": 133460,
    "simplifiedError": 0.00044
+  },
+  {
+   "id": "tf-tooth-11",
+   "name": "Upper right central incisor",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 0,
+   "normals": 36048,
+   "indices": 72096,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -72.75504302978516,
+     0.13736042380332947,
+     -28.34122657775879
+    ],
+    [
+     -63.74593734741211,
+     13.955551147460938,
+     -5.552613258361816
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 11,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -67.37161555112846,
+     6.366774052277637,
+     -19.48066258206805
+    ],
+    "side": [
+     -0.968500562938878,
+     0.24892898405046676,
+     -0.006404723778535709
+    ],
+    "up": [
+     -0.12488417271729907,
+     -0.5078137679231656,
+     -0.8523667758144925
+    ],
+    "out": [
+     -0.21543120245635883,
+     -0.8247178535761669,
+     0.5229052103401989
+    ]
+   },
+   "axesDerived": true,
+   "label": 11,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 22091,
+   "sourceMm3": 596.5,
+   "meshedTriangles": 17516,
+   "simplifiedError": 0.00079
+  },
+  {
+   "id": "tf-tooth-12",
+   "name": "Upper right lateral incisor",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 144096,
+   "normals": 180144,
+   "indices": 216192,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -78.16083526611328,
+     3.9993903636932373,
+     -27.398590087890625
+    ],
+    [
+     -67.08299255371094,
+     18.446504592895508,
+     -7.054312705993652
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 12,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -72.71864589845093,
+     10.448419757929353,
+     -18.65248106106302
+    ],
+    "side": [
+     -0.8394284674891912,
+     0.5413357141592905,
+     0.04811956508946552
+    ],
+    "up": [
+     -0.35898573330703754,
+     -0.4858256208341826,
+     -0.7969333155434586
+    ],
+    "out": [
+     -0.4080307479231887,
+     -0.6862427491177826,
+     0.6021476546765847
+    ]
+   },
+   "axesDerived": true,
+   "label": 12,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 16006,
+   "sourceMm3": 432.2,
+   "meshedTriangles": 14900,
+   "simplifiedError": 0.00088
+  },
+  {
+   "id": "tf-tooth-13",
+   "name": "Upper right canine",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 288192,
+   "normals": 324240,
+   "indices": 360288,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -83.55369567871094,
+     8.840435028076172,
+     -27.464752197265625
+    ],
+    [
+     -73.3465576171875,
+     20.854772567749023,
+     -1.8876293897628784
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 13,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -78.4862988066502,
+     15.015585812271498,
+     -17.155565363425737
+    ],
+    "side": [
+     -0.6669354556238277,
+     0.7370739014495172,
+     -0.10917491394008433
+    ],
+    "up": [
+     -0.23696644238418774,
+     -0.3487277220446911,
+     -0.9067722321847433
+    ],
+    "out": [
+     -0.706430465945247,
+     -0.5788877608651855,
+     0.4072406623912611
+    ]
+   },
+   "axesDerived": true,
+   "label": 13,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 24350,
+   "sourceMm3": 657.5,
+   "meshedTriangles": 19088,
+   "simplifiedError": 0.00075
+  },
+  {
+   "id": "tf-tooth-14",
+   "name": "Upper right first premolar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 432288,
+   "normals": 468336,
+   "indices": 504384,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -86.25275421142578,
+     16.338926315307617,
+     -28.03822898864746
+    ],
+    [
+     -76.12944793701172,
+     23.433053970336914,
+     -6.526789665222168
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 14,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -81.64163011904145,
+     20.3053544386807,
+     -20.11944914507361
+    ],
+    "side": [
+     -0.42980545268405107,
+     0.9016662593702206,
+     -0.047594427786999224
+    ],
+    "up": [
+     -0.17652121187701486,
+     -0.13560462523817327,
+     -0.9749110971629591
+    ],
+    "out": [
+     -0.8854984667409244,
+     -0.41062067937127633,
+     0.21744682814919034
+    ]
+   },
+   "axesDerived": true,
+   "label": 14,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 17801,
+   "sourceMm3": 480.6,
+   "meshedTriangles": 15296,
+   "simplifiedError": 0.00079
+  },
+  {
+   "id": "tf-tooth-15",
+   "name": "Upper right second premolar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 576384,
+   "normals": 612432,
+   "indices": 648480,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -88.65624237060547,
+     22.640483856201172,
+     -26.48272705078125
+    ],
+    [
+     -79.64476013183594,
+     29.26127815246582,
+     -4.419412136077881
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 15,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -83.82889710565017,
+     25.943162336142024,
+     -18.276638078713024
+    ],
+    "side": [
+     -0.31061399193815264,
+     0.9496448857341327,
+     0.041152630672308
+    ],
+    "up": [
+     -0.16816449534254374,
+     -0.012289671922480313,
+     -0.9856823354764076
+    ],
+    "out": [
+     -0.9355424365139365,
+     -0.3130871363742751,
+     0.1635138970195599
+    ]
+   },
+   "axesDerived": true,
+   "label": 15,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 17284,
+   "sourceMm3": 466.7,
+   "meshedTriangles": 14632,
+   "simplifiedError": 0.00067
+  },
+  {
+   "id": "tf-tooth-16",
+   "name": "Upper right first molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 720480,
+   "normals": 756552,
+   "indices": 792624,
+   "vertexCount": 3006,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -91.3372802734375,
+     28.357479095458984,
+     -24.7419490814209
+    ],
+    [
+     -78.46385955810547,
+     40.34538650512695,
+     -3.214719772338867
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 16,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -85.67903068198473,
+     34.21865292946457,
+     -16.578984189412363
+    ],
+    "side": [
+     -0.2889267264969848,
+     0.9572856556448182,
+     0.011203580338763452
+    ],
+    "up": [
+     -0.20658273700160856,
+     -0.050915018098819584,
+     -0.9771034918087853
+    ],
+    "out": [
+     -0.9347967262932946,
+     -0.284625779627685,
+     0.21246940034431253
+    ]
+   },
+   "axesDerived": true,
+   "label": 16,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 38860,
+   "sourceMm3": 1049.2,
+   "meshedTriangles": 27236,
+   "simplifiedError": 0.00136
+  },
+  {
+   "id": "tf-tooth-17",
+   "name": "Upper right second molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 864624,
+   "normals": 900672,
+   "indices": 936720,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -94.05867004394531,
+     38.25625991821289,
+     -22.051332473754883
+    ],
+    [
+     -79.96681213378906,
+     48.42332458496094,
+     -1.3818072080612183
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 17,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -87.89561664995797,
+     42.608533279023966,
+     -13.843820557205568
+    ],
+    "side": [
+     -0.28058022895978096,
+     0.933991143201007,
+     0.22121319928736877
+    ],
+    "up": [
+     -0.35930491277681287,
+     0.1115083060122888,
+     -0.9265343368406358
+    ],
+    "out": [
+     -0.8900419736008656,
+     -0.33945020564487216,
+     0.30430058021030815
+    ]
+   },
+   "axesDerived": true,
+   "label": 17,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 30979,
+   "sourceMm3": 836.4,
+   "meshedTriangles": 21678,
+   "simplifiedError": 0.00114
+  },
+  {
+   "id": "tf-tooth-18",
+   "name": "Upper right third molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 1008720,
+   "normals": 1044768,
+   "indices": 1080816,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -93.74545288085938,
+     44.240230560302734,
+     -13.354883193969727
+    ],
+    [
+     -82.34537506103516,
+     52.962547302246094,
+     0.1555899977684021
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 18,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -88.0058665922769,
+     49.22537397985007,
+     -6.6445538354594085
+    ],
+    "side": [
+     -0.5844614729154723,
+     0.8084226637605281,
+     0.06969636572884383
+    ],
+    "up": [
+     -0.42984702812958825,
+     -0.23561999972910222,
+     -0.8716161701895043
+    ],
+    "out": [
+     -0.6882124084071988,
+     -0.5393848463258768,
+     0.4852088915800836
+    ]
+   },
+   "axesDerived": true,
+   "label": 18,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 20160,
+   "sourceMm3": 544.3,
+   "meshedTriangles": 14156,
+   "simplifiedError": 0.00106
+  },
+  {
+   "id": "tf-tooth-21",
+   "name": "Upper left central incisor",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 1152816,
+   "normals": 1188864,
+   "indices": 1224912,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -63.976566314697266,
+     0.7464181780815125,
+     -28.65685272216797
+    ],
+    [
+     -54.48542404174805,
+     13.655076026916504,
+     -5.34725284576416
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 21,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -59.46101791629089,
+     6.354881313819462,
+     -19.646748264680625
+    ],
+    "side": [
+     -0.9754671765600983,
+     -0.21503354571715055,
+     0.047163138892361574
+    ],
+    "up": [
+     0.06202551553889859,
+     -0.4740129291361804,
+     -0.8783305633039717
+    ],
+    "out": [
+     0.21122647295262,
+     -0.8538573166683344,
+     0.47572162016871555
+    ]
+   },
+   "axesDerived": true,
+   "label": 21,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 21860,
+   "sourceMm3": 590.2,
+   "meshedTriangles": 17608,
+   "simplifiedError": 0.00077
+  },
+  {
+   "id": "tf-tooth-22",
+   "name": "Upper left lateral incisor",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 1296912,
+   "normals": 1332960,
+   "indices": 1369008,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -58.66057205200195,
+     3.748270034790039,
+     -27.456573486328125
+    ],
+    [
+     -49.044673919677734,
+     17.454816818237305,
+     -6.7822699546813965
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 22,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -53.90980737610328,
+     9.93272912770771,
+     -19.057460097346343
+    ],
+    "side": [
+     -0.8237734107481454,
+     -0.5667867063290272,
+     0.012255499706675277
+    ],
+    "up": [
+     0.30160708831808714,
+     -0.4564584078453636,
+     -0.8370656403075932
+    ],
+    "out": [
+     0.48003180313459737,
+     -0.685856071953853,
+     0.5469651876887398
+    ]
+   },
+   "axesDerived": true,
+   "label": 22,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 14941,
+   "sourceMm3": 403.4,
+   "meshedTriangles": 13976,
+   "simplifiedError": 0.00077
+  },
+  {
+   "id": "tf-tooth-23",
+   "name": "Upper left canine",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 1441008,
+   "normals": 1477056,
+   "indices": 1513104,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -53.2494010925293,
+     9.455580711364746,
+     -28.335739135742188
+    ],
+    [
+     -44.84615707397461,
+     20.855239868164062,
+     -1.668867826461792
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 23,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -49.140865369132044,
+     15.109813278737763,
+     -17.725928008669744
+    ],
+    "side": [
+     -0.5604907290691586,
+     -0.8093071449045842,
+     0.17570454699271068
+    ],
+    "up": [
+     0.13236979315853353,
+     -0.2969817782544194,
+     -0.9456638204161192
+    ],
+    "out": [
+     0.8175135353538131,
+     -0.5067778296169174,
+     0.2735833527868179
+    ]
+   },
+   "axesDerived": true,
+   "label": 23,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 24183,
+   "sourceMm3": 652.9,
+   "meshedTriangles": 19140,
+   "simplifiedError": 0.00071
+  },
+  {
+   "id": "tf-tooth-24",
+   "name": "Upper left first premolar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 1585104,
+   "normals": 1621152,
+   "indices": 1657200,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -51.158565521240234,
+     16.972137451171875,
+     -27.45746421813965
+    ],
+    [
+     -42.44443130493164,
+     24.385574340820312,
+     -6.42416524887085
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 24,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -46.78385528545846,
+     20.87058724716848,
+     -20.090045907371735
+    ],
+    "side": [
+     -0.3922377069239245,
+     -0.9153965717041149,
+     0.09054666078555743
+    ],
+    "up": [
+     0.037562320864893174,
+     -0.11429184715716875,
+     -0.9927368461604744
+    ],
+    "out": [
+     0.9190966506947483,
+     -0.38598768139120143,
+     0.07921399179400077
+    ]
+   },
+   "axesDerived": true,
+   "label": 24,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 16183,
+   "sourceMm3": 436.9,
+   "meshedTriangles": 14040,
+   "simplifiedError": 0.00075
+  },
+  {
+   "id": "tf-tooth-25",
+   "name": "Upper left second premolar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 1729200,
+   "normals": 1765248,
+   "indices": 1801296,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -48.45521926879883,
+     23.239065170288086,
+     -26.544837951660156
+    ],
+    [
+     -40.11423873901367,
+     29.86088752746582,
+     -5.046235084533691
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 25,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -44.2422693991914,
+     26.59143757433842,
+     -18.61614458554467
+    ],
+    "side": [
+     -0.2606776123449794,
+     -0.9653542906848518,
+     0.01175907642917527
+    ],
+    "up": [
+     -0.0006002661838631231,
+     -0.012018125597094621,
+     -0.9999275995479078
+    ],
+    "out": [
+     0.9654257206552087,
+     -0.2606657977439292,
+     0.0025533867493674227
+    ]
+   },
+   "axesDerived": true,
+   "label": 25,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 15461,
+   "sourceMm3": 417.4,
+   "meshedTriangles": 13320,
+   "simplifiedError": 0.00066
+  },
+  {
+   "id": "tf-tooth-26",
+   "name": "Upper left first molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 1873296,
+   "normals": 1909344,
+   "indices": 1945392,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -49.941471099853516,
+     28.981727600097656,
+     -24.741846084594727
+    ],
+    [
+     -37.375125885009766,
+     40.65460968017578,
+     -3.1099367141723633
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 26,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -43.02517657203752,
+     34.82478263963014,
+     -16.69989428344469
+    ],
+    "side": [
+     -0.21592195758508795,
+     -0.9758371771283716,
+     0.033459108875687316
+    ],
+    "up": [
+     0.16484938740234287,
+     -0.07020867435616496,
+     -0.9838167621657106
+    ],
+    "out": [
+     0.962394091682662,
+     -0.20691192759065777,
+     0.1760257552604807
+    ]
+   },
+   "axesDerived": true,
+   "label": 26,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 37601,
+   "sourceMm3": 1015.2,
+   "meshedTriangles": 26476,
+   "simplifiedError": 0.00136
+  },
+  {
+   "id": "tf-tooth-27",
+   "name": "Upper left second molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 2017392,
+   "normals": 2053440,
+   "indices": 2089488,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -47.85441207885742,
+     39.141971588134766,
+     -22.6444034576416
+    ],
+    [
+     -35.563079833984375,
+     49.35248565673828,
+     -0.453321248292923
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 27,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -41.33618908121787,
+     43.95047095644455,
+     -14.099779755564386
+    ],
+    "side": [
+     -0.23441089221268427,
+     -0.968073549230362,
+     -0.08879829329769454
+    ],
+    "up": [
+     0.2091269225003341,
+     0.03898893381498692,
+     -0.9771109421787835
+    ],
+    "out": [
+     0.9493774085671054,
+     -0.24761556154753406,
+     0.193310811342529
+    ]
+   },
+   "axesDerived": true,
+   "label": 27,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 32608,
+   "sourceMm3": 880.4,
+   "meshedTriangles": 22436,
+   "simplifiedError": 0.00114
+  },
+  {
+   "id": "tf-tooth-28",
+   "name": "Upper left third molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 2161488,
+   "normals": 2197560,
+   "indices": 2233632,
+   "vertexCount": 3006,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -45.682945251464844,
+     45.57378387451172,
+     -12.189456939697266
+    ],
+    [
+     -36.140907287597656,
+     56.822120666503906,
+     0.15843437612056732
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 28,
+   "jaw": "maxilla",
+   "axes": {
+    "center": [
+     -40.8798692556344,
+     51.233586767254245,
+     -6.217454456694649
+    ],
+    "side": [
+     -0.8168697983631208,
+     -0.5546725391219395,
+     0.1583101603379097
+    ],
+    "up": [
+     0.2073848713696401,
+     -0.5385124257087651,
+     -0.8166981587369102
+    ],
+    "out": [
+     0.5382520298607273,
+     -0.6343049280127704,
+     0.5549252297828248
+    ]
+   },
+   "axesDerived": true,
+   "label": 28,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 19491,
+   "sourceMm3": 526.3,
+   "meshedTriangles": 14228,
+   "simplifiedError": 0.00114
+  },
+  {
+   "id": "tf-tooth-31",
+   "name": "Lower left central incisor",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 2305632,
+   "normals": 2341680,
+   "indices": 2377728,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -63.9451789855957,
+     5.839353084564209,
+     -60.13666915893555
+    ],
+    [
+     -58.04252243041992,
+     16.94792938232422,
+     -39.76359939575195
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 31,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -61.50981394276655,
+     10.637106925979412,
+     -48.601868095260876
+    ],
+    "side": [
+     0.979340408615544,
+     0.20062546628135797,
+     0.0253335021686132
+    ],
+    "up": [
+     0.07423854636348207,
+     -0.4732332638259182,
+     0.8778034610563494
+    ],
+    "out": [
+     0.18809838459321376,
+     -0.8577876778597701,
+     -0.47835060094596604
+    ]
+   },
+   "axesDerived": true,
+   "label": 31,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 10610,
+   "sourceMm3": 286.5,
+   "meshedTriangles": 11124,
+   "simplifiedError": 0.0006
+  },
+  {
+   "id": "tf-tooth-32",
+   "name": "Lower left lateral incisor",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 2449728,
+   "normals": 2485776,
+   "indices": 2521824,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -59.77938461303711,
+     7.052639007568359,
+     -61.325592041015625
+    ],
+    [
+     -52.64628982543945,
+     19.043380737304688,
+     -39.45157241821289
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 32,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -56.694449799703705,
+     12.389749195954217,
+     -48.717560771123125
+    ],
+    "side": [
+     0.8763958963696479,
+     0.4775566380755823,
+     0.06220844200258263
+    ],
+    "up": [
+     0.17207092282311018,
+     -0.43115593698800186,
+     0.885717875804029
+    ],
+    "out": [
+     0.4498019901526055,
+     -0.7655352476731202,
+     -0.4600369052856628
+    ]
+   },
+   "axesDerived": true,
+   "label": 32,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 12535,
+   "sourceMm3": 338.4,
+   "meshedTriangles": 12724,
+   "simplifiedError": 0.00063
+  },
+  {
+   "id": "tf-tooth-33",
+   "name": "Lower left canine",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 2593824,
+   "normals": 2629872,
+   "indices": 2665920,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -55.05523681640625,
+     10.675959587097168,
+     -63.16958236694336
+    ],
+    [
+     -47.54370880126953,
+     23.27947998046875,
+     -38.56361770629883
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 33,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -51.45607102544545,
+     16.596457657051936,
+     -48.688599104730926
+    ],
+    "side": [
+     0.6891975761043029,
+     0.6984020005030709,
+     0.1929801720002918
+    ],
+    "up": [
+     0.12424431025293664,
+     -0.3763012619642162,
+     0.9181289188419622
+    ],
+    "out": [
+     0.7138417558967293,
+     -0.6087955370544752,
+     -0.3461183924625032
+    ]
+   },
+   "axesDerived": true,
+   "label": 33,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 18092,
+   "sourceMm3": 488.5,
+   "meshedTriangles": 16136,
+   "simplifiedError": 0.00065
+  },
+  {
+   "id": "tf-tooth-34",
+   "name": "Lower left first premolar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 2737920,
+   "normals": 2773968,
+   "indices": 2810016,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -51.16001510620117,
+     17.375629425048828,
+     -59.00621032714844
+    ],
+    [
+     -43.639617919921875,
+     26.861160278320312,
+     -37.6485481262207
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 34,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -47.448971138952956,
+     21.62161487450382,
+     -45.88763286541443
+    ],
+    "side": [
+     0.44215081588497873,
+     0.8760023567257362,
+     0.19267207120702118
+    ],
+    "up": [
+     0.07730961422872984,
+     -0.2512313043712062,
+     0.9648347295012485
+    ],
+    "out": [
+     0.8936027526591738,
+     -0.41170705934547464,
+     -0.17880553046550107
+    ]
+   },
+   "axesDerived": true,
+   "label": 34,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 14213,
+   "sourceMm3": 383.8,
+   "meshedTriangles": 12716,
+   "simplifiedError": 0.00063
+  },
+  {
+   "id": "tf-tooth-35",
+   "name": "Lower left second premolar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 2882016,
+   "normals": 2918064,
+   "indices": 2954112,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -48.76021957397461,
+     23.542076110839844,
+     -56.76255416870117
+    ],
+    [
+     -41.57202911376953,
+     34.929630279541016,
+     -36.43685531616211
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 35,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -44.97267179518123,
+     28.571160712666188,
+     -43.85925397797672
+    ],
+    "side": [
+     0.3113987161544538,
+     0.8589697177240698,
+     0.40645032120837327
+    ],
+    "up": [
+     -0.17198646447256744,
+     -0.36971006951217855,
+     0.9130909705716767
+    ],
+    "out": [
+     0.9345862697555449,
+     -0.35423930969661177,
+     0.03260392384489576
+    ]
+   },
+   "axesDerived": true,
+   "label": 35,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 14764,
+   "sourceMm3": 398.6,
+   "meshedTriangles": 12966,
+   "simplifiedError": 0.00069
+  },
+  {
+   "id": "tf-tooth-36",
+   "name": "Lower left first molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 3026112,
+   "normals": 3062184,
+   "indices": 3098256,
+   "vertexCount": 3006,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -48.43775939941406,
+     29.540081024169922,
+     -52.92619705200195
+    ],
+    [
+     -34.95168685913086,
+     45.41580581665039,
+     -32.62242126464844
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 36,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -41.85263471551129,
+     36.854151916592684,
+     -40.80529292300479
+    ],
+    "side": [
+     0.2519842034556476,
+     0.8468938250859814,
+     0.46826788299012945
+    ],
+    "up": [
+     -0.3185331349119616,
+     -0.3843332307930532,
+     0.8665013616096237
+    ],
+    "out": [
+     0.9138055609220052,
+     -0.36750349214586864,
+     0.17291784201929702
+    ]
+   },
+   "axesDerived": true,
+   "label": 36,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 35719,
+   "sourceMm3": 964.4,
+   "meshedTriangles": 27180,
+   "simplifiedError": 0.00138
+  },
+  {
+   "id": "tf-tooth-37",
+   "name": "Lower left second molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 3170256,
+   "normals": 3206304,
+   "indices": 3242352,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -45.44941329956055,
+     39.75947189331055,
+     -46.316673278808594
+    ],
+    [
+     -32.84031677246094,
+     53.25226593017578,
+     -28.656038284301758
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 37,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -39.093417532272134,
+     46.79761172604115,
+     -36.192091689586505
+    ],
+    "side": [
+     0.2644845400663045,
+     0.764236011129968,
+     0.5882102067782151
+    ],
+    "up": [
+     -0.4167149054913189,
+     -0.4594845750447418,
+     0.7843612769874059
+    ],
+    "out": [
+     0.869710650508131,
+     -0.4525673923164465,
+     0.19694197065281735
+    ]
+   },
+   "axesDerived": true,
+   "label": 37,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 31379,
+   "sourceMm3": 847.2,
+   "meshedTriangles": 21934,
+   "simplifiedError": 0.00146
+  },
+  {
+   "id": "tf-tooth-38",
+   "name": "Lower left third molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 3314352,
+   "normals": 3350400,
+   "indices": 3386448,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -39.755126953125,
+     48.14411163330078,
+     -42.42391586303711
+    ],
+    [
+     -29.541213989257812,
+     59.52947235107422,
+     -25.71084976196289
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 38,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -34.7099676138651,
+     54.18976361720048,
+     -32.51107851657733
+    ],
+    "side": [
+     0.4836842928399632,
+     0.8282839196858819,
+     0.2828343212018233
+    ],
+    "up": [
+     -0.0972563879115678,
+     -0.2702853433728592,
+     0.9578554317683907
+    ],
+    "out": [
+     0.8698222231411998,
+     -0.4908070716153212,
+     -0.05017687298042403
+    ]
+   },
+   "axesDerived": true,
+   "label": 38,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 27543,
+   "sourceMm3": 743.7,
+   "meshedTriangles": 18440,
+   "simplifiedError": 0.00122
+  },
+  {
+   "id": "tf-tooth-41",
+   "name": "Lower right central incisor",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 3458448,
+   "normals": 3494496,
+   "indices": 3530544,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -69.74665832519531,
+     5.244579792022705,
+     -59.81789779663086
+    ],
+    [
+     -63.7528190612793,
+     16.93343734741211,
+     -40.64976501464844
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 41,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -66.50983195422279,
+     10.272395934968783,
+     -48.78031388656027
+    ],
+    "side": [
+     0.9938054387726304,
+     -0.10366225204791267,
+     -0.04006104549677284
+    ],
+    "up": [
+     -0.01962420101650705,
+     -0.5185003224005359,
+     0.8548522131953594
+    ],
+    "out": [
+     -0.10938757059375256,
+     -0.8487706128106081,
+     -0.5173227292790269
+    ]
+   },
+   "axesDerived": true,
+   "label": 41,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 10194,
+   "sourceMm3": 275.2,
+   "meshedTriangles": 10540,
+   "simplifiedError": 0.00057
+  },
+  {
+   "id": "tf-tooth-42",
+   "name": "Lower right lateral incisor",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 3602544,
+   "normals": 3638592,
+   "indices": 3674640,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -75.12918853759766,
+     7.3423380851745605,
+     -61.39917755126953
+    ],
+    [
+     -68.89025115966797,
+     19.012771606445312,
+     -39.76298141479492
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 42,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -71.35932279642567,
+     12.14094960181175,
+     -48.98654793480876
+    ],
+    "side": [
+     0.9014770230738733,
+     -0.4137407912218825,
+     -0.12711307780459966
+    ],
+    "up": [
+     -0.07985927297058924,
+     -0.44763258313650617,
+     0.8906444672455716
+    ],
+    "out": [
+     -0.4253959019436794,
+     -0.7927443649712242,
+     -0.4365715272620214
+    ]
+   },
+   "axesDerived": true,
+   "label": 42,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 12264,
+   "sourceMm3": 331.1,
+   "meshedTriangles": 12036,
+   "simplifiedError": 0.00062
+  },
+  {
+   "id": "tf-tooth-43",
+   "name": "Lower right canine",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 3746640,
+   "normals": 3782688,
+   "indices": 3818736,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -80.55646514892578,
+     10.050904273986816,
+     -64.02999114990234
+    ],
+    [
+     -73.6103744506836,
+     22.938865661621094,
+     -39.162025451660156
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 43,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -76.91420370492139,
+     16.274135369415127,
+     -49.54048258954115
+    ],
+    "side": [
+     0.7082274733784366,
+     -0.6538514798871965,
+     -0.26625568200757505
+    ],
+    "up": [
+     -0.03405996233131103,
+     -0.40834697494074346,
+     0.9121911351371124
+    ],
+    "out": [
+     -0.7051622259579603,
+     -0.6369701643766895,
+     -0.31147270309924047
+    ]
+   },
+   "axesDerived": true,
+   "label": 43,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 18809,
+   "sourceMm3": 507.8,
+   "meshedTriangles": 16840,
+   "simplifiedError": 0.00068
+  },
+  {
+   "id": "tf-tooth-44",
+   "name": "Lower right first premolar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 3890736,
+   "normals": 3926784,
+   "indices": 3962832,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -83.86128997802734,
+     15.764939308166504,
+     -59.26016616821289
+    ],
+    [
+     -76.33509826660156,
+     26.543251037597656,
+     -37.944847106933594
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 44,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -80.57643026313032,
+     20.880592795893538,
+     -45.99217941741695
+    ],
+    "side": [
+     0.4675998753590668,
+     -0.8108512278750357,
+     -0.351952614449349
+    ],
+    "up": [
+     0.1221888747443807,
+     -0.3350482096725643,
+     0.9342443877722314
+    ],
+    "out": [
+     -0.8754543023213075,
+     -0.47985725320011186,
+     -0.05759150196301955
+    ]
+   },
+   "axesDerived": true,
+   "label": 44,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 14190,
+   "sourceMm3": 383.1,
+   "meshedTriangles": 13352,
+   "simplifiedError": 0.00069
+  },
+  {
+   "id": "tf-tooth-45",
+   "name": "Lower right second premolar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4034832,
+   "normals": 4070904,
+   "indices": 4106976,
+   "vertexCount": 3006,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -88.05502319335938,
+     22.051633834838867,
+     -55.103553771972656
+    ],
+    [
+     -78.21595764160156,
+     31.949243545532227,
+     -37.349544525146484
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 45,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -83.41252739929433,
+     27.508264848164757,
+     -44.36251514324036
+    ],
+    "side": [
+     0.32085755142547634,
+     -0.8432526228852417,
+     -0.4312487051463559
+    ],
+    "up": [
+     0.36855803209557353,
+     -0.308272385865484,
+     0.8770023449744251
+    ],
+    "out": [
+     -0.8724765949130591,
+     -0.4403329991154,
+     0.21187600434912676
+    ]
+   },
+   "axesDerived": true,
+   "label": 45,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 14013,
+   "sourceMm3": 378.4,
+   "meshedTriangles": 12588,
+   "simplifiedError": 0.00079
+  },
+  {
+   "id": "tf-tooth-46",
+   "name": "Lower right first molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4178976,
+   "normals": 4215024,
+   "indices": 4251072,
+   "vertexCount": 3004,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -94.34271240234375,
+     27.765140533447266,
+     -52.64409637451172
+    ],
+    [
+     -79.93789672851562,
+     44.85794448852539,
+     -33.13615036010742
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -86.80395132202716,
+     35.47489874305211,
+     -41.30553194851276
+    ],
+    "side": [
+     0.23846326580794158,
+     -0.7965548629124175,
+     -0.5555498368560563
+    ],
+    "up": [
+     0.3612005073007476,
+     -0.4582676390226388,
+     0.8121114237284802
+    ],
+    "out": [
+     -0.9014818158930847,
+     -0.39432362520548553,
+     0.17843602276140935
+    ]
+   },
+   "axesDerived": true,
+   "label": 46,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 36526,
+   "sourceMm3": 986.2,
+   "meshedTriangles": 27536,
+   "simplifiedError": 0.00144
+  },
+  {
+   "id": "tf-tooth-47",
+   "name": "Lower right second molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4323072,
+   "normals": 4359144,
+   "indices": 4395216,
+   "vertexCount": 3006,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -96.16675567626953,
+     38.26194381713867,
+     -45.35077667236328
+    ],
+    [
+     -82.66651916503906,
+     52.41727828979492,
+     -28.358627319335938
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 47,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -89.48208055446045,
+     45.222618993163984,
+     -35.87994239124049
+    ],
+    "side": [
+     0.19977627864663414,
+     -0.7200068101800777,
+     -0.6645898222094676
+    ],
+    "up": [
+     0.4968453008798733,
+     -0.510161803326935,
+     0.702053902075758
+    ],
+    "out": [
+     -0.8445319327791522,
+     -0.4704520461434078,
+     0.25581377366316743
+    ]
+   },
+   "axesDerived": true,
+   "label": 47,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 31507,
+   "sourceMm3": 850.7,
+   "meshedTriangles": 23012,
+   "simplifiedError": 0.0015
+  },
+  {
+   "id": "tf-tooth-48",
+   "name": "Lower right third molar",
+   "group": "tooth",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4467216,
+   "normals": 4503240,
+   "indices": 4539264,
+   "vertexCount": 3002,
+   "indexCount": 18000,
+   "bounds": [
+    [
+     -98.25927734375,
+     45.701717376708984,
+     -39.729835510253906
+    ],
+    [
+     -87.73786163330078,
+     60.443363189697266,
+     -24.1577205657959
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 48,
+   "jaw": "mandible",
+   "axes": {
+    "center": [
+     -93.2845046005095,
+     52.55573906074089,
+     -31.287767639524276
+    ],
+    "side": [
+     0.3961759293436372,
+     -0.7561350256584741,
+     -0.5208689431912448
+    ],
+    "up": [
+     0.15950794887092268,
+     -0.5019829968572446,
+     0.8500413431787955
+    ],
+    "out": [
+     -0.9042133859082692,
+     -0.4198486558733735,
+     -0.07826403328237728
+    ]
+   },
+   "axesDerived": true,
+   "label": 48,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 29092,
+   "sourceMm3": 785.5,
+   "meshedTriangles": 20220,
+   "simplifiedError": 0.0015
+  },
+  {
+   "id": "tf-pulp-11",
+   "name": "Upper right central incisor, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4611264,
+   "normals": 4624848,
+   "indices": 4638432,
+   "vertexCount": 1132,
+   "indexCount": 6780,
+   "bounds": [
+    [
+     -68.83763885498047,
+     3.8500239849090576,
+     -22.86669921875
+    ],
+    [
+     -65.65196990966797,
+     12.352686882019043,
+     -8.02694034576416
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 11,
+   "jaw": "maxilla",
+   "label": 111,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 861,
+   "sourceMm3": 23.2,
+   "meshedTriangles": 2260,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-12",
+   "name": "Upper right lateral incisor, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4665552,
+   "normals": 4675872,
+   "indices": 4686192,
+   "vertexCount": 860,
+   "indexCount": 5148,
+   "bounds": [
+    [
+     -74.5846939086914,
+     8.303459167480469,
+     -21.966283798217773
+    ],
+    [
+     -68.86463165283203,
+     15.97319221496582,
+     -9.827287673950195
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 12,
+   "jaw": "maxilla",
+   "label": 112,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 574,
+   "sourceMm3": 15.5,
+   "meshedTriangles": 1716,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-13",
+   "name": "Upper right canine, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4706784,
+   "normals": 4722696,
+   "indices": 4738608,
+   "vertexCount": 1326,
+   "indexCount": 7944,
+   "bounds": [
+    [
+     -80.27913665771484,
+     12.795211791992188,
+     -22.006816864013672
+    ],
+    [
+     -75.45790100097656,
+     19.28838539123535,
+     -5.898313045501709
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 13,
+   "jaw": "maxilla",
+   "label": 113,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 998,
+   "sourceMm3": 26.9,
+   "meshedTriangles": 2648,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-14",
+   "name": "Upper right first premolar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4770384,
+   "normals": 4781016,
+   "indices": 4791648,
+   "vertexCount": 886,
+   "indexCount": 5304,
+   "bounds": [
+    [
+     -83.79493713378906,
+     19.360877990722656,
+     -22.549030303955078
+    ],
+    [
+     -78.7984390258789,
+     21.75701141357422,
+     -14.575277328491211
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 14,
+   "jaw": "maxilla",
+   "label": 114,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 628,
+   "sourceMm3": 17,
+   "meshedTriangles": 1768,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-15",
+   "name": "Upper right second premolar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4812864,
+   "normals": 4825008,
+   "indices": 4837152,
+   "vertexCount": 1012,
+   "indexCount": 6060,
+   "bounds": [
+    [
+     -85.9675064086914,
+     25.037582397460938,
+     -21.056289672851562
+    ],
+    [
+     -81.8551254272461,
+     26.85418128967285,
+     -9.463983535766602
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 15,
+   "jaw": "maxilla",
+   "label": 115,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 782,
+   "sourceMm3": 21.1,
+   "meshedTriangles": 2020,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-16",
+   "name": "Upper right first molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4861392,
+   "normals": 4879464,
+   "indices": 4897536,
+   "vertexCount": 1506,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     -88.52021789550781,
+     30.233314514160156,
+     -18.976613998413086
+    ],
+    [
+     -79.80403900146484,
+     37.036720275878906,
+     -7.77414608001709
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 16,
+   "jaw": "maxilla",
+   "label": 116,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1432,
+   "sourceMm3": 38.7,
+   "meshedTriangles": 3228,
+   "simplifiedError": 0.00066
+  },
+  {
+   "id": "tf-pulp-17",
+   "name": "Upper right second molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4933536,
+   "normals": 4950132,
+   "indices": 4966728,
+   "vertexCount": 1383,
+   "indexCount": 8286,
+   "bounds": [
+    [
+     -90.39684295654297,
+     40.40875244140625,
+     -15.985564231872559
+    ],
+    [
+     -82.42181396484375,
+     43.9250373840332,
+     -5.265849590301514
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 17,
+   "jaw": "maxilla",
+   "label": 117,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1246,
+   "sourceMm3": 33.6,
+   "meshedTriangles": 2762,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-18",
+   "name": "Upper right third molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 4999872,
+   "normals": 5010264,
+   "indices": 5020656,
+   "vertexCount": 866,
+   "indexCount": 5184,
+   "bounds": [
+    [
+     -89.53575897216797,
+     47.90342330932617,
+     -7.5734543800354
+    ],
+    [
+     -83.86184692382812,
+     51.629310607910156,
+     -2.0169966220855713
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 18,
+   "jaw": "maxilla",
+   "label": 118,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 876,
+   "sourceMm3": 23.7,
+   "meshedTriangles": 1728,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-21",
+   "name": "Upper left central incisor, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5041392,
+   "normals": 5055792,
+   "indices": 5070192,
+   "vertexCount": 1200,
+   "indexCount": 7188,
+   "bounds": [
+    [
+     -60.672943115234375,
+     4.118671894073486,
+     -23.180044174194336
+    ],
+    [
+     -57.827396392822266,
+     12.35456657409668,
+     -7.649071216583252
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 21,
+   "jaw": "maxilla",
+   "label": 121,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 918,
+   "sourceMm3": 24.8,
+   "meshedTriangles": 2396,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-22",
+   "name": "Upper left lateral incisor, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5098944,
+   "normals": 5108016,
+   "indices": 5117088,
+   "vertexCount": 756,
+   "indexCount": 4512,
+   "bounds": [
+    [
+     -57.02626037597656,
+     7.980097770690918,
+     -22.332046508789062
+    ],
+    [
+     -52.3695068359375,
+     14.105063438415527,
+     -11.107850074768066
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 22,
+   "jaw": "maxilla",
+   "label": 122,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 504,
+   "sourceMm3": 13.6,
+   "meshedTriangles": 1504,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-23",
+   "name": "Upper left canine, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5135136,
+   "normals": 5151432,
+   "indices": 5167728,
+   "vertexCount": 1358,
+   "indexCount": 8136,
+   "bounds": [
+    [
+     -50.82549285888672,
+     13.113862037658691,
+     -22.70463752746582
+    ],
+    [
+     -47.86437225341797,
+     18.974586486816406,
+     -5.626262187957764
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 23,
+   "jaw": "maxilla",
+   "label": 123,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1083,
+   "sourceMm3": 29.2,
+   "meshedTriangles": 2712,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-24",
+   "name": "Upper left first premolar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5200272,
+   "normals": 5210328,
+   "indices": 5220384,
+   "vertexCount": 838,
+   "indexCount": 5016,
+   "bounds": [
+    [
+     -48.99115753173828,
+     19.95288848876953,
+     -22.08498191833496
+    ],
+    [
+     -44.26100158691406,
+     22.27859115600586,
+     -13.66223430633545
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 24,
+   "jaw": "maxilla",
+   "label": 124,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 574,
+   "sourceMm3": 15.5,
+   "meshedTriangles": 1672,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-25",
+   "name": "Upper left second premolar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5240448,
+   "normals": 5250936,
+   "indices": 5261424,
+   "vertexCount": 874,
+   "indexCount": 5232,
+   "bounds": [
+    [
+     -45.698516845703125,
+     25.696086883544922,
+     -21.054340362548828
+    ],
+    [
+     -42.50445556640625,
+     27.672929763793945,
+     -10.97622013092041
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 25,
+   "jaw": "maxilla",
+   "label": 125,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 647,
+   "sourceMm3": 17.5,
+   "meshedTriangles": 1744,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-26",
+   "name": "Upper left first molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5282352,
+   "normals": 5300376,
+   "indices": 5318400,
+   "vertexCount": 1502,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     -48.68111801147461,
+     30.829212188720703,
+     -18.80956268310547
+    ],
+    [
+     -39.830345153808594,
+     37.6459846496582,
+     -8.501043319702148
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 26,
+   "jaw": "maxilla",
+   "label": 126,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1402,
+   "sourceMm3": 37.9,
+   "meshedTriangles": 3128,
+   "simplifiedError": 0.00054
+  },
+  {
+   "id": "tf-pulp-27",
+   "name": "Upper left second molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5354400,
+   "normals": 5372112,
+   "indices": 5389824,
+   "vertexCount": 1476,
+   "indexCount": 8844,
+   "bounds": [
+    [
+     -46.586849212646484,
+     41.86506652832031,
+     -15.984904289245605
+    ],
+    [
+     -38.92930221557617,
+     45.410865783691406,
+     -3.8192191123962402
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 27,
+   "jaw": "maxilla",
+   "label": 127,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1294,
+   "sourceMm3": 34.9,
+   "meshedTriangles": 2948,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-28",
+   "name": "Upper left third molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5425200,
+   "normals": 5435904,
+   "indices": 5446608,
+   "vertexCount": 892,
+   "indexCount": 5340,
+   "bounds": [
+    [
+     -43.865684509277344,
+     50.263763427734375,
+     -6.716366767883301
+    ],
+    [
+     -39.20275115966797,
+     54.66680145263672,
+     -1.1447144746780396
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 28,
+   "jaw": "maxilla",
+   "label": 128,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 886,
+   "sourceMm3": 23.9,
+   "meshedTriangles": 1780,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-31",
+   "name": "Lower left central incisor, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5467968,
+   "normals": 5476224,
+   "indices": 5484480,
+   "vertexCount": 688,
+   "indexCount": 4116,
+   "bounds": [
+    [
+     -62.521610260009766,
+     8.354905128479004,
+     -56.48094177246094
+    ],
+    [
+     -60.7755012512207,
+     15.054813385009766,
+     -44.864952087402344
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 31,
+   "jaw": "mandible",
+   "label": 131,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 435,
+   "sourceMm3": 11.7,
+   "meshedTriangles": 1372,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-32",
+   "name": "Lower left lateral incisor, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5500944,
+   "normals": 5510112,
+   "indices": 5519280,
+   "vertexCount": 764,
+   "indexCount": 4572,
+   "bounds": [
+    [
+     -58.32374572753906,
+     10.102601051330566,
+     -56.24134826660156
+    ],
+    [
+     -55.650970458984375,
+     16.278738021850586,
+     -44.572906494140625
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 32,
+   "jaw": "mandible",
+   "label": 132,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 501,
+   "sourceMm3": 13.5,
+   "meshedTriangles": 1524,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-33",
+   "name": "Lower left canine, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5537568,
+   "normals": 5550600,
+   "indices": 5563632,
+   "vertexCount": 1086,
+   "indexCount": 6504,
+   "bounds": [
+    [
+     -53.257415771484375,
+     14.567120552062988,
+     -58.57258224487305
+    ],
+    [
+     -50.25691604614258,
+     20.74911117553711,
+     -44.233856201171875
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 33,
+   "jaw": "mandible",
+   "label": 133,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 752,
+   "sourceMm3": 20.3,
+   "meshedTriangles": 2168,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-34",
+   "name": "Lower left first premolar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5589648,
+   "normals": 5599584,
+   "indices": 5609520,
+   "vertexCount": 828,
+   "indexCount": 4956,
+   "bounds": [
+    [
+     -48.986820220947266,
+     20.537721633911133,
+     -54.356483459472656
+    ],
+    [
+     -46.06656265258789,
+     24.037887573242188,
+     -42.83549118041992
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 34,
+   "jaw": "mandible",
+   "label": 134,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 590,
+   "sourceMm3": 15.9,
+   "meshedTriangles": 1652,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-35",
+   "name": "Lower left second premolar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5629344,
+   "normals": 5638788,
+   "indices": 5648232,
+   "vertexCount": 787,
+   "indexCount": 4710,
+   "bounds": [
+    [
+     -46.03007507324219,
+     26.852039337158203,
+     -51.96699142456055
+    ],
+    [
+     -43.45481872558594,
+     31.8709774017334,
+     -41.297203063964844
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 35,
+   "jaw": "mandible",
+   "label": 135,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 594,
+   "sourceMm3": 16,
+   "meshedTriangles": 1570,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-36",
+   "name": "Lower left first molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5667072,
+   "normals": 5685120,
+   "indices": 5703168,
+   "vertexCount": 1504,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     -44.75370788574219,
+     33.7840690612793,
+     -46.55921936035156
+    ],
+    [
+     -37.466163635253906,
+     43.2037353515625,
+     -39.15639114379883
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 36,
+   "jaw": "mandible",
+   "label": 136,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1318,
+   "sourceMm3": 35.6,
+   "meshedTriangles": 3428,
+   "simplifiedError": 0.00092
+  },
+  {
+   "id": "tf-pulp-37",
+   "name": "Lower left second molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5739168,
+   "normals": 5756760,
+   "indices": 5774352,
+   "vertexCount": 1466,
+   "indexCount": 8796,
+   "bounds": [
+    [
+     -41.497413635253906,
+     44.55963134765625,
+     -42.69606018066406
+    ],
+    [
+     -35.3446044921875,
+     51.96336364746094,
+     -35.2767448425293
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 37,
+   "jaw": "mandible",
+   "label": 137,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1263,
+   "sourceMm3": 34.1,
+   "meshedTriangles": 2932,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-38",
+   "name": "Lower left third molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5809536,
+   "normals": 5824200,
+   "indices": 5838864,
+   "vertexCount": 1222,
+   "indexCount": 7356,
+   "bounds": [
+    [
+     -37.04058837890625,
+     52.36594772338867,
+     -39.68669128417969
+    ],
+    [
+     -33.37183380126953,
+     58.04886245727539,
+     -32.3508415222168
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 38,
+   "jaw": "mandible",
+   "label": 138,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1237,
+   "sourceMm3": 33.4,
+   "meshedTriangles": 2452,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-41",
+   "name": "Lower right central incisor, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5868288,
+   "normals": 5875248,
+   "indices": 5882208,
+   "vertexCount": 580,
+   "indexCount": 3468,
+   "bounds": [
+    [
+     -67.05247497558594,
+     7.97772216796875,
+     -54.98722457885742
+    ],
+    [
+     -65.89138793945312,
+     14.208677291870117,
+     -45.220314025878906
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 41,
+   "jaw": "mandible",
+   "label": 141,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 385,
+   "sourceMm3": 10.4,
+   "meshedTriangles": 1156,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-42",
+   "name": "Lower right lateral incisor, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5896080,
+   "normals": 5904552,
+   "indices": 5913024,
+   "vertexCount": 706,
+   "indexCount": 4224,
+   "bounds": [
+    [
+     -72.11442565917969,
+     9.780094146728516,
+     -56.86311340332031
+    ],
+    [
+     -70.3968734741211,
+     16.27814483642578,
+     -44.619083404541016
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 42,
+   "jaw": "mandible",
+   "label": 142,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 500,
+   "sourceMm3": 13.5,
+   "meshedTriangles": 1408,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-43",
+   "name": "Lower right canine, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5929920,
+   "normals": 5944200,
+   "indices": 5958480,
+   "vertexCount": 1190,
+   "indexCount": 7128,
+   "bounds": [
+    [
+     -78.39767456054688,
+     13.748887062072754,
+     -60.13230895996094
+    ],
+    [
+     -75.5540771484375,
+     21.06768798828125,
+     -44.82845687866211
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 43,
+   "jaw": "mandible",
+   "label": 143,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 799,
+   "sourceMm3": 21.6,
+   "meshedTriangles": 2376,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-44",
+   "name": "Lower right first premolar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 5986992,
+   "normals": 5997504,
+   "indices": 6008016,
+   "vertexCount": 876,
+   "indexCount": 5244,
+   "bounds": [
+    [
+     -82.03495788574219,
+     19.427947998046875,
+     -54.65043258666992
+    ],
+    [
+     -79.42318725585938,
+     24.046789169311523,
+     -43.13089370727539
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 44,
+   "jaw": "mandible",
+   "label": 144,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 599,
+   "sourceMm3": 16.2,
+   "meshedTriangles": 1748,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-45",
+   "name": "Lower right second premolar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 6028992,
+   "normals": 6037944,
+   "indices": 6046896,
+   "vertexCount": 746,
+   "indexCount": 4452,
+   "bounds": [
+    [
+     -86.49372100830078,
+     26.058271408081055,
+     -52.55827713012695
+    ],
+    [
+     -82.12163543701172,
+     30.02018165588379,
+     -42.14102554321289
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 45,
+   "jaw": "mandible",
+   "label": 145,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 526,
+   "sourceMm3": 14.2,
+   "meshedTriangles": 1484,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-pulp-46",
+   "name": "Lower right first molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 6064704,
+   "normals": 6082704,
+   "indices": 6100704,
+   "vertexCount": 1500,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     -90.95600128173828,
+     32.504364013671875,
+     -48.034400939941406
+    ],
+    [
+     -83.63146209716797,
+     41.43168258666992,
+     -39.46680450439453
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 46,
+   "jaw": "mandible",
+   "label": 146,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1395,
+   "sourceMm3": 37.7,
+   "meshedTriangles": 3576,
+   "simplifiedError": 0.00103
+  },
+  {
+   "id": "tf-pulp-47",
+   "name": "Lower right second molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 6136704,
+   "normals": 6154800,
+   "indices": 6172896,
+   "vertexCount": 1508,
+   "indexCount": 9000,
+   "bounds": [
+    [
+     -94.28699493408203,
+     42.85665512084961,
+     -42.69895553588867
+    ],
+    [
+     -87.22521209716797,
+     51.098548889160156,
+     -34.7220573425293
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 47,
+   "jaw": "mandible",
+   "label": 147,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1358,
+   "sourceMm3": 36.7,
+   "meshedTriangles": 3216,
+   "simplifiedError": 0.00077
+  },
+  {
+   "id": "tf-pulp-48",
+   "name": "Lower right third molar, pulp and canals",
+   "group": "pulp",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 6208896,
+   "normals": 6223608,
+   "indices": 6238320,
+   "vertexCount": 1226,
+   "indexCount": 7344,
+   "bounds": [
+    [
+     -95.55770111083984,
+     50.331451416015625,
+     -37.564361572265625
+    ],
+    [
+     -90.7726058959961,
+     58.57970428466797,
+     -30.851150512695312
+    ]
+   ],
+   "openEdges": 0,
+   "fdi": 48,
+   "jaw": "mandible",
+   "label": 148,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1199,
+   "sourceMm3": 32.4,
+   "meshedTriangles": 2448,
+   "simplifiedError": 0
+  },
+  {
+   "id": "tf-bone-mandible",
+   "name": "Mandible",
+   "group": "bone",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 6267696,
+   "normals": 6468144,
+   "indices": 6668592,
+   "vertexCount": 16704,
+   "indexCount": 101820,
+   "bounds": [
+    [
+     -114.72103881835938,
+     8.614602088928223,
+     -78.74148559570312
+    ],
+    [
+     -15.870104789733887,
+     82.02452850341797,
+     0.15070252120494843
+    ]
+   ],
+   "openEdges": 0,
+   "jaw": "mandible",
+   "label": 1,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 1632048,
+   "sourceMm3": 44065.3,
+   "meshedTriangles": 624558,
+   "simplifiedError": 0.00085
+  },
+  {
+   "id": "tf-bone-maxilla",
+   "name": "Maxillary alveolar process",
+   "group": "bone",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 7075872,
+   "normals": 7278048,
+   "indices": 7480224,
+   "vertexCount": 16848,
+   "indexCount": 102000,
+   "bounds": [
+    [
+     -99.8150405883789,
+     4.0511064529418945,
+     -21.128192901611328
+    ],
+    [
+     -25.723413467407227,
+     60.4460563659668,
+     0.16193687915802002
+    ]
+   ],
+   "openEdges": 0,
+   "jaw": "maxilla",
+   "label": 2,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 618519,
+   "sourceMm3": 16700,
+   "meshedTriangles": 389302,
+   "simplifiedError": 0.00073
+  },
+  {
+   "id": "tf-canal-left",
+   "name": "Left inferior alveolar canal",
+   "group": "canal",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 7888224,
+   "normals": 7912248,
+   "indices": 7936272,
+   "vertexCount": 2002,
+   "indexCount": 12000,
+   "bounds": [
+    [
+     -48.03580093383789,
+     25.124691009521484,
+     -64.33403015136719
+    ],
+    [
+     -22.663476943969727,
+     71.87035369873047,
+     -14.564558029174805
+    ]
+   ],
+   "openEdges": 0,
+   "label": 3,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 12644,
+   "sourceMm3": 341.4,
+   "meshedTriangles": 19944,
+   "simplifiedError": 0.00091
+  },
+  {
+   "id": "tf-canal-right",
+   "name": "Right inferior alveolar canal",
+   "group": "canal",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 7984272,
+   "normals": 8008296,
+   "indices": 8032320,
+   "vertexCount": 2002,
+   "indexCount": 12000,
+   "bounds": [
+    [
+     -107.85559844970703,
+     25.052602767944336,
+     -62.3215217590332
+    ],
+    [
+     -82.36337280273438,
+     70.6458511352539,
+     -12.45631217956543
+    ]
+   ],
+   "openEdges": 0,
+   "label": 4,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 12872,
+   "sourceMm3": 347.5,
+   "meshedTriangles": 19832,
+   "simplifiedError": 0.0009
+  },
+  {
+   "id": "tf-sinus-left",
+   "name": "Left maxillary sinus floor",
+   "group": "sinus",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 8080320,
+   "normals": 8092320,
+   "indices": 8104320,
+   "vertexCount": 1000,
+   "indexCount": 6000,
+   "bounds": [
+    [
+     -51.72882843017578,
+     22.123912811279297,
+     -8.197488784790039
+    ],
+    [
+     -28.955507278442383,
+     51.397972106933594,
+     0.15209558606147766
+    ]
+   ],
+   "openEdges": 0,
+   "label": 5,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 71064,
+   "sourceMm3": 1918.7,
+   "meshedTriangles": 34440,
+   "simplifiedError": 0.00194
+  },
+  {
+   "id": "tf-sinus-right",
+   "name": "Right maxillary sinus floor",
+   "group": "sinus",
+   "source": "toothfairy",
+   "buffer": "toothfairy",
+   "positions": 8128320,
+   "normals": 8140344,
+   "indices": 8152368,
+   "vertexCount": 1002,
+   "indexCount": 6000,
+   "bounds": [
+    [
+     -97.4097671508789,
+     20.74101448059082,
+     -7.936874866485596
+    ],
+    [
+     -75.16000366210938,
+     50.803768157958984,
+     0.15135572850704193
+    ]
+   ],
+   "openEdges": 0,
+   "label": 6,
+   "shells": 1,
+   "sourceMember": "labelsTr/ToothFairy3F_026.nii.gz",
+   "sourceSha256": "d88e4970f8eca999e6e64e58abcdfb12d18287a7be4bbefc6ce7d8bea81da309",
+   "sourceVoxels": 68616,
+   "sourceMm3": 1852.6,
+   "meshedTriangles": 33544,
+   "simplifiedError": 0.00192
   }
  ]
 }

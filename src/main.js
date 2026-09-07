@@ -40,7 +40,12 @@ import {
 } from "./embryology.js";
 import { getDentitionFDIs } from "./dental-geometry.js";
 import { TISSUE_ORDER, tissueGroup } from "./explosion-layout.js";
-import { MODEL_GROUPS, MODEL_VIEWS, UNNAMED_CUTS } from "./dental-models.js";
+import {
+  MODEL_GROUPS,
+  MODEL_VIEWS,
+  TOOTH_SOURCES,
+  UNNAMED_CUTS,
+} from "./dental-models.js";
 
 const touchLayout = () => matchMedia("(max-width: 860px)").matches;
 const groupOpacity = (group) => state.opacity.get(group) ?? 1;
@@ -105,6 +110,10 @@ const state = {
   hidden: new Set(),
   modelView: "jaw",
   archSource: "published",
+  // Which patient a published tooth or arch comes from. The scan carries a
+  // pulp in all thirty two teeth; the model carries a ligament around
+  // thirty one. Neither has both and no tooth is ever built out of the two.
+  toothSource: "toothfairy",
   cutAxis: "a",
   cutPosition: 50,
   cutTilt: 0,
@@ -854,7 +863,15 @@ function drawOrientation(axes) {
   host.innerHTML = arms.map((a) => a.markup).join("");
 }
 
-const MODEL_GROUP_ORDER = ["bone", "tooth", "pdl", "pulp", "appliance"];
+const MODEL_GROUP_ORDER = [
+  "bone",
+  "tooth",
+  "pdl",
+  "pulp",
+  "canal",
+  "sinus",
+  "appliance",
+];
 function renderModelControls() {
   const host = document.querySelector("#model-controls");
   const view = MODEL_VIEWS[state.modelView];
@@ -958,8 +975,44 @@ function renderToothTissues() {
     };
   });
   if (status)
-    status.innerHTML = `<strong>${escape(published.note)}</strong><span>${escape(published.limits)}</span><button id="tooth-model-sources">Sources and method</button>`;
+    status.innerHTML = `${toothSourceChoice()}<strong>${escape(published.note)}</strong><span>${escape(published.limits)}</span><button id="tooth-model-sources">Sources and method</button>`;
   status.querySelector("#tooth-model-sources").onclick = () => modelSources();
+  bindToothSourceChoice(status);
+}
+
+/** Two patients can show a tooth and neither can show all of it: one carries
+ *  a pulp cavity in every tooth and no ligament, the other a ligament around
+ *  every root and no pulp. The switch is here rather than buried in a dialog
+ *  because which of them a reader is looking at changes what the tooth is. */
+function toothSourceChoice() {
+  const available = TOOTH_SOURCES.filter((source) =>
+    viewer?.publishedFor?.(state.fdi, source.id),
+  );
+  if (available.length < 2) return "";
+  return `<span class="tooth-source"><span>Shown from</span><span class="tooth-source-pick">${available
+    .map(
+      (source) =>
+        `<button data-tooth-source="${source.id}" class="${source.id === state.toothSource ? "active" : ""}" title="${escape(source.detail)}">${escape(source.name)}</button>`,
+    )
+    .join("")}</span></span>`;
+}
+
+function bindToothSourceChoice(host) {
+  host.querySelectorAll("[data-tooth-source]").forEach((button) => {
+    button.onclick = () => {
+      if (button.dataset.toothSource === state.toothSource) return;
+      state.toothSource = button.dataset.toothSource;
+      // A tissue hidden on one patient may not exist on the other, and a
+      // ligament switched off should not leave a pulp switched off too.
+      state.hiddenTissues.clear();
+      document
+        .querySelectorAll("[data-tissue3d]")
+        .forEach((b) => b.setAttribute("aria-pressed", "true"));
+      updateScene();
+      renderToothTissues();
+      requestAnimationFrame(() => viewer?.view("oblique", true));
+    };
+  });
 }
 
 function landmarkBlock(part) {
@@ -1026,7 +1079,7 @@ function renderDental(panel) {
           `<button data-dental-tab="${id}" class="${state.dentalTab === id ? "active" : ""}">${title}</button>`,
       )
       .join("")}</div>
-    <div class="detail-body"><button id="tooth-isolate" class="primary full-width">Open 3D tooth cutaway</button><button id="show-arches" class="full-width">Show ${state.age === "adult" ? "one patient's own jaws" : `the complete ${state.age === "child" ? "20-tooth" : "mixed"} arches`}</button>${state.age === "adult" ? '<button id="show-drawn-arches" class="full-width">Show the drawn 32-tooth arches</button>' : ""}<label class="fine-print"><input id="auto-detail" type="checkbox" ${state.autoDetail ? "checked" : ""}> Reveal internal anatomy when zooming into a tooth</label><p class="fine-print">3D tissues and root canals are schematic teaching models, not reconstructed from the external surface. ${tooth.primary ? "Primary proportions and root divergence differ from permanent teeth." : "Representative root and canal forms vary between patients."}</p>
+    <div class="detail-body"><button id="tooth-isolate" class="primary full-width">Open 3D tooth cutaway</button><button id="show-arches" class="full-width">Show ${state.age === "adult" ? "a whole mouth from one patient" : `the complete ${state.age === "child" ? "20-tooth" : "mixed"} arches`}</button>${state.age === "adult" ? '<button id="show-drawn-arches" class="full-width">Show the drawn 32-tooth arches</button>' : ""}<label class="fine-print"><input id="auto-detail" type="checkbox" ${state.autoDetail ? "checked" : ""}> Reveal internal anatomy when zooming into a tooth</label><p class="fine-print">3D tissues and root canals are schematic teaching models, not reconstructed from the external surface. ${tooth.primary ? "Primary proportions and root divergence differ from permanent teeth." : "Representative root and canal forms vary between patients."}</p>
     ${dentalContent(tooth)}
     <details class="references"><summary>References for this tooth</summary>${dentalSources.map(sourceLink).join("")}</details></div>`;
   if (!state.selected) panel.querySelectorAll("[data-tooth]").forEach((button) => {
@@ -1278,7 +1331,7 @@ function setTab(tab) {
   document.body.classList.toggle("dental-stage", tab === "dental");
   // The published dental models are what this tab shows, so they start
   // arriving when the tab does rather than when the first tooth is opened.
-  if (tab === "dental") viewer?.prefetchModels?.();
+  if (tab === "dental") viewer?.prefetchModels?.(state.toothSource);
   if (tab !== "dental") setMode("3d");
   document.querySelectorAll("[data-tab]").forEach((b) => {
     b.classList.toggle("active", b.dataset.tab === tab);
@@ -1354,8 +1407,8 @@ function modelSources() {
   const manifest = viewer?.modelManifest?.();
   const sources = manifest?.sources;
   document.querySelector("#modal-content").innerHTML = `<h2>Published dental models</h2>
-  <p>Three datasets are redistributed here as their authors made them. None is drawn by this project, none is segmented by this project, and none is registered onto the head assembly, because a position on this skull is not something any of them carries.</p>
-  <p><strong>They are not under the same terms.</strong> Two are CC BY 4.0. Open-Full-Jaw is CC BY-NC-SA 4.0: not for commercial use, and anything derived from it carries the same terms. It is also the one that is a real person rather than a model, shown here as teaching material and not as diagnostic imaging.</p>
+  <p>Four datasets are redistributed here as their authors made them. None is drawn by this project, none is segmented by this project, and none is registered onto the head assembly, because a position on this skull is not something any of them carries.</p>
+  <p><strong>They are not under the same terms.</strong> Two are CC BY 4.0. Open-Full-Jaw is CC BY-NC-SA 4.0: not for commercial use, and anything derived from it carries the same terms. ToothFairy3 is CC BY-SA 4.0, which binds derivatives the same way but allows commercial use. Those two are also the ones that are real people rather than models, one patient each, shown here as teaching material and not as diagnostic imaging.</p>
   ${
     sources
       ? Object.entries(sources)

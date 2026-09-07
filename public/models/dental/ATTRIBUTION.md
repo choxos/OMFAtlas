@@ -1,23 +1,30 @@
 # Published dental models
 
-The files in this directory are derived from three openly licensed datasets.
+The files in this directory are derived from four openly licensed datasets.
 None is drawn by this project, none is segmented by this project, and none is
 registered onto the head and neck assembly.
 
-**They are not all under the same license.** Two are CC BY 4.0. The third,
-Open-Full-Jaw, is **CC BY-NC-SA 4.0**: it may not be used commercially, and
-anything derived from it carries the same terms. The two licenses are kept in
-separate files so the file boundary is the license boundary:
+**They are not all under the same license.** Two are CC BY 4.0. The other two
+each bind derivatives to their own terms, and one of those two also forbids
+commercial use. Each set of terms is kept in its own file, so the file
+boundary is the license boundary and a reader who never opens one never
+downloads it:
 
 | File | Contents | License |
 | --- | --- | --- |
 | `dental.bin` | Diaz synthetic lower jaw, Kang immature molar | CC BY 4.0 |
 | `open-full-jaw.bin` | Open-Full-Jaw patient 12, both jaws | CC BY-NC-SA 4.0 |
+| `toothfairy.bin` | ToothFairy3 case F_026, a whole mouth | CC BY-SA 4.0 |
 
-`scripts/import-dental-models.mjs` produces both, plus `manifest.json`. The
-manifest records, for every structure, which file it is in, the source archive,
-the digest of the file it came from, the triangle count before and after
-simplification, and the limits the source itself states.
+Each set has its own importer, because each has its own source archive and
+those run to gigabytes: nobody should need all of them on disk to rebuild one.
+`scripts/import-dental-models.mjs` owns the first two files and
+`scripts/import-toothfairy.mjs` the third, and both share
+`scripts/mesh-tools.mjs`. An importer replaces only the sets it names and
+merges into `manifest.json` rather than rewriting it. The manifest records,
+for every structure, which file it is in, the source archive, the digest of
+the file it came from, the triangle count before and after simplification, and
+the limits the source itself states.
 
 ## Synthetic lower jaw
 
@@ -97,19 +104,83 @@ is a generated surface and not segmented ligament tissue.
 
 The CBCT scans behind the dataset were provided by 3Shape A/S.
 
+## One patient's whole mouth, from the scan itself
+
+Bolelli F, Lumetti L, Vinayahalingam S and colleagues. *ToothFairy3*, MICCAI
+2025. <https://ditto.ing.unimore.it/toothfairy3/> · **CC BY-SA 4.0**
+
+The published paper is the earlier ToothFairy challenge, which is the canal
+alone across 443 scans: Bolelli F and colleagues (2025), *Segmenting the
+Inferior Alveolar Canal in CBCTs Volumes: The ToothFairy Challenge*, IEEE
+Transactions on Medical Imaging 44(4):1890-1906,
+<https://doi.org/10.1109/TMI.2024.3523096>, PMID 35872385. It is the lineage
+of this release rather than its own paper.
+
+Case F_026 of the 532, chosen because it is one of fifteen carrying all
+thirty two teeth with a pulp inside every one of them, both inferior alveolar
+canals in a single piece each, and no bridge, crown or implant. It is the only
+source here with a whole dentition, and the only one that can open any tooth
+onto its own canal.
+
+This dataset is voxels rather than meshes, so the surfaces are made here by
+`scripts/toothfairy-surfaces.py`: each label is taken at its largest connected
+component, padded, blurred by 0.7 of a voxel, passed through marching cubes at
+the half level, smoothed with a Taubin filter that does not shrink it, then
+welded and simplified with meshoptimizer to 6,000 triangles a tooth, 3,000 a
+pulp, 4,000 a canal, 2,000 a sinus floor and 34,000 a jaw of bone. A pulp is
+the exception to the largest component rule: a molar's arrives in two to four
+pieces because a canal narrower than the sampling cannot stay connected, and
+every piece over 2 mm³ is kept.
+
+Nothing is moved. The frame is the scan's own, turned a half turn about the
+anteroposterior axis to stand it up. That correction matters twice over. The
+volume's stored affine claims superior is +Z and it is not: the index it calls
+Z increases toward the feet, and believing it turns the jaw upside down and
+puts the root apices 18 mm from the alveolar canal instead of 2 mm. Undoing
+that by negating one axis would be a reflection, which would mirror the
+patient and put every left and right in this atlas on the wrong side of a real
+person, so the correction is a rotation and the determinant is asserted.
+
+The dataset publishes no tooth axes, so they are measured here: the long axis
+is the tooth's own first principal component, the crown end of it is known
+from which jaw the tooth is in, and the labial direction is the part of "away
+from the middle of the arch" that is square to the arch itself. Run against
+the axes Open-Full-Jaw does publish, that method lands within a median of 9
+degrees on all three axes and never more than 25, so the section names it
+allows are close rather than exact and the interface says so.
+
+This is one adult's scan, not a norm, and nothing in it is finer than the
+0.3 mm the voxels were sampled at. Each pulp reaches 78 to 97 percent of the
+way down its root and stops 0.6 to 4.5 mm short of the apex, because a canal
+narrower than that cannot be recovered: chambers and the coronal and middle
+canal are real here, apical anatomy and working length are not. The maxillary
+sinus and the upper jawbone are cut off by the scan's field of view, so what
+is here is a sinus floor and an alveolar process rather than a whole sinus or
+a whole maxilla, and both are named that way on screen. There is no
+periodontal ligament in this dataset, no enamel and dentin division, no
+cementum, no gingiva, and no nerve inside the canal.
+
+The pharynx, the mandibular incisive canals and the lingual canal are labeled
+in the source and are not taken: the first is an airway rather than jaw
+anatomy and the others survive as fragments of 7 to 12 mm³.
+
 ## Attribution when redistributing
 
-Keep this file with the assets. All three datasets require attribution to
-their authors and a link to the license, and none may be presented as this
-project's own work.
+Keep this file with the assets. All four datasets require attribution to their
+authors and a link to the license, and none may be presented as this project's
+own work.
 
-Open-Full-Jaw adds two terms the other two do not. **NonCommercial:** it may
-not be used for commercial advantage, so anything built on `open-full-jaw.bin`
-inherits that restriction whatever the rest of this repository is licensed as.
-**ShareAlike:** the simplified meshes in `open-full-jaw.bin` are a derivative
-of it and must be distributed under CC BY-NC-SA 4.0 as well. The MIT `LICENSE`
-at the root of this repository covers the code, never these assets.
+Two of them add terms the CC BY 4.0 pair do not. **ShareAlike** applies to
+both: the simplified meshes in `open-full-jaw.bin` and `toothfairy.bin` are
+derivatives and must be distributed under the same license their source
+carries, CC BY-NC-SA 4.0 and CC BY-SA 4.0 respectively. **NonCommercial**
+applies to `open-full-jaw.bin` alone: it may not be used for commercial
+advantage, and anything built on it inherits that restriction whatever the
+rest of this repository is licensed as. `toothfairy.bin` carries no such
+clause. The MIT `LICENSE` at the root of this repository covers the code,
+never these assets.
 
-Open-Full-Jaw is also the one set here that is a real person rather than a
-model, and it is presented that way on screen: it is a segmented patient scan
-shown as teaching material, not diagnostic imaging and not a norm.
+Open-Full-Jaw and ToothFairy3 are also the two sets here that are real people
+rather than models, one patient each, and both are presented that way on
+screen: segmented patient scans shown as teaching material, not diagnostic
+imaging and not a norm.

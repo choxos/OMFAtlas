@@ -7708,3 +7708,69 @@ body.source-models .studio .caption-stack {
     white-space: nowrap;
   }
 }
+
+/* ---- Which patient a tooth is from ---------------------------------------
+
+   Two people can each show a tooth and neither can show all of it: the scan
+   carries a pulp cavity inside all thirty two teeth and no ligament, the
+   model a ligament around thirty one roots and no pulp. Which one is on
+   screen changes what the tooth is, so the switch sits with the caption that
+   names it rather than behind the sources dialog. */
+
+.studio .tooth-source {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.studio .tooth-source > span:first-child {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.studio .tooth-source-pick {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: #17242f06;
+}
+
+.studio .tooth-source-pick button {
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.studio .tooth-source-pick button.active {
+  background: var(--navy);
+  color: var(--on-navy);
+}
+
+@media (max-width: 860px) {
+  .studio .tooth-source {
+    margin-bottom: 4px;
+  }
+
+  .studio .tooth-source > span:first-child {
+    display: none;
+  }
+
+  .studio .tooth-source-pick {
+    flex: 1;
+  }
+
+  .studio .tooth-source-pick button {
+    flex: 1;
+  }
+}

@@ -186,10 +186,11 @@ test("published dental models carry their source, license and limits", () => {
   }
 
   for (const source of Object.values(manifest.sources)) {
-    assert.match(source.license, /^CC BY(-NC-SA)? 4\.0$/);
-    // One of these sets forbids commercial use and binds derivatives to the
-    // same terms. A reader cannot honour a term they are not told about, so
-    // the set that carries it has to say so where its limits are read.
+    assert.match(source.license, /^CC BY(-NC-SA|-SA)? 4\.0$/);
+    // Two of these sets bind derivatives to their own terms and one of those
+    // also forbids commercial use. A reader cannot honour a term they are not
+    // told about, so a set carrying one has to say so where its limits are
+    // read, not only in a file beside the assets.
     if (source.license !== "CC BY 4.0")
       assert.match(
         source.limits,
@@ -204,7 +205,9 @@ test("published dental models carry their source, license and limits", () => {
     assert.ok(source.pdlModel.length > 40, `${source.title} needs its ligament note`);
   }
 
-  const groups = new Set(["bone", "tooth", "pdl", "pulp", "appliance"]);
+  const groups = new Set([
+    "bone", "tooth", "pdl", "pulp", "canal", "sinus", "appliance",
+  ]);
   for (const part of manifest.parts) {
     assert.ok(groups.has(part.group), `${part.id} has an unknown group`);
     assert.ok(manifest.sources[part.source], `${part.id} names no source`);

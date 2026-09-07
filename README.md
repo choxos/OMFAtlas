@@ -69,15 +69,15 @@ The summary above in full.
 <a id="published-dental-models"></a>
 
 Everything else in the 3D dental views is procedural teaching geometry built by
-this project. These three are not. They are published datasets loaded as their
+this project. These four are not. They are published datasets loaded as their
 authors made them, and the Source models view names the authors, the license
 and the limits on screen rather than only here.
 
-**They are not under the same terms.** The first two are CC BY 4.0. The third
-is CC BY-NC-SA 4.0: not for commercial use, and anything derived from it
-carries the same terms. The two licenses are kept in separate files, so the
-file boundary is the license boundary and a reader who never opens one never
-downloads it.
+**They are not under the same terms.** Two are CC BY 4.0. Open-Full-Jaw is
+CC BY-NC-SA 4.0, so it is not for commercial use and its derivatives carry the
+same terms. ToothFairy3 is CC BY-SA 4.0, which binds derivatives but permits
+commercial use. Each set of terms lives in its own file, so the file boundary
+is the license boundary and a reader who never opens one never downloads it.
 
 **A synthetic lower jaw.** Diaz and colleagues (2024), Mendeley Data
 [10.17632/xjsx7nfhj8.1](https://doi.org/10.17632/xjsx7nfhj8.1). Cortical and
@@ -122,13 +122,40 @@ names them, which is what lets a tooth here stand on its own long axis and its
 cutting planes be called buccolingual, mesiodistal and horizontal rather than
 after an axis of the scanner.
 
+**One patient's whole mouth, from the scan itself.** Bolelli and colleagues,
+ToothFairy3 ([challenge page](https://ditto.ing.unimore.it/toothfairy3/)),
+CC BY-SA 4.0. Case F_026 of 532 maxillofacial cone beam CT volumes, labeled
+voxel by voxel at 0.3 mm: all thirty two teeth including the third molars, a
+pulp cavity inside every one of them, both inferior alveolar canals, and the
+bone. It is the only source here with a whole dentition and the only one that
+can open any tooth onto its own canal, so it is what a reader gets by default
+when they open an arch or zoom into a tooth. Being one adult's scan is what
+makes it real and also what makes it not a norm, and being a scan is what
+limits it: nothing in it is finer than 0.3 mm. Each pulp reaches 78 to 97
+percent of the way down its root and stops 0.6 to 4.5 mm short of the apex,
+because a canal narrower than the sampling cannot be recovered, so this shows
+chambers and the coronal and middle canal rather than apical anatomy or a
+working length. The maxillary sinus and the upper jawbone are cut off by the
+scan's own field of view, so they are a sinus floor and an alveolar process
+and are named that way. There is no periodontal ligament in it, which is why
+the Open-Full-Jaw patient stays available as the other view of a tooth. The
+dataset is voxels rather than meshes, so `scripts/toothfairy-surfaces.py`
+makes the surfaces and `scripts/import-toothfairy.mjs` packs them; the
+published paper listed on the challenge page is the earlier canal-only
+release, [10.1109/TMI.2024.3523096](https://doi.org/10.1109/TMI.2024.3523096).
+
 No model is registered onto the head and neck assembly, because a position on
 this skull is not something any of these datasets carries, and no two of them
-are ever shown in one frame. `scripts/import-dental-models.mjs` converts them
-and records, for every structure, which file it is in, the digest of the
-source file, the tessellation settings, and the triangle count before and
-after simplification, in `public/models/dental/manifest.json`. Full terms are
-in [public/models/dental/ATTRIBUTION.md](public/models/dental/ATTRIBUTION.md).
+are ever shown in one frame: a canal from one person inside a crown from
+another would be invented anatomy rather than shown anatomy. Each set has its
+own importer, because each has its own multi-gigabyte source archive and
+nobody should need all of them on disk to rebuild one; they share
+`scripts/mesh-tools.mjs` and merge into
+`public/models/dental/manifest.json` rather than rewriting it. The manifest
+records, for every structure, which file it is in, the digest of the source
+file, the tessellation or meshing settings, and the triangle count before and
+after simplification. Full terms are in
+[public/models/dental/ATTRIBUTION.md](public/models/dental/ATTRIBUTION.md).
 
 ## Schematic anatomy
 <a id="schematic-anatomy"></a>
@@ -168,7 +195,7 @@ node scripts/extract-models.mjs /absolute/path/to/human-atlas
 npm test
 ```
 
-Application code uses the repository MIT license. BodyParts3D 4.0 geometry is CC BY 4.0; the separate adapted 3.0 facial meshes retain CC BY-SA 2.1 Japan; of the three published dental datasets two are CC BY 4.0 and Open-Full-Jaw is CC BY-NC-SA 4.0, which is NonCommercial and ShareAlike, and all three carry [their own attribution file](public/models/dental/ATTRIBUTION.md). Preserve [the full attribution](public/ATTRIBUTION.md) and [facial asset attribution](public/models/facial/ATTRIBUTION.md) when redistributing assets.
+Application code uses the repository MIT license. BodyParts3D 4.0 geometry is CC BY 4.0; the separate adapted 3.0 facial meshes retain CC BY-SA 2.1 Japan; of the four published dental datasets two are CC BY 4.0, Open-Full-Jaw is CC BY-NC-SA 4.0 (NonCommercial and ShareAlike) and ToothFairy3 is CC BY-SA 4.0 (ShareAlike), and all four carry [their own attribution file](public/models/dental/ATTRIBUTION.md). Preserve [the full attribution](public/ATTRIBUTION.md) and [facial asset attribution](public/models/facial/ATTRIBUTION.md) when redistributing assets.
 
 Run `node scripts/validate-explorer.mjs /path/to/browse http://localhost:3017` and `node scripts/validate-camera.mjs /path/to/browse http://localhost:3017` against a running production preview for browser interaction checks. [Reference UI study](documentation/qa/REFERENCE-UX.md) distinguishes upstream behavior from requested extensions.
 

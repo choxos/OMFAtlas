@@ -4,6 +4,7 @@ import { MASTICATORY, groups, toothNumber } from "./content.js";
 import { createExplosionLayout, tissueSeparation } from "./explosion-layout.js";
 import { createSchematicParts, deriveLandmarks } from "./schematic-anatomy.js";
 import {
+  buffersForArch,
   buffersForTooth,
   buffersForView,
   createModelGroup,
@@ -236,17 +237,18 @@ export async function createViewer(host, atlas, handlers) {
 
   /** Every tooth a published model exists for, from the manifest rather than
    *  a list here: a hardcoded set silently leaves a new arch schematic. */
-  const publishedFor = (fdi) =>
-    dentalModels ? publishedTeeth(dentalModels.manifest).has(fdi) : false;
+  const publishedFor = (fdi, source) =>
+    dentalModels
+      ? publishedTeeth(dentalModels.manifest, source).has(fdi)
+      : false;
 
   // A load that failed, or a set that turns out not to be in the manifest at
   // all, must stop the retry rather than ask for the same file forever.
   let dentalLoadFailed = false;
   const haveBuffers = (names) =>
     !!dentalModels && names.every((name) => dentalModels.buffers[name]);
-  const publishedArchExists = () =>
-    !dentalModels ||
-    dentalModels.manifest.parts.some((part) => part.source === "openfulljaw");
+  const publishedArchExists = (source) =>
+    !dentalModels || buffersForArch(dentalModels.manifest, source).length > 0;
 
   // One plane, reused by every published cutaway.
   // A longitudinal cut across the tooth. World X is mesiodistal once the
@@ -800,9 +802,10 @@ export async function createViewer(host, atlas, handlers) {
     landmarks: () => landmarks.map((l) => ({ ...l })),
     // Entering the dental tab shows an arch, so that file starts arriving
     // before a reader taps anything.
-    prefetchModels: () =>
-      loadDentalModels((m) => buffersForView(m, "patient")).catch(() => {}),
+    prefetchModels: (source) =>
+      loadDentalModels((m) => buffersForArch(m, source)).catch(() => {}),
     modelManifest: () => dentalModels?.manifest || null,
+    publishedFor: (fdi, source) => publishedFor(fdi, source),
     publishedArch: () => dentalModel?.userData.publishedArch || null,
     faceCut() {
       if (!dentalModel || !currentState) return;
@@ -839,13 +842,16 @@ export async function createViewer(host, atlas, handlers) {
       const previousExplosion = explosion;
       currentState = state;
       explosion = Number.isFinite(state.explode) ? THREE.MathUtils.clamp(state.explode, 0, 100) : 0;
-      const key = state.mode === "models"
-        ? `model-${state.modelView}`
-        : state.toothDetail
-          ? `tooth-${state.fdi}`
-          : state.arches || state.age !== "adult"
-            ? state.age
-            : "";
+      // The key has to carry which patient the tooth or arch is coming from,
+      // or switching between them rebuilds nothing.
+      const key =
+        state.mode === "models"
+          ? `model-${state.modelView}`
+          : state.toothDetail
+            ? `tooth-${state.fdi}-${state.toothSource}`
+            : state.arches || state.age !== "adult"
+              ? `${state.age}-${state.archSource}-${state.toothSource}`
+              : "";
       if (key !== dentalKey) {
         detailExitDistance = Infinity;
         if (dentalModel) disposeModel(dentalModel);
@@ -882,12 +888,14 @@ export async function createViewer(host, atlas, handlers) {
                     dentalModels?.manifest,
                     dentalModels?.buffers,
                     state.fdi,
+                    state.toothSource,
                   )
                 : state.archSource === "drawn"
                   ? null
                   : createPublishedDentitionModel(
                       dentalModels?.manifest,
                       dentalModels?.buffers,
+                      state.toothSource,
                     );
           // A published model may exist and simply not be downloaded yet, so
           // this asks the manifest rather than a list written in this file.
@@ -897,8 +905,8 @@ export async function createViewer(host, atlas, handlers) {
             state.age === "adult" &&
             state.archSource !== "drawn" &&
             (state.toothDetail
-              ? !dentalModels || publishedFor(state.fdi)
-              : publishedArchExists());
+              ? !dentalModels || publishedFor(state.fdi, state.toothSource)
+              : publishedArchExists(state.toothSource));
           if (published) dentalModel = published;
           else {
             // Never draw a schematic stand in for a tooth that has a published
@@ -915,8 +923,8 @@ export async function createViewer(host, atlas, handlers) {
             if (awaitingPublished)
               loadDentalModels((m) =>
                 state.toothDetail
-                  ? buffersForTooth(m, state.fdi)
-                  : buffersForView(m, "patient"),
+                  ? buffersForTooth(m, state.fdi, state.toothSource)
+                  : buffersForArch(m, state.toothSource),
               )
                 .then(() => {
                   dentalKey = "";

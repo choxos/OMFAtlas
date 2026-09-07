@@ -118,56 +118,83 @@ test("standing a tooth up is a rotation, not a reflection", () => {
 });
 
 test("a tooth cutaway stands crown up whichever jaw it came from", () => {
-  // Turning a tooth by the inverse of its own basis puts that basis's up on
-  // +Y by algebra, so asking the basis proves nothing about which end of the
-  // tooth it points at. The ligament wraps the root and not the crown, so
-  // where the ligament ends up is the evidence.
+  // The same check the scan's teeth get: correlate each vertex's source z,
+  // which is superior in this dataset's own frame, against its world y after
+  // the model is built. Asking the tooth's own basis would return +Y by
+  // algebra whichever end of the tooth it pointed at.
   for (const tooth of jawTeeth) {
-    const group = createPublishedToothModel(manifest, buffers, tooth.fdi);
+    const group = createPublishedToothModel(
+      manifest,
+      buffers,
+      tooth.fdi,
+      "openfulljaw",
+    );
     assert.ok(group, `no cutaway for FDI ${tooth.fdi}`);
     group.updateMatrixWorld(true);
-    const middle = (tissue) => {
-      const mesh = group.children.find((m) => m.userData.tissue === tissue);
-      return new THREE.Box3()
-        .setFromObject(mesh)
-        .getCenter(new THREE.Vector3()).y;
-    };
+    const mesh = group.children.find((m) => m.userData.tissue === "tooth");
+    const position = mesh.geometry.attributes.position;
+    const point = new THREE.Vector3();
+    let n = 0, sz = 0, sy = 0, szz = 0, syy = 0, szy = 0;
+    for (let i = 0; i < position.count; i++) {
+      const z = position.getZ(i);
+      point.fromBufferAttribute(position, i).applyMatrix4(mesh.matrixWorld);
+      n++; sz += z; sy += point.y; szz += z * z; syy += point.y * point.y;
+      szy += z * point.y;
+    }
+    const r =
+      (n * szy - sz * sy) /
+      Math.sqrt((n * szz - sz * sz) * (n * syy - sy * sy));
     assert.ok(
-      middle("pdl") < middle("tooth"),
-      `FDI ${tooth.fdi} has its root above its crown`,
+      r * (tooth.fdi > 30 ? 1 : -1) > 0.7,
+      `FDI ${tooth.fdi} is not standing crown up`,
     );
     const size = new THREE.Box3()
       .setFromObject(group)
       .getSize(new THREE.Vector3());
-    // A tooth is a centimetre or two of a metre, never a hundred of them.
     assert.ok(size.y > 0.004 && size.y < 0.05, `FDI ${tooth.fdi}: ${size.y}m`);
   }
 });
 
-test("the lower first molars stay with the only source that has a canal", () => {
-  for (const fdi of [36, 46]) {
-    const plan = publishedToothPlan(manifest, fdi);
-    assert.equal(plan.source, "fang");
-    assert.ok(plan.parts.some((p) => p.tissue === "pulp"));
-    assert.deepEqual(buffersForTooth(manifest, fdi), ["dental"]);
+test("this patient's tooth carries this patient's ligament", () => {
+  for (const fdi of [11, 31, 46]) {
+    const plan = publishedToothPlan(manifest, fdi, "openfulljaw");
+    assert.equal(plan.source, "openfulljaw");
+    assert.ok(plan.parts.some((p) => p.tissue === "pdl"), "the ligament");
+    // This dataset has no pulp at all, so it must never claim one.
+    assert.ok(!plan.parts.some((p) => p.tissue === "pulp"));
+    for (const { part } of plan.parts)
+      assert.equal(part.source, "openfulljaw", "one patient for one tooth");
+    assert.deepEqual(buffersForTooth(manifest, fdi, "openfulljaw"), [
+      "open-full-jaw",
+    ]);
   }
-  // Everything else is the patient, and needs only the patient's file.
-  assert.deepEqual(buffersForTooth(manifest, 11), ["open-full-jaw"]);
-  assert.equal(publishedToothPlan(manifest, 11).source, "openfulljaw");
-  assert.equal(publishedToothPlan(manifest, 26), null, "FDI 26 is absent");
+  assert.equal(
+    publishedToothPlan(manifest, 26, "openfulljaw"),
+    null,
+    "this patient is missing FDI 26",
+  );
+  // Kang is a seven year old's molar and is offered as a model of its own,
+  // never as a stand in for an adult tooth a reader asked to see.
+  const kang = publishedToothPlan(manifest, 46, "fang");
+  assert.equal(kang.source, "fang");
+  assert.deepEqual(buffersForTooth(manifest, 46, "fang"), ["dental"]);
+  assert.equal(publishedToothPlan(manifest, 11, "fang"), null);
 });
 
-test("published teeth are read from the manifest, uppers included", () => {
-  const teeth = publishedTeeth(manifest);
-  assert.ok(teeth.has(11) && teeth.has(28), "upper teeth are published now");
-  assert.ok(teeth.has(36) && teeth.has(46), "Kang stands in for both molars");
-  assert.ok(!teeth.has(26), "FDI 26 is not published");
-  // The patient has both lower first molars too, so Kang adds no number.
-  assert.equal(teeth.size, 31, "every tooth the patient has");
+test("published teeth are read from the manifest, per patient", () => {
+  const model = publishedTeeth(manifest, "openfulljaw");
+  assert.equal(model.size, 31, "every tooth this patient has");
+  assert.ok(!model.has(26), "this patient is missing FDI 26");
+  assert.ok(model.has(11) && model.has(28), "upper teeth included");
+  const scan = publishedTeeth(manifest, "toothfairy");
+  assert.equal(scan.size, 32, "the other patient has a whole dentition");
+  assert.ok(scan.has(26));
+  // With no patient named it is every tooth either of them can show.
+  assert.equal(publishedTeeth(manifest).size, 32);
 });
 
 test("the dentition model carries every patient part and is metre scaled", () => {
-  const group = createPublishedDentitionModel(manifest, buffers);
+  const group = createPublishedDentitionModel(manifest, buffers, "openfulljaw");
   assert.ok(group);
   assert.equal(group.children.length, jawParts.length);
   group.updateMatrixWorld(true);

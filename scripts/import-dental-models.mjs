@@ -26,20 +26,24 @@
 //
 // Usage: node scripts/import-dental-models.mjs [refs-directory]
 
-import { createHash } from "node:crypto";
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  readdirSync,
-  writeFileSync,
-} from "node:fs";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import occtimportjs from "occt-import-js";
-import { MeshoptSimplifier } from "meshoptimizer";
+import {
+  boundsOf,
+  findOne,
+  openEdges,
+  pack,
+  publish,
+  readBinaryStl,
+  sha256,
+  simplify,
+  walk,
+  weld,
+  writer,
+} from "./mesh-tools.mjs";
 
 const REFS = process.argv[2] || "documentation/refs";
-const OUT = "public/models/dental";
 
 // The Fang solids have CJK file names that macOS and Linux normalize
 // differently, so they are identified by content instead. These digests also
@@ -63,233 +67,8 @@ const FANG = {
   },
 };
 
-const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
-
-/** Every file under a directory. Names here carry spaces, commas and CJK, and
- *  macOS and Linux disagree about how to normalize the last of those, so
- *  nothing in this script addresses a source file by its name. */
-function walk(directory) {
-  const found = [];
-  for (const entry of readdirSync(directory, { withFileTypes: true })) {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) found.push(...walk(path));
-    else if (entry.isFile()) found.push(path);
-  }
-  return found;
-}
-
-function findOne(files, ends, what) {
-  const matches = files.filter((path) => path.endsWith(ends));
-  if (matches.length !== 1)
-    throw new Error(
-      `expected one ${what} under ${REFS}, found ${matches.length} for ${ends}`,
-    );
-  return matches[0];
-}
-
-/** Binary STL to indexed triangles, welding on exact coordinates. */
-function readBinaryStl(bytes) {
-  const view = new DataView(
-    bytes.buffer,
-    bytes.byteOffset,
-    bytes.byteLength,
-  );
-  const count = view.getUint32(80, true);
-  const positions = [];
-  const indices = [];
-  const seen = new Map();
-  for (let t = 0; t < count; t++) {
-    const base = 84 + t * 50 + 12;
-    for (let corner = 0; corner < 3; corner++) {
-      const at = base + corner * 12;
-      const x = view.getFloat32(at, true);
-      const y = view.getFloat32(at + 4, true);
-      const z = view.getFloat32(at + 8, true);
-      const key = `${x},${y},${z}`;
-      let index = seen.get(key);
-      if (index === undefined) {
-        index = positions.length / 3;
-        seen.set(key, index);
-        positions.push(x, y, z);
-      }
-      indices.push(index);
-    }
-  }
-  return {
-    positions: Float32Array.from(positions),
-    indices: Uint32Array.from(indices),
-  };
-}
-
-/** Merge vertices that share a coordinate. The STEP tessellator emits every
- *  face separately, which leaves a seam at every patch boundary: the surface
- *  is closed but the mesh is not, and nothing can be simplified across it.
- *  Six decimals of a millimeter is far below the tessellation tolerance. */
-function weld(positions, indices) {
-  const seen = new Map();
-  const merged = [];
-  const remap = new Uint32Array(positions.length / 3);
-  for (let v = 0; v < positions.length / 3; v++) {
-    const key = `${positions[v * 3].toFixed(6)},${positions[v * 3 + 1].toFixed(6)},${positions[v * 3 + 2].toFixed(6)}`;
-    let at = seen.get(key);
-    if (at === undefined) {
-      at = merged.length / 3;
-      seen.set(key, at);
-      merged.push(positions[v * 3], positions[v * 3 + 1], positions[v * 3 + 2]);
-    }
-    remap[v] = at;
-  }
-  const out = new Uint32Array(indices.length);
-  for (let i = 0; i < indices.length; i++) out[i] = remap[indices[i]];
-  return { positions: Float32Array.from(merged), indices: out };
-}
-
-/** Collapse to a triangle budget, keeping the boundary and reporting the error
- *  so the manifest can carry it. A tooth that has to travel over the network
- *  cannot arrive at its CAD tessellation density. */
-async function simplify(positions, indices, target) {
-  if (indices.length / 3 <= target) return { positions, indices, error: 0 };
-  await MeshoptSimplifier.ready;
-  const [collapsed, error] = MeshoptSimplifier.simplify(
-    indices,
-    positions,
-    3,
-    target * 3,
-    0.02,
-    ["LockBorder"],
-  );
-  return { positions, indices: collapsed, error };
-}
-
-/** Area weighted vertex normals, so a welded mesh shades smoothly. */
-function vertexNormals(positions, indices) {
-  const normals = new Float32Array(positions.length);
-  for (let i = 0; i < indices.length; i += 3) {
-    const [a, b, c] = [indices[i] * 3, indices[i + 1] * 3, indices[i + 2] * 3];
-    const ux = positions[b] - positions[a],
-      uy = positions[b + 1] - positions[a + 1],
-      uz = positions[b + 2] - positions[a + 2];
-    const vx = positions[c] - positions[a],
-      vy = positions[c + 1] - positions[a + 1],
-      vz = positions[c + 2] - positions[a + 2];
-    const nx = uy * vz - uz * vy,
-      ny = uz * vx - ux * vz,
-      nz = ux * vy - uy * vx;
-    for (const at of [a, b, c]) {
-      normals[at] += nx;
-      normals[at + 1] += ny;
-      normals[at + 2] += nz;
-    }
-  }
-  for (let i = 0; i < normals.length; i += 3) {
-    const length =
-      Math.hypot(normals[i], normals[i + 1], normals[i + 2]) || 1;
-    normals[i] /= length;
-    normals[i + 1] /= length;
-    normals[i + 2] /= length;
-  }
-  return normals;
-}
-
-function boundsOf(positions) {
-  const lo = [Infinity, Infinity, Infinity];
-  const hi = [-Infinity, -Infinity, -Infinity];
-  for (let i = 0; i < positions.length; i += 3)
-    for (let axis = 0; axis < 3; axis++) {
-      const value = positions[i + axis];
-      if (value < lo[axis]) lo[axis] = value;
-      if (value > hi[axis]) hi[axis] = value;
-    }
-  return [lo, hi];
-}
-
-/** Count edges used by exactly one triangle: a closed surface has none. */
-function openEdges(indices) {
-  const edges = new Map();
-  for (let i = 0; i < indices.length; i += 3)
-    for (const [a, b] of [
-      [indices[i], indices[i + 1]],
-      [indices[i + 1], indices[i + 2]],
-      [indices[i + 2], indices[i]],
-    ]) {
-      const key = a < b ? `${a}_${b}` : `${b}_${a}`;
-      edges.set(key, (edges.get(key) || 0) + 1);
-    }
-  let open = 0;
-  for (const uses of edges.values()) if (uses === 1) open++;
-  return open;
-}
-
-/** One output buffer. Each set of parts writes into its own, because the
- *  license a reader accepts by downloading them is not the same one. */
-function writer(name, file) {
-  const chunks = [];
-  let offset = 0;
-  return {
-    name,
-    file,
-    get bytes() {
-      return offset;
-    },
-    append(array) {
-      // Float32Array and Uint32Array both want four byte alignment.
-      if (offset % 4) {
-        const pad = 4 - (offset % 4);
-        chunks.push(Buffer.alloc(pad));
-        offset += pad;
-      }
-      const at = offset;
-      const buffer = Buffer.from(
-        array.buffer,
-        array.byteOffset,
-        array.byteLength,
-      );
-      chunks.push(buffer);
-      offset += buffer.length;
-      return at;
-    },
-    concat: () => Buffer.concat(chunks),
-  };
-}
-
 const dentalBuffer = writer("dental", "dental.bin");
 const jawBuffer = writer("open-full-jaw", "open-full-jaw.bin");
-
-function compact(positions, indices) {
-  const remap = new Int32Array(positions.length / 3).fill(-1);
-  const kept = [];
-  const out = new Uint32Array(indices.length);
-  for (let i = 0; i < indices.length; i++) {
-    const v = indices[i];
-    if (remap[v] < 0) {
-      remap[v] = kept.length / 3;
-      kept.push(positions[v * 3], positions[v * 3 + 1], positions[v * 3 + 2]);
-    }
-    out[i] = remap[v];
-  }
-  return { positions: Float32Array.from(kept), indices: out };
-}
-
-function pack(into, id, name, group, source, rawPositions, rawIndices, extra = {}) {
-  const { positions, indices } = compact(rawPositions, rawIndices);
-  const normals = vertexNormals(positions, indices);
-  const part = {
-    id,
-    name,
-    group,
-    source,
-    buffer: into.name,
-    positions: into.append(positions),
-    normals: into.append(normals),
-    indices: into.append(indices),
-    vertexCount: positions.length / 3,
-    indexCount: indices.length,
-    bounds: boundsOf(positions),
-    openEdges: openEdges(indices),
-    ...extra,
-  };
-  return part;
-}
 
 const TOOTH_NAMES = {
   1: "central incisor",
@@ -705,90 +484,81 @@ if (existsSync(JAW_ROOT)) {
   console.warn(`skipped Open-Full-Jaw: no patient 12 under ${JAW_ROOT}`);
 }
 
-mkdirSync(OUT, { recursive: true });
-writeFileSync(join(OUT, dentalBuffer.file), dentalBuffer.concat());
-if (jawBuffer.bytes) writeFileSync(join(OUT, jawBuffer.file), jawBuffer.concat());
-
-const manifest = {
-  generatedBy: "scripts/import-dental-models.mjs",
-  buffer: "dental.bin",
-  bufferBytes: dentalBuffer.bytes,
-  buffers: {
-    dental: { file: dentalBuffer.file, bytes: dentalBuffer.bytes },
-    "open-full-jaw": { file: jawBuffer.file, bytes: jawBuffer.bytes },
+// Two buffers, because two licenses. Each is published on its own so the
+// manifest keeps every set this script does not own, including any imported
+// by scripts/import-toothfairy.mjs.
+const SOURCES = {
+  diaz: {
+    title:
+      "Data of synthetic 3D models of the human jaw, including teeth, ligaments, and bone structures",
+    authors: "Cristian Diaz and colleagues",
+    year: 2024,
+    doi: "10.17632/xjsx7nfhj8.1",
+    url: "https://data.mendeley.com/datasets/xjsx7nfhj8/1",
+    license: "CC BY 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    units:
+      "STL carries no unit. Millimeters follow the source modeling protocol; this is not a measurement tool.",
+    processing:
+      "Binary STL read and welded on exact coordinates. No decimation, smoothing, scaling or registration. Assembly positions are the source's own.",
+    pdlModel:
+      "The source built the ligament by extruding 0.25 mm radially around each root. It is a synthetic shell of even thickness, not a segmented ligament, and its width cannot be read as a measurement.",
+    limits:
+      "A synthetic model of one lower jaw. It carries no pulp, no cementum, no gingiva and no nerve, and it is not a patient.",
   },
-  sources: {
-    diaz: {
-      title:
-        "Data of synthetic 3D models of the human jaw, including teeth, ligaments, and bone structures",
-      authors: "Cristian Diaz and colleagues",
-      year: 2024,
-      doi: "10.17632/xjsx7nfhj8.1",
-      url: "https://data.mendeley.com/datasets/xjsx7nfhj8/1",
-      license: "CC BY 4.0",
-      licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
-      units:
-        "STL carries no unit. Millimeters follow the source modeling protocol; this is not a measurement tool.",
-      processing:
-        "Binary STL read and welded on exact coordinates. No decimation, smoothing, scaling or registration. Assembly positions are the source's own.",
-      pdlModel:
-        "The source built the ligament by extruding 0.25 mm radially around each root. It is a synthetic shell of even thickness, not a segmented ligament, and its width cannot be read as a measurement.",
-      limits:
-        "A synthetic model of one lower jaw. It carries no pulp, no cementum, no gingiva and no nerve, and it is not a patient.",
-    },
-    fang: {
-      title: "Models for a finite element study of a band and loop space maintainer",
-      authors: "Fang Fang Kang; study by Shi, Kang and Liu",
-      year: 2024,
-      doi: "10.6084/m9.figshare.24591537.v1",
-      article: "10.7717/peerj.17456",
-      license: "CC BY 4.0",
-      licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
-      units: "millimeter",
-      processing:
-        "STEP solids tessellated with OpenCASCADE through occt-import-js at a linear deflection of 0.0015 of the bounding box and an angular deflection of 0.5 radians. No smoothing, thinning or registration.",
-      derivation:
-        "Built from the cone beam CT of a seven year old in mixed dentition, so this is an immature first permanent molar and not an adult standard form.",
-      pdlModel:
-        "The source thickened the ligament to an even shell. Its methods give 0.15 mm and its discussion gives 0.2 mm; the paper states both.",
-      limits:
-        "The outer surface is not divided into enamel and dentin. The pulp cavity is the modeled cavity, not pulp tissue, and carries no apical foramen, lateral canal, vessel or nerve. Root canal length and preparation cannot be measured from it.",
-      used: fangUsed,
-    },
-    openfulljaw: {
-      title:
-        "Open-Full-Jaw: an open-access dataset and pipeline for finite element models of human jaw",
-      authors:
-        "Torkan Gholamalizadeh, Faezeh Moshfeghifar, Zachary Ferguson, Teseo Schneider, Daniele Panozzo, Sune Darkner, Masrour Makaremi, Francois Chan, Peter Lampel Sondergaard, Kenny Erleben",
-      year: 2022,
-      doi: "10.1016/j.cmpb.2022.107009",
-      url: "https://github.com/diku-dk/Open-Full-Jaw",
-      license: "CC BY-NC-SA 4.0",
-      licenseUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
-      patient: "Patient 12 of 17",
-      units: "millimeter",
-      processing:
-        "Per tooth binary STL and the jaw's ASCII STL bone and ligament surfaces, welded and simplified with meshoptimizer to 6,000 triangles a tooth, 3,000 a ligament and 34,000 a jaw of bone. The ligament arrives as one mesh per jaw and is separated into its connected shells, one per tooth. Nothing is smoothed, thickened or moved: both arches are in the coordinate frame the scan was segmented in.",
-      derivation:
-        "Segmented from the cone beam CT of one adult patient and clinically validated by the study. This is one person's mouth, not a standard form: the teeth are worn and tipped as that patient's teeth are, and one upper first molar is missing because that patient is missing it.",
-      pdlModel:
-        "The study generated the ligament as the gap between each root and its socket rather than by extruding a fixed thickness, so its width varies as the socket does. It is still a generated surface and not segmented ligament tissue.",
-      limits:
-        "Bone, teeth and ligament only. There is no pulp and no canal in this dataset, so a tooth from it cannot be opened to show one, and no enamel and dentin division, no cementum, no gingiva and no nerve. Being one patient is what makes it real and also what makes it not a norm. Redistributed under CC BY-NC-SA 4.0: not for commercial use, and any derivative of it carries the same terms. That is not the license the rest of this atlas carries.",
-      used: jawUsed,
-    },
+  fang: {
+    title: "Models for a finite element study of a band and loop space maintainer",
+    authors: "Fang Fang Kang; study by Shi, Kang and Liu",
+    year: 2024,
+    doi: "10.6084/m9.figshare.24591537.v1",
+    article: "10.7717/peerj.17456",
+    license: "CC BY 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    units: "millimeter",
+    processing:
+      "STEP solids tessellated with OpenCASCADE through occt-import-js at a linear deflection of 0.0015 of the bounding box and an angular deflection of 0.5 radians. No smoothing, thinning or registration.",
+    derivation:
+      "Built from the cone beam CT of a seven year old in mixed dentition, so this is an immature first permanent molar and not an adult standard form.",
+    pdlModel:
+      "The source thickened the ligament to an even shell. Its methods give 0.15 mm and its discussion gives 0.2 mm; the paper states both.",
+    limits:
+      "The outer surface is not divided into enamel and dentin. The pulp cavity is the modeled cavity, not pulp tissue, and carries no apical foramen, lateral canal, vessel or nerve. Root canal length and preparation cannot be measured from it.",
+    used: fangUsed,
   },
-  parts,
+  openfulljaw: {
+    title:
+      "Open-Full-Jaw: an open-access dataset and pipeline for finite element models of human jaw",
+    authors:
+      "Torkan Gholamalizadeh, Faezeh Moshfeghifar, Zachary Ferguson, Teseo Schneider, Daniele Panozzo, Sune Darkner, Masrour Makaremi, Francois Chan, Peter Lampel Sondergaard, Kenny Erleben",
+    year: 2022,
+    doi: "10.1016/j.cmpb.2022.107009",
+    url: "https://github.com/diku-dk/Open-Full-Jaw",
+    license: "CC BY-NC-SA 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+    patient: "Patient 12 of 17",
+    units: "millimeter",
+    processing:
+      "Per tooth binary STL and the jaw's ASCII STL bone and ligament surfaces, welded and simplified with meshoptimizer to 6,000 triangles a tooth, 3,000 a ligament and 34,000 a jaw of bone. The ligament arrives as one mesh per jaw and is separated into its connected shells, one per tooth. Nothing is smoothed, thickened or moved: both arches are in the coordinate frame the scan was segmented in.",
+    derivation:
+      "Segmented from the cone beam CT of one adult patient and clinically validated by the study. This is one person's mouth, not a standard form: the teeth are worn and tipped as that patient's teeth are, and one upper first molar is missing because that patient is missing it.",
+    pdlModel:
+      "The study generated the ligament as the gap between each root and its socket rather than by extruding a fixed thickness, so its width varies as the socket does. It is still a generated surface and not segmented ligament tissue.",
+    limits:
+      "Bone, teeth and ligament only. There is no pulp and no canal in this dataset, so a tooth from it cannot be opened to show one, and no enamel and dentin division, no cementum, no gingiva and no nerve. Being one patient is what makes it real and also what makes it not a norm. Redistributed under CC BY-NC-SA 4.0: not for commercial use, and any derivative of it carries the same terms. That is not the license the rest of this atlas carries.",
+    used: jawUsed,
+  },
 };
-writeFileSync(join(OUT, "manifest.json"), JSON.stringify(manifest, null, 1));
 
-for (const buffer of [dentalBuffer, jawBuffer]) {
-  const mine = parts.filter((part) => part.buffer === buffer.name);
-  const triangles = mine.reduce((sum, part) => sum + part.indexCount / 3, 0);
-  console.log(
-    `${buffer.file}: ${mine.length} parts, ${triangles.toLocaleString()} triangles, ${(buffer.bytes / 1e6).toFixed(1)} MB`,
-  );
-}
-for (const part of parts)
-  if (part.openEdges)
-    console.log(`  ${part.id}: ${part.openEdges} open edges`);
+publish({
+  buffer: dentalBuffer,
+  owns: ["diaz", "fang"],
+  sources: { diaz: SOURCES.diaz, fang: SOURCES.fang },
+  parts: parts.filter((part) => part.buffer === dentalBuffer.name),
+});
+if (jawBuffer.bytes)
+  publish({
+    buffer: jawBuffer,
+    owns: ["openfulljaw"],
+    sources: { openfulljaw: SOURCES.openfulljaw },
+    parts: parts.filter((part) => part.buffer === jawBuffer.name),
+  });
