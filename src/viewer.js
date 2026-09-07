@@ -756,6 +756,7 @@ export async function createViewer(host, atlas, handlers) {
   });
   const api = {
     landmarks: () => landmarks.map((l) => ({ ...l })),
+    prefetchModels: () => loadDentalModels().catch(() => {}),
     modelManifest: () => dentalModels?.manifest || null,
     publishedArch: () => dentalModel?.userData.publishedArch || null,
     faceCut() {
@@ -847,18 +848,25 @@ export async function createViewer(host, atlas, handlers) {
                       dentalModels?.manifest,
                       dentalModels?.buffer,
                     );
+          const awaitingPublished =
+            !dentalModels &&
+            state.age === "adult" &&
+            state.archSource !== "drawn" &&
+            (state.toothDetail ? PUBLISHED_TEETH.has(state.fdi) : true);
           if (published) dentalModel = published;
           else {
-            dentalModel = state.toothDetail
-              ? createToothModel(state.fdi)
-              : createDentitionModel(state.age);
+            // Never draw a schematic stand in for a tooth that has a published
+            // model on the way. It would be replaced a second later, and until
+            // then it says schematic about anatomy that is not.
+            dentalModel = awaitingPublished
+              ? null
+              : state.toothDetail
+                ? createToothModel(state.fdi)
+                : createDentitionModel(state.age);
+            if (awaitingPublished) resolutionStatus("Loading the published model");
             // The published buffer may simply not be here yet. Fetch it and
             // rebuild rather than leaving the drawn tooth in place.
-            if (
-              state.age === "adult" &&
-              !dentalModels &&
-              (!state.toothDetail || PUBLISHED_TEETH.has(state.fdi))
-            )
+            if (awaitingPublished)
               loadDentalModels()
                 .then(() => {
                   dentalKey = "";
@@ -866,7 +874,15 @@ export async function createViewer(host, atlas, handlers) {
                   onModelsReady();
                   api.view("oblique", true);
                 })
-                .catch(() => {});
+                .catch((error) => {
+                  // A silent failure here leaves a drawn tooth pretending to
+                  // be the published one, so it is reported and the drawn
+                  // geometry is built deliberately rather than by accident.
+                  resolutionStatus(`Published model unavailable: ${error.message}`);
+                  dentalModels = { manifest: null, buffer: null };
+                  dentalKey = "";
+                  if (currentState) api.update(currentState);
+                });
           }
         }
         dentalKey = key;

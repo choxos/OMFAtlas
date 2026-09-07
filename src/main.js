@@ -1248,6 +1248,9 @@ function setTab(tab) {
   showDetails(tab !== "anatomy" || Boolean(state.selected));
   document.querySelector("#mode-bar").hidden = tab !== "dental";
   document.body.classList.toggle("dental-stage", tab === "dental");
+  // The published dental models are what this tab shows, so they start
+  // arriving when the tab does rather than when the first tooth is opened.
+  if (tab === "dental") viewer?.prefetchModels?.();
   if (tab !== "dental") setMode("3d");
   document.querySelectorAll("[data-tab]").forEach((b) => {
     b.classList.toggle("active", b.dataset.tab === tab);
